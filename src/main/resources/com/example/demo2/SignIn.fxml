@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo2.SignInController">
+   <children>
+      <TextField fx:id="EmailTextField" layoutX="241.0" layoutY="37.0" promptText="Email" />
+      <TextField fx:id="PasswordTextField" layoutX="241.0" layoutY="84.0" promptText="Password" />
+      <Button layoutX="241.0" layoutY="291.0" mnemonicParsing="false" onAction="#SignInClick" prefHeight="26.0" prefWidth="160.0" text="Sign In" />
+      <Button layoutX="241.0" layoutY="354.0" mnemonicParsing="false" onAction="#RegisterClick" prefHeight="26.0" prefWidth="160.0" text="Register" />
+      <Hyperlink layoutX="241.0" layoutY="320.0" text="Forgot Password" underline="true" />
+      <ImageView fitHeight="181.0" fitWidth="182.0" layoutX="230.0" layoutY="110.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../Images/Studio_Shodwe-removebg-preview.png" />
+         </image>
+      </ImageView>
+      <Text fx:id="SignInMessage" layoutX="241.0" layoutY="287.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="160.0" />
+   </children>
+</AnchorPane>
