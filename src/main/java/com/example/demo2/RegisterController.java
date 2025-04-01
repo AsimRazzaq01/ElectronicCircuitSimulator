@@ -7,23 +7,12 @@ import javafx.scene.control.TextField;
 
 public class RegisterController {
     @FXML
-    private Button backButton;
+    private Button backButton, registerButton;
 
     @FXML
-    private PasswordField confirmPasswordField;
+    private TextField emailField, firstNameField, lastNameField;
 
     @FXML
-    private TextField emailField;
+    private PasswordField passwordField, confirmPasswordField;
 
-    @FXML
-    private TextField firstNameField;
-
-    @FXML
-    private TextField lastNameField;
-
-    @FXML
-    private PasswordField passwordField;
-
-    @FXML
-    private Button registerButton;
-}
+    }
