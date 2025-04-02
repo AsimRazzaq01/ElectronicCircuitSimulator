@@ -3,11 +3,15 @@ package com.example.demo2;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.Pane;
+
+import java.io.IOException;
 
 public class ProjectController {
     @FXML
@@ -195,5 +199,12 @@ public class ProjectController {
         Resistor r = new Resistor(getViewportCenterX() / scale, getViewportCenterY() / scale);
         canvasPane.getChildren().add(r);
         r.makeDraggable(canvasScrollPane);
+    }
+
+    @FXML
+    protected void logout() throws IOException {
+        Scene scene = this.logoutButton.getScene();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SignIn.fxml"));
+        scene.setRoot(fxmlLoader.load());
     }
 }
