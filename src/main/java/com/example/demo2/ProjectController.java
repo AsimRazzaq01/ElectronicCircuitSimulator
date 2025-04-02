@@ -50,7 +50,7 @@ public class ProjectController {
 
     @FXML
     public void initialize() {
-        canvasScrollPane.setPannable(true);
+        //canvasScrollPane.setPannable(true);
         zoomSlider.setDisable(true);
     }
 
@@ -181,5 +181,19 @@ public class ProjectController {
 //                node.setOpacity(1.0);
 //            }
         });
+    }
+
+    @FXML
+    public void addBattery(ActionEvent actionEvent) {
+        Battery b = new Battery(getViewportCenterX() / scale, getViewportCenterY() / scale);
+        canvasPane.getChildren().add(b);
+        b.makeDraggable(canvasScrollPane);
+    }
+
+    @FXML
+    public void addResistor(ActionEvent actionEvent) {
+        Resistor r = new Resistor(getViewportCenterX() / scale, getViewportCenterY() / scale);
+        canvasPane.getChildren().add(r);
+        r.makeDraggable(canvasScrollPane);
     }
 }
