@@ -50,7 +50,7 @@ public class ProjectController {
     @FXML
     private Button fuseButton;
 
-    private double scale = 1.0;
+    private double zoomScale = 1.0;
 
     @FXML
     public void initialize() {
@@ -59,34 +59,35 @@ public class ProjectController {
     }
 
     @FXML
-    void zoomIn(ActionEvent actionEvent) {
+    void zoomIn() {
         double viewportWidth = canvasScrollPane.getViewportBounds().getWidth();
         double viewportHeight = canvasScrollPane.getViewportBounds().getHeight();
         double canvasWidth = canvasPane.getLayoutBounds().getWidth();
         double canvasHeight = canvasPane.getLayoutBounds().getHeight();
 
-        double oldCenterX = getViewportCenterX() / scale;
-        double oldCenterY = getViewportCenterY() / scale;
+        double oldCenterX = getViewportCenterX() / zoomScale;
+        double oldCenterY = getViewportCenterY() / zoomScale;
 
         //Zoom in the pane
-        scale += 0.1;
-        canvasPane.setScaleX(scale);
-        canvasPane.setScaleY(scale);
+        zoomScale += 0.1;
+        canvasPane.setScaleX(zoomScale);
+        canvasPane.setScaleY(zoomScale);
+        adjustElementZoomScale(zoomScale);
 
         Platform.runLater(() -> {
-            double scaledCenterX = oldCenterX * scale;
-            double scaledCenterY = oldCenterY * scale;
+            double scaledCenterX = oldCenterX * zoomScale;
+            double scaledCenterY = oldCenterY * zoomScale;
 
             //Calculates the original center of viewport when zoom scale is 1.0
-            double originalCenterX = scaledCenterX / scale;
-            double originalCenterY = scaledCenterY / scale;
+            double originalCenterX = scaledCenterX / zoomScale;
+            double originalCenterY = scaledCenterY / zoomScale;
 
             //The new center is the original center coordinates multiplied by the new scale
-            double newCenterX = originalCenterX * scale;
-            double newCenterY = originalCenterY * scale;
+            double newCenterX = originalCenterX * zoomScale;
+            double newCenterY = originalCenterY * zoomScale;
 
-            double hValue = (newCenterX - viewportWidth / 2.0) / ((canvasWidth * scale) - viewportWidth);
-            double vValue = (newCenterY - viewportHeight / 2.0) / ((canvasHeight * scale) - viewportHeight);
+            double hValue = (newCenterX - viewportWidth / 2.0) / ((canvasWidth * zoomScale) - viewportWidth);
+            double vValue = (newCenterY - viewportHeight / 2.0) / ((canvasHeight * zoomScale) - viewportHeight);
 
             //Force a layout update
             canvasScrollPane.layout();
@@ -94,10 +95,10 @@ public class ProjectController {
             canvasScrollPane.setHvalue(hValue);
             canvasScrollPane.setVvalue(vValue);
 
-            currentZoomLabel.setText(((int)(100*scale)) + "%");
+            currentZoomLabel.setText(((int)(100* zoomScale)) + "%");
         });
 
-        if (scale >= 1.5) {
+        if (zoomScale >= 1.5) {
             zoomInButton.setDisable(true);
         }
         else {
@@ -106,35 +107,36 @@ public class ProjectController {
     }
 
     @FXML
-    void zoomOut(ActionEvent actionEvent) {
+    void zoomOut() {
 
         double viewportWidth = canvasScrollPane.getViewportBounds().getWidth();
         double viewportHeight = canvasScrollPane.getViewportBounds().getHeight();
         double canvasWidth = canvasPane.getLayoutBounds().getWidth();
         double canvasHeight = canvasPane.getLayoutBounds().getHeight();
 
-        double oldCenterX = getViewportCenterX() / scale;
-        double oldCenterY = getViewportCenterY() / scale;
+        double oldCenterX = getViewportCenterX() / zoomScale;
+        double oldCenterY = getViewportCenterY() / zoomScale;
 
         //Zoom out of the pane
-        scale -= 0.1;
-        canvasPane.setScaleX(scale);
-        canvasPane.setScaleY(scale);
+        zoomScale -= 0.1;
+        canvasPane.setScaleX(zoomScale);
+        canvasPane.setScaleY(zoomScale);
+        adjustElementZoomScale(zoomScale);
 
         Platform.runLater(() -> {
-            double scaledCenterX = oldCenterX * scale;
-            double scaledCenterY = oldCenterY * scale;
+            double scaledCenterX = oldCenterX * zoomScale;
+            double scaledCenterY = oldCenterY * zoomScale;
 
             //Calculates the original center of viewport when zoom scale is 1.0
-            double originalCenterX = scaledCenterX / scale;
-            double originalCenterY = scaledCenterY / scale;
+            double originalCenterX = scaledCenterX / zoomScale;
+            double originalCenterY = scaledCenterY / zoomScale;
 
             //The new center is the original center coordinates multiplied by the new scale
-            double newCenterX = originalCenterX * scale;
-            double newCenterY = originalCenterY * scale;
+            double newCenterX = originalCenterX * zoomScale;
+            double newCenterY = originalCenterY * zoomScale;
 
-            double hValue = (newCenterX - viewportWidth / 2.0) / ((canvasWidth * scale) - viewportWidth);
-            double vValue = (newCenterY - viewportHeight / 2.0) / ((canvasHeight * scale) - viewportHeight);
+            double hValue = (newCenterX - viewportWidth / 2.0) / ((canvasWidth * zoomScale) - viewportWidth);
+            double vValue = (newCenterY - viewportHeight / 2.0) / ((canvasHeight * zoomScale) - viewportHeight);
 
             //Force a layout update
             canvasScrollPane.layout();
@@ -142,10 +144,10 @@ public class ProjectController {
             canvasScrollPane.setHvalue(hValue);
             canvasScrollPane.setVvalue(vValue);
 
-            currentZoomLabel.setText(((int)(100*scale)) + "%");
+            currentZoomLabel.setText(((int)(100* zoomScale)) + "%");
         });
 
-        if (scale < 0.6) {
+        if (zoomScale < 0.6) {
             zoomOutButton.setDisable(true);
         }
         else {
@@ -187,16 +189,21 @@ public class ProjectController {
         });
     }
 
+    private void adjustElementZoomScale(double zoomScale) {
+        Battery.zoomScale = zoomScale;
+    }
+
     @FXML
-    public void addBattery(ActionEvent actionEvent) {
-        Battery b = new Battery(getViewportCenterX() / scale, getViewportCenterY() / scale);
+    public void addBattery() {
+        Battery b = new Battery(getViewportCenterX() / zoomScale, getViewportCenterY() / zoomScale);
         canvasPane.getChildren().add(b);
+        adjustElementZoomScale(zoomScale);
         b.makeDraggable(canvasScrollPane);
     }
 
     @FXML
-    public void addResistor(ActionEvent actionEvent) {
-        Resistor r = new Resistor(getViewportCenterX() / scale, getViewportCenterY() / scale);
+    public void addResistor() {
+        Resistor r = new Resistor(getViewportCenterX() / zoomScale, getViewportCenterY() / zoomScale);
         canvasPane.getChildren().add(r);
         r.makeDraggable(canvasScrollPane);
     }
