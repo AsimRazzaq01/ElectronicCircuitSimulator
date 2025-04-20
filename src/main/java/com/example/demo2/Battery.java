@@ -10,8 +10,8 @@ import java.net.URL;
 public class Battery extends Group {
     private double batteryX;
     private double batteryY;
-    static double zoomScale;
     private double voltage;
+    static double zoomScale;
 
     Battery(double x , double y) {
         URL imagePath = Battery.class.getResource("component_sprites/battery.png");
@@ -19,6 +19,7 @@ public class Battery extends Group {
             Image batteryImage = new Image(imagePath.toExternalForm(),70,0,true,false);
             ImageView batteryImageView = new ImageView(batteryImage);
             this.getChildren().add(batteryImageView);
+            voltage = 9.0;
             batteryX = x;
             batteryY = y;
             this.setLayoutX(batteryX);
@@ -36,15 +37,16 @@ public class Battery extends Group {
 
     void makeDraggable(ScrollPane pane) {
         this.setOnMousePressed(mouseEvent -> {
-            System.out.println(zoomScale);
             batteryX = (mouseEvent.getSceneX() / zoomScale) - this.getLayoutX();
             batteryY = (mouseEvent.getSceneY() / zoomScale) - this.getLayoutY();
             pane.setPannable(false);
+            this.toFront();
         });
 
         this.setOnMouseDragged(mouseEvent -> {
             double newBatteryX = (mouseEvent.getSceneX() / zoomScale) - batteryX;
             double newBatteryY = (mouseEvent.getSceneY() / zoomScale) - batteryY;
+
             if (newBatteryX >= 0 && newBatteryX <= 1528) {
                 this.setLayoutX(newBatteryX);
             }

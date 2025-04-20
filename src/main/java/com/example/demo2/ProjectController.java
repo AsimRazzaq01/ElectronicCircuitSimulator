@@ -1,7 +1,6 @@
 package com.example.demo2;
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -36,7 +35,6 @@ public class ProjectController {
     private Button homeButton;
     @FXML
     private Slider zoomSlider;
-
     @FXML
     private Button wireButton;
     @FXML
@@ -51,10 +49,17 @@ public class ProjectController {
     private Button fuseButton;
 
     private double zoomScale = 1.0;
+    private Project currentProject;
+
+    void setCurrentProject(Project project) {
+        currentProject = project;
+    }
 
     @FXML
     public void initialize() {
-        //canvasScrollPane.setPannable(true);
+        //Project data from database will be passed to the project view screen
+        setCurrentProject(new Project(101, "Test Project"));
+        projectNameLabel.setText(currentProject.getProjectName());
         zoomSlider.setDisable(true);
     }
 
@@ -191,12 +196,22 @@ public class ProjectController {
 
     private void adjustElementZoomScale(double zoomScale) {
         Battery.zoomScale = zoomScale;
+        Resistor.zoomScale = zoomScale;
+    }
+
+    @FXML
+    public void undo() {
+    }
+
+    @FXML
+    public void redo() {
     }
 
     @FXML
     public void addBattery() {
         Battery b = new Battery(getViewportCenterX() / zoomScale, getViewportCenterY() / zoomScale);
         canvasPane.getChildren().add(b);
+        currentProject.addElement(b);
         adjustElementZoomScale(zoomScale);
         b.makeDraggable(canvasScrollPane);
     }
@@ -205,6 +220,8 @@ public class ProjectController {
     public void addResistor() {
         Resistor r = new Resistor(getViewportCenterX() / zoomScale, getViewportCenterY() / zoomScale);
         canvasPane.getChildren().add(r);
+        currentProject.addElement(r);
+        adjustElementZoomScale(zoomScale);
         r.makeDraggable(canvasScrollPane);
     }
 
