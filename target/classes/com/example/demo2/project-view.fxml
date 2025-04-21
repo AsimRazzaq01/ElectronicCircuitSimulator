@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -15,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo2.ProjectController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo2.ProjectController">
    <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
       <VBox prefHeight="400.0" prefWidth="115.0">
          <GridPane minHeight="72.0">
@@ -47,11 +48,20 @@
                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   </rowConstraints>
                   <Button fx:id="wireButton" mnemonicParsing="false" text="Wire" GridPane.halignment="CENTER" />
-                  <Button fx:id="batteryButton" mnemonicParsing="false" onAction="#addBattery" text="Battery" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-                  <Button fx:id="lightBulbButton" mnemonicParsing="false" text="Light Bulb" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
-                  <Button fx:id="resistorButton" mnemonicParsing="false" onAction="#addResistor" text="Resistor" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
                   <Button fx:id="switchButton" mnemonicParsing="false" text="Switch" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
                   <Button fx:id="fuseButton" mnemonicParsing="false" text="Fuse" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.rowIndex="1">
+                     <children>
+                        <ImageView fx:id="batteryImageView" fitHeight="34.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" />
+                        <Label text="Battery" />
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.rowIndex="2">
+                     <children>
+                        <ImageView fx:id="resistorImageView" fitHeight="34.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" />
+                        <Label text="Resistor" />
+                     </children>
+                  </VBox>
                </GridPane>
             </VBox>
          </ScrollPane>
@@ -65,18 +75,14 @@
             </Label>
          </HBox>
          <HBox alignment="CENTER" minHeight="32.0" prefHeight="32.0" prefWidth="485.0" spacing="50.0">
-            <Button fx:id="redoButton" mnemonicParsing="false" text="Undo" />
-            <Button fx:id="undoButton" mnemonicParsing="false" text="Redo" />
+            <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undo" text="Undo" />
+            <Button fx:id="redoButton" mnemonicParsing="false" onAction="#redo" text="Redo" />
          </HBox>
          <ScrollPane fx:id="canvasScrollPane" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
             <StackPane prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #b9bbbd;">
-               <children>
-                  <Group>
-                     <children>
-                        <Pane fx:id="canvasPane" prefHeight="875.5" prefWidth="1598.0" style="-fx-background-color: white;" />
-                     </children>
-                  </Group>
-               </children>
+               <Group>
+                  <Pane fx:id="canvasPane" prefHeight="875.5" prefWidth="1598.0" style="-fx-background-color: white;" />
+               </Group>
             </StackPane>
          </ScrollPane>
          <HBox alignment="CENTER_RIGHT" prefHeight="40.0" prefWidth="600.0" spacing="10.0">

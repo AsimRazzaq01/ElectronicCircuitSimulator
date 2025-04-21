@@ -8,9 +8,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
+import java.net.URL;
 
 public class ProjectController {
     @FXML
@@ -36,17 +42,9 @@ public class ProjectController {
     @FXML
     private Slider zoomSlider;
     @FXML
-    private Button wireButton;
+    private ImageView batteryImageView;
     @FXML
-    private Button batteryButton;
-    @FXML
-    private Button resistorButton;
-    @FXML
-    private Button switchButton;
-    @FXML
-    private Button lightBulbButton;
-    @FXML
-    private Button fuseButton;
+    private ImageView resistorImageView;
 
     private double zoomScale = 1.0;
     private Project currentProject;
@@ -55,12 +53,85 @@ public class ProjectController {
         currentProject = project;
     }
 
+    private void loadComponentPaneImages() {
+        URL batteryImagePath = this.getClass().getResource("component_sprites/battery.png");
+        URL resistorImagePath = this.getClass().getResource("component_sprites/resistor_default.png");
+
+        if (batteryImagePath != null) {
+            Image batteryImage = new Image(batteryImagePath.toExternalForm(), 70, 0, true, false);
+            batteryImageView.setImage(batteryImage);
+        }
+
+        if (resistorImagePath != null) {
+            Image resistorImage = new Image(resistorImagePath.toExternalForm());
+            resistorImageView.setImage(resistorImage);
+        }
+    }
+
+    private void allowDragAndDrop() {
+        batteryImageView.setOnDragDetected(mouseEvent -> {
+            Dragboard batteryDragboard = batteryImageView.startDragAndDrop(TransferMode.MOVE);
+            ClipboardContent clipboardContent = new ClipboardContent();
+            clipboardContent.putString("battery");
+            batteryDragboard.setContent(clipboardContent);
+            mouseEvent.consume();
+        });
+
+        resistorImageView.setOnDragDetected(mouseEvent -> {
+            Dragboard resistorDragboard = resistorImageView.startDragAndDrop(TransferMode.MOVE);
+            ClipboardContent clipboardContent = new ClipboardContent();
+            clipboardContent.putString("resistor");
+            resistorDragboard.setContent(clipboardContent);
+            mouseEvent.consume();
+        });
+
+        canvasPane.setOnDragOver(mouseEvent -> {
+            if (mouseEvent.getGestureSource() != canvasPane && mouseEvent.getDragboard().hasString()) {
+                mouseEvent.acceptTransferModes(TransferMode.MOVE);
+            }
+
+            mouseEvent.consume();
+        });
+
+        canvasPane.setOnDragDropped(mouseEvent -> {
+            Dragboard dragboard = mouseEvent.getDragboard();
+            boolean success = false;
+            if (dragboard.hasString()) {
+                String dragData = dragboard.getString();
+                switch (dragData) {
+                    case "battery" -> addBattery(mouseEvent.getX(), mouseEvent.getY());
+                    case "resistor" -> addResistor(mouseEvent.getX(), mouseEvent.getY());
+                }
+                success = true;
+            }
+
+            mouseEvent.setDropCompleted(success);
+            mouseEvent.consume();
+        });
+    }
+
     @FXML
     public void initialize() {
         //Project data from database will be passed to the project view screen
         setCurrentProject(new Project(101, "Test Project"));
         projectNameLabel.setText(currentProject.getProjectName());
+        loadComponentPaneImages();
+        allowDragAndDrop();
+        undoButton.setDisable(true);
+        redoButton.setDisable(true);
         zoomSlider.setDisable(true);
+    }
+
+    @FXML
+    protected void logout() throws IOException {
+        Scene scene = this.logoutButton.getScene();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SignIn.fxml"));
+        scene.setRoot(fxmlLoader.load());
+    }
+
+    private void adjustElementZoomScale(double zoomScale) {
+        Battery.zoomScale = zoomScale;
+        Resistor.zoomScale = zoomScale;
     }
 
     @FXML
@@ -75,33 +146,7 @@ public class ProjectController {
 
         //Zoom in the pane
         zoomScale += 0.1;
-        canvasPane.setScaleX(zoomScale);
-        canvasPane.setScaleY(zoomScale);
-        adjustElementZoomScale(zoomScale);
-
-        Platform.runLater(() -> {
-            double scaledCenterX = oldCenterX * zoomScale;
-            double scaledCenterY = oldCenterY * zoomScale;
-
-            //Calculates the original center of viewport when zoom scale is 1.0
-            double originalCenterX = scaledCenterX / zoomScale;
-            double originalCenterY = scaledCenterY / zoomScale;
-
-            //The new center is the original center coordinates multiplied by the new scale
-            double newCenterX = originalCenterX * zoomScale;
-            double newCenterY = originalCenterY * zoomScale;
-
-            double hValue = (newCenterX - viewportWidth / 2.0) / ((canvasWidth * zoomScale) - viewportWidth);
-            double vValue = (newCenterY - viewportHeight / 2.0) / ((canvasHeight * zoomScale) - viewportHeight);
-
-            //Force a layout update
-            canvasScrollPane.layout();
-
-            canvasScrollPane.setHvalue(hValue);
-            canvasScrollPane.setVvalue(vValue);
-
-            currentZoomLabel.setText(((int)(100* zoomScale)) + "%");
-        });
+        applyZoom (viewportWidth, viewportHeight, canvasWidth, canvasHeight, oldCenterX, oldCenterY);
 
         if (zoomScale >= 1.5) {
             zoomInButton.setDisable(true);
@@ -113,7 +158,6 @@ public class ProjectController {
 
     @FXML
     void zoomOut() {
-
         double viewportWidth = canvasScrollPane.getViewportBounds().getWidth();
         double viewportHeight = canvasScrollPane.getViewportBounds().getHeight();
         double canvasWidth = canvasPane.getLayoutBounds().getWidth();
@@ -124,6 +168,17 @@ public class ProjectController {
 
         //Zoom out of the pane
         zoomScale -= 0.1;
+        applyZoom (viewportWidth, viewportHeight, canvasWidth, canvasHeight, oldCenterX, oldCenterY);
+
+        if (zoomScale < 0.6) {
+            zoomOutButton.setDisable(true);
+        }
+        else {
+            zoomInButton.setDisable(false);
+        }
+    }
+
+    private void applyZoom (double viewportWidth, double viewportHeight, double canvasWidth, double canvasHeight, double oldCenterX, double oldCenterY) {
         canvasPane.setScaleX(zoomScale);
         canvasPane.setScaleY(zoomScale);
         adjustElementZoomScale(zoomScale);
@@ -151,13 +206,6 @@ public class ProjectController {
 
             currentZoomLabel.setText(((int)(100* zoomScale)) + "%");
         });
-
-        if (zoomScale < 0.6) {
-            zoomOutButton.setDisable(true);
-        }
-        else {
-            zoomInButton.setDisable(false);
-        }
     }
 
     private double getViewportCenterX() {
@@ -194,41 +242,38 @@ public class ProjectController {
         });
     }
 
-    private void adjustElementZoomScale(double zoomScale) {
-        Battery.zoomScale = zoomScale;
-        Resistor.zoomScale = zoomScale;
-    }
-
     @FXML
     public void undo() {
+        if (!currentProject.getUndoStack().isEmpty()) {
+            undoButton.setDisable(false);
+            ProjectActions action = currentProject.performUndo();
+            action.undo();
+        }
+
+        if (currentProject.getUndoStack().isEmpty()) {
+            undoButton.setDisable(true);
+        }
     }
 
     @FXML
     public void redo() {
     }
 
-    @FXML
-    public void addBattery() {
-        Battery b = new Battery(getViewportCenterX() / zoomScale, getViewportCenterY() / zoomScale);
-        canvasPane.getChildren().add(b);
-        currentProject.addElement(b);
+    public void addBattery(double x, double y) {
+        Battery b = new Battery(x, y);
+        AddComponent add = new AddComponent(currentProject, canvasPane, b);
+        add.performAction();
+        undoButton.setDisable(false);
         adjustElementZoomScale(zoomScale);
         b.makeDraggable(canvasScrollPane);
     }
 
-    @FXML
-    public void addResistor() {
-        Resistor r = new Resistor(getViewportCenterX() / zoomScale, getViewportCenterY() / zoomScale);
-        canvasPane.getChildren().add(r);
-        currentProject.addElement(r);
+    public void addResistor(double x, double y) {
+        Resistor r = new Resistor(x, y);
+        AddComponent add = new AddComponent(currentProject, canvasPane, r);
+        add.performAction();
+        undoButton.setDisable(false);
         adjustElementZoomScale(zoomScale);
         r.makeDraggable(canvasScrollPane);
-    }
-
-    @FXML
-    protected void logout() throws IOException {
-        Scene scene = this.logoutButton.getScene();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SignIn.fxml"));
-        scene.setRoot(fxmlLoader.load());
     }
 }

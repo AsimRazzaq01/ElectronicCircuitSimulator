@@ -7,15 +7,15 @@ import java.util.Stack;
 
 public class Project {
     private final int projectID;
-    private String projectName;
-    private ArrayList<Node> projectElements;
+    private final String projectName;
+    private ArrayList<Node> projectComponents;
     Stack<ProjectActions> undoStack;
     Stack<ProjectActions> redoStack;
 
     Project(int id, String name) {
         projectID = id;
         projectName = name;
-        projectElements = new ArrayList<>();
+        projectComponents = new ArrayList<>();
         undoStack = new Stack<>();
         redoStack = new Stack<>();
     }
@@ -24,12 +24,28 @@ public class Project {
         return projectName;
     }
 
-    void addElement(Node element) {
-        projectElements.add(element);
+    int getProjectID() {
+        return projectID;
     }
 
-    void removeElement(Node element) {
-        projectElements.remove(element);
+    ArrayList<Node> getProjectComponents() {
+        return projectComponents;
+    }
+
+    Stack<ProjectActions> getUndoStack() {
+        return undoStack;
+    }
+
+    Stack<ProjectActions> getRedoStack() {
+        return redoStack;
+    }
+
+    void addComponent(Node component) {
+        projectComponents.add(component);
+    }
+
+    void removeComponent(Node component) {
+        projectComponents.remove(component);
     }
 
     void addToUndoStack(ProjectActions action) {
@@ -41,6 +57,7 @@ public class Project {
     }
 
     ProjectActions performUndo() {
+        System.out.println(undoStack.toString());
         return undoStack.pop();
     }
 

@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -46,12 +47,19 @@
                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   </rowConstraints>
-                  <Button fx:id="wireButton" mnemonicParsing="false" text="Wire" GridPane.halignment="CENTER" />
-                  <Button fx:id="batteryButton" mnemonicParsing="false" onAction="#addBattery" text="Battery" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-                  <Button fx:id="lightBulbButton" mnemonicParsing="false" text="Light Bulb" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
-                  <Button fx:id="resistorButton" mnemonicParsing="false" onAction="#addResistor" text="Resistor" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
-                  <Button fx:id="switchButton" mnemonicParsing="false" text="Switch" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
-                  <Button fx:id="fuseButton" mnemonicParsing="false" text="Fuse" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+                  <Button mnemonicParsing="false" text="Wire" GridPane.halignment="CENTER" />
+                  <Button mnemonicParsing="false" text="Switch" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
+                  <Button mnemonicParsing="false" text="Fuse" GridPane.halignment="CENTER" GridPane.rowIndex="5" />
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.rowIndex="1">
+                     <ImageView fx:id="batteryImageView" fitHeight="34.0" fitWidth="66.0" pickOnBounds="true"
+                                preserveRatio="true"/>
+                     <Label text="Battery"/>
+                  </VBox>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.rowIndex="2">
+                     <ImageView fx:id="resistorImageView" fitHeight="34.0" fitWidth="66.0" pickOnBounds="true"
+                                preserveRatio="true"/>
+                     <Label text="Resistor"/>
+                  </VBox>
                </GridPane>
             </VBox>
          </ScrollPane>
@@ -71,8 +79,7 @@
          <ScrollPane fx:id="canvasScrollPane" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
             <StackPane prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #b9bbbd;">
                <Group>
-                  <Pane fx:id="canvasPane" prefHeight="875.5" prefWidth="1598.0"
-                        style="-fx-background-color: white;"/>
+                  <Pane fx:id="canvasPane" prefHeight="875.5" prefWidth="1598.0" style="-fx-background-color: white;" />
                </Group>
             </StackPane>
          </ScrollPane>
