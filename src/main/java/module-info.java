@@ -9,4 +9,6 @@ module com.example.demo2 {
 
     opens com.example.demo2 to javafx.fxml;
     exports com.example.demo2;
+    exports com.example.demo2.components;
+    opens com.example.demo2.components to javafx.fxml;
 }

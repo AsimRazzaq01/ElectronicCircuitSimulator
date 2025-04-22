@@ -1,5 +1,8 @@
 package com.example.demo2;
 
+import com.example.demo2.components.Battery;
+import com.example.demo2.components.Component;
+import com.example.demo2.components.Resistor;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -129,9 +132,8 @@ public class ProjectController {
         scene.setRoot(fxmlLoader.load());
     }
 
-    private void adjustElementZoomScale(double zoomScale) {
-        Battery.zoomScale = zoomScale;
-        Resistor.zoomScale = zoomScale;
+    private void adjustComponentZoomScale(double zoomScale) {
+        Component.zoomScale = zoomScale;
     }
 
     @FXML
@@ -181,7 +183,7 @@ public class ProjectController {
     private void applyZoom (double viewportWidth, double viewportHeight, double canvasWidth, double canvasHeight, double oldCenterX, double oldCenterY) {
         canvasPane.setScaleX(zoomScale);
         canvasPane.setScaleY(zoomScale);
-        adjustElementZoomScale(zoomScale);
+        adjustComponentZoomScale(zoomScale);
 
         Platform.runLater(() -> {
             double scaledCenterX = oldCenterX * zoomScale;
@@ -250,6 +252,10 @@ public class ProjectController {
             action.undo();
         }
 
+        if (!currentProject.getRedoStack().isEmpty()) {
+            redoButton.setDisable(false);
+        }
+
         if (currentProject.getUndoStack().isEmpty()) {
             undoButton.setDisable(true);
         }
@@ -257,14 +263,34 @@ public class ProjectController {
 
     @FXML
     public void redo() {
+        if (!currentProject.getRedoStack().isEmpty()) {
+            redoButton.setDisable(false);
+            ProjectActions action = currentProject.performRedo();
+            action.redo();
+        }
+
+        if (!currentProject.getUndoStack().isEmpty()) {
+            undoButton.setDisable(false);
+        }
+
+        if (currentProject.getRedoStack().isEmpty()) {
+            redoButton.setDisable(true);
+        }
     }
 
     public void addBattery(double x, double y) {
         Battery b = new Battery(x, y);
         AddComponent add = new AddComponent(currentProject, canvasPane, b);
         add.performAction();
+
+        //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
+        if (!currentProject.getRedoStack().isEmpty()) {
+            currentProject.clearRedoStack();
+            redoButton.setDisable(true);
+        }
+
         undoButton.setDisable(false);
-        adjustElementZoomScale(zoomScale);
+        adjustComponentZoomScale(zoomScale);
         b.makeDraggable(canvasScrollPane);
     }
 
@@ -272,8 +298,15 @@ public class ProjectController {
         Resistor r = new Resistor(x, y);
         AddComponent add = new AddComponent(currentProject, canvasPane, r);
         add.performAction();
+
+        //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
+        if (!currentProject.getRedoStack().isEmpty()) {
+            currentProject.clearRedoStack();
+            redoButton.setDisable(true);
+        }
+
         undoButton.setDisable(false);
-        adjustElementZoomScale(zoomScale);
+        adjustComponentZoomScale(zoomScale);
         r.makeDraggable(canvasScrollPane);
     }
 }

@@ -1,6 +1,6 @@
 package com.example.demo2;
 
-import javafx.scene.Node;
+import com.example.demo2.components.Component;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -8,7 +8,7 @@ import java.util.Stack;
 public class Project {
     private final int projectID;
     private final String projectName;
-    private ArrayList<Node> projectComponents;
+    private ArrayList<Component> projectComponents;
     Stack<ProjectActions> undoStack;
     Stack<ProjectActions> redoStack;
 
@@ -28,7 +28,7 @@ public class Project {
         return projectID;
     }
 
-    ArrayList<Node> getProjectComponents() {
+    ArrayList<Component> getProjectComponents() {
         return projectComponents;
     }
 
@@ -40,11 +40,11 @@ public class Project {
         return redoStack;
     }
 
-    void addComponent(Node component) {
+    void addComponent(Component component) {
         projectComponents.add(component);
     }
 
-    void removeComponent(Node component) {
+    void removeComponent(Component component) {
         projectComponents.remove(component);
     }
 
@@ -57,11 +57,14 @@ public class Project {
     }
 
     ProjectActions performUndo() {
-        System.out.println(undoStack.toString());
         return undoStack.pop();
     }
 
     ProjectActions performRedo() {
         return redoStack.pop();
+    }
+
+    void clearRedoStack() {
+        redoStack.clear();
     }
 }
