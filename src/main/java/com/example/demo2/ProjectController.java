@@ -1,11 +1,13 @@
 package com.example.demo2;
 
-import com.example.demo2.components.Battery;
-import com.example.demo2.components.Component;
-import com.example.demo2.components.Resistor;
+import com.example.demo2.componentmodel.Component;
+import com.example.demo2.componentnode.BatteryNode;
+import com.example.demo2.componentnode.ResistorNode;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -278,9 +280,45 @@ public class ProjectController {
         }
     }
 
+    public void makeDraggable(Node componentNode, Component component) {
+        Node canvas = canvasScrollPane.getContent();
+
+        componentNode.setOnMousePressed(mouseEvent -> {
+            //Gets the coordinates of the cursor within the canvasPane
+            Point2D cursorInPane = canvas.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+
+            component.setComponentX((cursorInPane.getX() / zoomScale) - componentNode.getLayoutX());
+            component.setComponentY((cursorInPane.getY() / zoomScale) - componentNode.getLayoutY());
+            canvasScrollPane.setPannable(false);
+            componentNode.toFront();
+        });
+
+        componentNode.setOnMouseDragged(mouseEvent -> {
+            Point2D cursorInPane = canvas.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+
+            double potentialNewX = (cursorInPane.getX() / zoomScale) - component.getComponentX();
+            double potentialNewY = (cursorInPane.getY() / zoomScale) - component.getComponentY();
+
+            //The position of the battery can only be in 0 and 1528 for x and 0 and 842.5 for y
+            //The new coordinate values are calculated by getting the maximum value of 0 and the minimum value of the new calculated coordinates and the maximum possible value
+            double newComponentX = Math.max(0, Math.min(potentialNewX, 1528));
+            double newComponentY = Math.max(0, Math.min(potentialNewY, 842.5));
+
+            //Set the new position of the component
+            componentNode.setLayoutX(newComponentX);
+            componentNode.setLayoutY(newComponentY);
+        });
+
+        componentNode.setOnMouseReleased(_ -> {
+            canvasScrollPane.setPannable(true);
+            component.setComponentX(componentNode.getLayoutX());
+            component.setComponentY(componentNode.getLayoutY());
+        });
+    }
+
     public void addBattery(double x, double y) {
-        Battery b = new Battery(x, y);
-        AddComponent add = new AddComponent(currentProject, canvasPane, b);
+        BatteryNode battery = new BatteryNode(x, y);
+        AddComponent add = new AddComponent(currentProject, canvasPane, battery, battery.getBatteryModel());
         add.performAction();
 
         //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
@@ -291,12 +329,12 @@ public class ProjectController {
 
         undoButton.setDisable(false);
         adjustComponentZoomScale(zoomScale);
-        b.makeDraggable(canvasScrollPane);
+        makeDraggable(battery, battery.getBatteryModel());
     }
 
     public void addResistor(double x, double y) {
-        Resistor r = new Resistor(x, y);
-        AddComponent add = new AddComponent(currentProject, canvasPane, r);
+        ResistorNode resistor = new ResistorNode(x, y);
+        AddComponent add = new AddComponent(currentProject, canvasPane, resistor, resistor.getResistorModel());
         add.performAction();
 
         //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
@@ -307,6 +345,6 @@ public class ProjectController {
 
         undoButton.setDisable(false);
         adjustComponentZoomScale(zoomScale);
-        r.makeDraggable(canvasScrollPane);
+        makeDraggable(resistor, resistor.getResistorModel());
     }
 }

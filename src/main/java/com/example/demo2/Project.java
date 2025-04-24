@@ -1,35 +1,36 @@
 package com.example.demo2;
 
-import com.example.demo2.components.Component;
+import com.example.demo2.componentmodel.Component;
+import javafx.scene.Node;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Stack;
 
 public class Project {
-    private final int projectID;
-    private final String projectName;
-    private ArrayList<Component> projectComponents;
+    private final int PROJECT_ID;
+    private final String PROJECT_NAME;
+    private final HashMap<Component, Node> PROJECT_COMPONENTS;
     Stack<ProjectActions> undoStack;
     Stack<ProjectActions> redoStack;
 
     Project(int id, String name) {
-        projectID = id;
-        projectName = name;
-        projectComponents = new ArrayList<>();
+        PROJECT_ID = id;
+        PROJECT_NAME = name;
+        PROJECT_COMPONENTS = new HashMap<>();
         undoStack = new Stack<>();
         redoStack = new Stack<>();
     }
 
     String getProjectName() {
-        return projectName;
+        return PROJECT_NAME;
     }
 
     int getProjectID() {
-        return projectID;
+        return PROJECT_ID;
     }
 
-    ArrayList<Component> getProjectComponents() {
-        return projectComponents;
+    HashMap<Component, Node> getProjectComponents() {
+        return PROJECT_COMPONENTS;
     }
 
     Stack<ProjectActions> getUndoStack() {
@@ -40,12 +41,12 @@ public class Project {
         return redoStack;
     }
 
-    void addComponent(Component component) {
-        projectComponents.add(component);
+    void addComponent(Component component, Node node) {
+        PROJECT_COMPONENTS.put(component, node);
     }
 
     void removeComponent(Component component) {
-        projectComponents.remove(component);
+        PROJECT_COMPONENTS.remove(component);
     }
 
     void addToUndoStack(ProjectActions action) {
