@@ -14,9 +14,25 @@ public class ResistorNode extends Group {
     public ResistorNode(double x, double y) {
         URL imagePath = Project.class.getResource("component_sprites/resistor_default.png");
         if (imagePath != null) {
-            Image resistorImage = new Image(imagePath.toExternalForm(),70,0,true,false);
+            Image resistorImage = new Image(imagePath.toExternalForm(),500, 0, true, false);
             ImageView resistorImageView = new ImageView(resistorImage);
+            resistorImageView.setFitWidth(70);
+            resistorImageView.setPreserveRatio(true);
             resistorModel = new ResistorModel(x, y);
+            this.getChildren().add(resistorImageView);
+            this.setLayoutX(resistorModel.getComponentX());
+            this.setLayoutY(resistorModel.getComponentY());
+        }
+    }
+
+    public ResistorNode(double x, double y, double r) {
+        URL imagePath = Project.class.getResource("component_sprites/resistor_default.png");
+        if (imagePath != null) {
+            Image resistorImage = new Image(imagePath.toExternalForm(),500, 0, true, false);
+            ImageView resistorImageView = new ImageView(resistorImage);
+            resistorImageView.setFitWidth(70);
+            resistorImageView.setPreserveRatio(true);
+            resistorModel = new ResistorModel(x, y, r);
             this.getChildren().add(resistorImageView);
             this.setLayoutX(resistorModel.getComponentX());
             this.setLayoutY(resistorModel.getComponentY());

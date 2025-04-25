@@ -1,7 +1,9 @@
 package com.example.demo2;
 
+import com.example.demo2.componentmodel.CircuitSwitchModel;
 import com.example.demo2.componentmodel.Component;
 import com.example.demo2.componentnode.BatteryNode;
+import com.example.demo2.componentnode.CircuitSwitchNode;
 import com.example.demo2.componentnode.ResistorNode;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -15,9 +17,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
@@ -50,6 +50,8 @@ public class ProjectController {
     private ImageView batteryImageView;
     @FXML
     private ImageView resistorImageView;
+    @FXML
+    private ImageView switchImageView;
 
     private double zoomScale = 1.0;
     private Project currentProject;
@@ -61,15 +63,22 @@ public class ProjectController {
     private void loadComponentPaneImages() {
         URL batteryImagePath = this.getClass().getResource("component_sprites/battery.png");
         URL resistorImagePath = this.getClass().getResource("component_sprites/resistor_default.png");
+        URL switchImagePath = this.getClass().getResource("component_sprites/switch_closed.png");
 
         if (batteryImagePath != null) {
-            Image batteryImage = new Image(batteryImagePath.toExternalForm(), 70, 0, true, false);
+            Image batteryImage = new Image(batteryImagePath.toExternalForm(), 500, 0, true, false);
             batteryImageView.setImage(batteryImage);
         }
 
         if (resistorImagePath != null) {
-            Image resistorImage = new Image(resistorImagePath.toExternalForm());
+            Image resistorImage = new Image(resistorImagePath.toExternalForm(), 500, 0, true, false);
             resistorImageView.setImage(resistorImage);
+        }
+
+        if (switchImagePath != null) {
+            Image switchImage = new Image(switchImagePath.toExternalForm(), 500, 0, true, false);
+            switchImageView.setImage(switchImage);
+            //switchImageView.setSmooth(false);
         }
     }
 
@@ -90,6 +99,14 @@ public class ProjectController {
             mouseEvent.consume();
         });
 
+        switchImageView.setOnDragDetected(mouseEvent -> {
+            Dragboard switchDragboard = switchImageView.startDragAndDrop(TransferMode.MOVE);
+            ClipboardContent switchClipboardContent = new ClipboardContent();
+            switchClipboardContent.putString("switch");
+            switchDragboard.setContent(switchClipboardContent);
+            mouseEvent.consume();
+        });
+
         canvasPane.setOnDragOver(mouseEvent -> {
             if (mouseEvent.getGestureSource() != canvasPane && mouseEvent.getDragboard().hasString()) {
                 mouseEvent.acceptTransferModes(TransferMode.MOVE);
@@ -106,12 +123,14 @@ public class ProjectController {
                 switch (dragData) {
                     case "battery" -> addBattery(mouseEvent.getX(), mouseEvent.getY());
                     case "resistor" -> addResistor(mouseEvent.getX(), mouseEvent.getY());
+                    case "switch" -> addCircuitSwitch(mouseEvent.getX(), mouseEvent.getY());
                 }
                 success = true;
             }
 
             mouseEvent.setDropCompleted(success);
             mouseEvent.consume();
+            canvasScrollPane.requestFocus();
         });
     }
 
@@ -284,35 +303,42 @@ public class ProjectController {
         Node canvas = canvasScrollPane.getContent();
 
         componentNode.setOnMousePressed(mouseEvent -> {
-            //Gets the coordinates of the cursor within the canvasPane
-            Point2D cursorInPane = canvas.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+            if (mouseEvent.getButton() == MouseButton.PRIMARY) {
+                //Gets the coordinates of the cursor within the canvasPane
+                Point2D cursorInPane = canvas.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
-            component.setComponentX((cursorInPane.getX() / zoomScale) - componentNode.getLayoutX());
-            component.setComponentY((cursorInPane.getY() / zoomScale) - componentNode.getLayoutY());
-            canvasScrollPane.setPannable(false);
-            componentNode.toFront();
+                component.setComponentX((cursorInPane.getX() / zoomScale) - componentNode.getLayoutX());
+                component.setComponentY((cursorInPane.getY() / zoomScale) - componentNode.getLayoutY());
+                canvasScrollPane.setPannable(false);
+                componentNode.toFront();
+            }
         });
 
         componentNode.setOnMouseDragged(mouseEvent -> {
-            Point2D cursorInPane = canvas.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+            if (mouseEvent.getButton() == MouseButton.PRIMARY) {
+                Point2D cursorInPane = canvas.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
-            double potentialNewX = (cursorInPane.getX() / zoomScale) - component.getComponentX();
-            double potentialNewY = (cursorInPane.getY() / zoomScale) - component.getComponentY();
+                double potentialNewX = (cursorInPane.getX() / zoomScale) - component.getComponentX();
+                double potentialNewY = (cursorInPane.getY() / zoomScale) - component.getComponentY();
 
-            //The position of the battery can only be in 0 and 1528 for x and 0 and 842.5 for y
-            //The new coordinate values are calculated by getting the maximum value of 0 and the minimum value of the new calculated coordinates and the maximum possible value
-            double newComponentX = Math.max(0, Math.min(potentialNewX, 1528));
-            double newComponentY = Math.max(0, Math.min(potentialNewY, 842.5));
+                //The position of the battery can only be in 0 and 1528 for x and 0 and 842.5 for y
+                //The new coordinate values are calculated by getting the maximum value of 0 and the minimum value of the new calculated coordinates and the maximum possible value
+                //Maximum value is determined by the size of the canvas - the size of the component
+                double newComponentX = Math.max(0, Math.min(potentialNewX, (canvasPane.getPrefWidth() - componentNode.getLayoutBounds().getWidth())));
+                double newComponentY = Math.max(0, Math.min(potentialNewY, (canvasPane.getPrefHeight() - componentNode.getLayoutBounds().getHeight())));
 
-            //Set the new position of the component
-            componentNode.setLayoutX(newComponentX);
-            componentNode.setLayoutY(newComponentY);
+                //Set the new position of the component
+                componentNode.setLayoutX(newComponentX);
+                componentNode.setLayoutY(newComponentY);
+            }
         });
 
-        componentNode.setOnMouseReleased(_ -> {
-            canvasScrollPane.setPannable(true);
-            component.setComponentX(componentNode.getLayoutX());
-            component.setComponentY(componentNode.getLayoutY());
+        componentNode.setOnMouseReleased(mouseEvent -> {
+            if (mouseEvent.getButton() == MouseButton.PRIMARY) {
+                canvasScrollPane.setPannable(true);
+                component.setComponentX(componentNode.getLayoutX());
+                component.setComponentY(componentNode.getLayoutY());
+            }
         });
     }
 
@@ -346,5 +372,33 @@ public class ProjectController {
         undoButton.setDisable(false);
         adjustComponentZoomScale(zoomScale);
         makeDraggable(resistor, resistor.getResistorModel());
+    }
+
+    public void addCircuitSwitch(double x, double y) {
+        CircuitSwitchNode circuitSwitch = new CircuitSwitchNode(x, y);
+        AddComponent add = new AddComponent(currentProject, canvasPane, circuitSwitch, circuitSwitch.getSwitchModel());
+        add.performAction();
+
+        //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
+        if (!currentProject.getRedoStack().isEmpty()) {
+            currentProject.clearRedoStack();
+            redoButton.setDisable(true);
+        }
+
+        setSwitchFunctionality(circuitSwitch);
+
+        undoButton.setDisable(false);
+        adjustComponentZoomScale(zoomScale);
+        makeDraggable(circuitSwitch, circuitSwitch.getSwitchModel());
+    }
+
+    public void setSwitchFunctionality(CircuitSwitchNode circuitSwitch) {
+        circuitSwitch.setOnMouseClicked(mouseEvent -> {
+            CircuitSwitchModel circuitSwitchModel = circuitSwitch.getSwitchModel();
+            if (mouseEvent.isStillSincePress()) {
+                circuitSwitchModel.setActive();
+                circuitSwitch.setSwitchImageState();
+            }
+        });
     }
 }
