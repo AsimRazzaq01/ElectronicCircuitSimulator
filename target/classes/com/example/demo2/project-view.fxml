@@ -58,9 +58,13 @@
                      <Label text="Resistor" />
                   </VBox>
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.rowIndex="3">
+                     <ImageView fx:id="switchImageView" fitHeight="34.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" />
+                     <Label text="Switch" />
+                  </VBox>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.rowIndex="4">
                      <children>
-                        <ImageView fx:id="switchImageView" fitHeight="34.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" />
-                        <Label text="Switch" />
+                        <ImageView fx:id="lightbulbImageView" fitHeight="50.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" />
+                        <Label text="Light bulb" />
                      </children>
                   </VBox>
                </GridPane>

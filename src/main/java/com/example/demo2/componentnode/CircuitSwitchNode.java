@@ -16,11 +16,11 @@ public class CircuitSwitchNode extends Group {
     private ImageView switchImageView;
 
     public CircuitSwitchNode(double x, double y) {
-        URL OPEN_SWITCH_PATH = Project.class.getResource("component_sprites/switch_opened.png");
-        URL CLOSED_SWITCH_PATH = Project.class.getResource("component_sprites/switch_closed.png");
-        if (CLOSED_SWITCH_PATH != null && OPEN_SWITCH_PATH != null) {
-            CLOSED_SWITCH_IMAGE = new Image(CLOSED_SWITCH_PATH.toExternalForm(),500, 0,true,false);
-            OPEN_SWITCH_IMAGE = new Image(OPEN_SWITCH_PATH.toExternalForm(),500,0,true,false);
+        URL openSwitchPath = Project.class.getResource("component_sprites/switch_opened.png");
+        URL closedSwitchPath = Project.class.getResource("component_sprites/switch_closed.png");
+        if (closedSwitchPath != null && openSwitchPath != null) {
+            CLOSED_SWITCH_IMAGE = new Image(closedSwitchPath.toExternalForm(),500, 0,true,false);
+            OPEN_SWITCH_IMAGE = new Image(openSwitchPath.toExternalForm(),500,0,true,false);
             switchModel = new CircuitSwitchModel(x, y);
             switchImageView = new ImageView(CLOSED_SWITCH_IMAGE);
             this.getChildren().add(switchImageView);
@@ -33,11 +33,11 @@ public class CircuitSwitchNode extends Group {
     }
 
     public CircuitSwitchNode(double x, double y, boolean active) {
-        URL OPEN_SWITCH_PATH = Project.class.getResource("component_sprites/switch_opened.png");
-        URL CLOSED_SWITCH_PATH = Project.class.getResource("component_sprites/switch_closed.png");
-        if (CLOSED_SWITCH_PATH != null && OPEN_SWITCH_PATH != null) {
-            CLOSED_SWITCH_IMAGE = new Image(CLOSED_SWITCH_PATH.toExternalForm(),500, 0,true,false);
-            OPEN_SWITCH_IMAGE = new Image(OPEN_SWITCH_PATH.toExternalForm(),500,0,true,false);
+        URL openSwitchPath = Project.class.getResource("component_sprites/switch_opened.png");
+        URL closedSwitchPath = Project.class.getResource("component_sprites/switch_closed.png");
+        if (closedSwitchPath != null && openSwitchPath != null) {
+            CLOSED_SWITCH_IMAGE = new Image(closedSwitchPath.toExternalForm(),500, 0,true,false);
+            OPEN_SWITCH_IMAGE = new Image(openSwitchPath.toExternalForm(),500,0,true,false);
             switchModel = new CircuitSwitchModel(x, y, active);
             switchImageView = new ImageView();
             switchImageView.setFitWidth(70);

@@ -12,9 +12,9 @@ public class BatteryNode extends Group {
     private BatteryModel batteryModel;
 
     public BatteryNode(double x, double y) {
-        URL IMAGE_PATH = Project.class.getResource("component_sprites/battery.png");
-        if (IMAGE_PATH != null) {
-            Image batteryImage = new Image(IMAGE_PATH.toExternalForm(), 500, 0, true, false);
+        URL imagePath = Project.class.getResource("component_sprites/battery.png");
+        if (imagePath != null) {
+            Image batteryImage = new Image(imagePath.toExternalForm(), 500, 0, true, false);
             ImageView batteryImageView = new ImageView(batteryImage);
             batteryImageView.setFitWidth(70);
             batteryImageView.setPreserveRatio(true);

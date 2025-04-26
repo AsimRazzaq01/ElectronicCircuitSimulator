@@ -1,15 +1,15 @@
 package com.example.demo2.componentmodel;
 
-public class ResistorModel extends Component {
+public class LightbulbModel extends Component {
     private double resistance;
 
-    public ResistorModel(double x, double y) {
-        super(x,y,"Resistor");
+    public LightbulbModel(double x, double y) {
+        super(x, y, "Lightbulb");
         resistance = 10.0;
     }
 
-    public ResistorModel(double x, double y, double r) {
-        super(x,y,"Resistor");
+    public LightbulbModel(double x, double y, double r) {
+        super(x, y, "Lightbulb");
         resistance = r;
     }
 
@@ -20,5 +20,4 @@ public class ResistorModel extends Component {
     public void setResistance(double resistance) {
         this.resistance = resistance;
     }
-
 }

@@ -4,6 +4,7 @@ import com.example.demo2.componentmodel.CircuitSwitchModel;
 import com.example.demo2.componentmodel.Component;
 import com.example.demo2.componentnode.BatteryNode;
 import com.example.demo2.componentnode.CircuitSwitchNode;
+import com.example.demo2.componentnode.LightbulbNode;
 import com.example.demo2.componentnode.ResistorNode;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -52,6 +53,8 @@ public class ProjectController {
     private ImageView resistorImageView;
     @FXML
     private ImageView switchImageView;
+    @FXML
+    private ImageView lightbulbImageView;
 
     private double zoomScale = 1.0;
     private Project currentProject;
@@ -64,6 +67,7 @@ public class ProjectController {
         URL batteryImagePath = this.getClass().getResource("component_sprites/battery.png");
         URL resistorImagePath = this.getClass().getResource("component_sprites/resistor_default.png");
         URL switchImagePath = this.getClass().getResource("component_sprites/switch_closed.png");
+        URL lightbulbImagePath = Project.class.getResource("component_sprites/lightbulb.png");
 
         if (batteryImagePath != null) {
             Image batteryImage = new Image(batteryImagePath.toExternalForm(), 500, 0, true, false);
@@ -79,6 +83,11 @@ public class ProjectController {
             Image switchImage = new Image(switchImagePath.toExternalForm(), 500, 0, true, false);
             switchImageView.setImage(switchImage);
             //switchImageView.setSmooth(false);
+        }
+
+        if (lightbulbImagePath != null) {
+            Image lightbulbImage = new Image(lightbulbImagePath.toExternalForm(), 500, 0, true, false);
+            lightbulbImageView.setImage(lightbulbImage);
         }
     }
 
@@ -107,6 +116,14 @@ public class ProjectController {
             mouseEvent.consume();
         });
 
+        lightbulbImageView.setOnDragDetected(mouseEvent -> {
+            Dragboard lightbulbDragboard = lightbulbImageView.startDragAndDrop(TransferMode.MOVE);
+            ClipboardContent lightbulbClipboardContent = new ClipboardContent();
+            lightbulbClipboardContent.putString("lightbulb");
+            lightbulbDragboard.setContent(lightbulbClipboardContent);
+            mouseEvent.consume();
+        });
+
         canvasPane.setOnDragOver(mouseEvent -> {
             if (mouseEvent.getGestureSource() != canvasPane && mouseEvent.getDragboard().hasString()) {
                 mouseEvent.acceptTransferModes(TransferMode.MOVE);
@@ -124,6 +141,7 @@ public class ProjectController {
                     case "battery" -> addBattery(mouseEvent.getX(), mouseEvent.getY());
                     case "resistor" -> addResistor(mouseEvent.getX(), mouseEvent.getY());
                     case "switch" -> addCircuitSwitch(mouseEvent.getX(), mouseEvent.getY());
+                    case "lightbulb" -> addLightbulb(mouseEvent.getX(), mouseEvent.getY());
                 }
                 success = true;
             }
@@ -390,6 +408,22 @@ public class ProjectController {
         undoButton.setDisable(false);
         adjustComponentZoomScale(zoomScale);
         makeDraggable(circuitSwitch, circuitSwitch.getSwitchModel());
+    }
+
+    public void addLightbulb(double x, double y) {
+        LightbulbNode lightbulb = new LightbulbNode(x, y);
+        AddComponent add = new AddComponent(currentProject, canvasPane, lightbulb, lightbulb.getLightbulbModel());
+        add.performAction();
+
+        //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
+        if (!currentProject.getRedoStack().isEmpty()) {
+            currentProject.clearRedoStack();
+            redoButton.setDisable(true);
+        }
+
+        undoButton.setDisable(false);
+        adjustComponentZoomScale(zoomScale);
+        makeDraggable(lightbulb, lightbulb.getLightbulbModel());
     }
 
     public void setSwitchFunctionality(CircuitSwitchNode circuitSwitch) {
