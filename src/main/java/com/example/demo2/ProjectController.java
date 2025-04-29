@@ -362,6 +362,24 @@ public class ProjectController {
 
     public void addBattery(double x, double y) {
         BatteryNode battery = new BatteryNode(x, y);
+
+        double batteryRight = x + battery.getLayoutBounds().getWidth();
+        double batteryBottom = y + battery.getLayoutBounds().getHeight();
+
+        //Checks if the component would be out of bounds before adding it to the canvas, then calculates a position
+        //so that it is in bounds
+        if (batteryRight > canvasPane.getPrefWidth()) {
+            double correctedX = canvasPane.getPrefWidth() - battery.getLayoutBounds().getWidth();
+            battery.setLayoutX(correctedX);
+            battery.getBatteryModel().setComponentX(correctedX);
+        }
+
+        if (batteryBottom > canvasPane.getPrefHeight()) {
+            double correctedY = canvasPane.getPrefHeight() - battery.getLayoutBounds().getHeight();
+            battery.setLayoutY(correctedY);
+            battery.getBatteryModel().setComponentY(correctedY);
+        }
+
         AddComponent add = new AddComponent(currentProject, canvasPane, battery, battery.getBatteryModel());
         add.performAction();
 
@@ -378,6 +396,24 @@ public class ProjectController {
 
     public void addResistor(double x, double y) {
         ResistorNode resistor = new ResistorNode(x, y);
+
+        double resistorRight = x + resistor.getLayoutBounds().getWidth();
+        double resistorBottom = y + resistor.getLayoutBounds().getHeight();
+
+        //Checks if the component would be out of bounds before adding it to the canvas, then calculates a position
+        //so that it is in bounds
+        if (resistorRight > canvasPane.getPrefWidth()) {
+            double correctedX = canvasPane.getPrefWidth() - resistor.getLayoutBounds().getWidth();
+            resistor.setLayoutX(correctedX);
+            resistor.getResistorModel().setComponentX(correctedX);
+        }
+
+        if (resistorBottom > canvasPane.getPrefHeight()) {
+            double correctedY = canvasPane.getPrefHeight() - resistor.getLayoutBounds().getHeight();
+            resistor.setLayoutY(correctedY);
+            resistor.getResistorModel().setComponentY(correctedY);
+        }
+
         AddComponent add = new AddComponent(currentProject, canvasPane, resistor, resistor.getResistorModel());
         add.performAction();
 
@@ -394,6 +430,24 @@ public class ProjectController {
 
     public void addCircuitSwitch(double x, double y) {
         CircuitSwitchNode circuitSwitch = new CircuitSwitchNode(x, y);
+
+        double circuitSwitchRight = x + circuitSwitch.getLayoutBounds().getWidth();
+        double circuitSwitchBottom = y + circuitSwitch.getLayoutBounds().getHeight();
+
+        //Checks if the component would be out of bounds before adding it to the canvas, then calculates a position
+        //so that it is in bounds
+        if (circuitSwitchRight > canvasPane.getPrefWidth()) {
+            double correctedX = canvasPane.getPrefWidth() - circuitSwitch.getLayoutBounds().getWidth();
+            circuitSwitch.setLayoutX(correctedX);
+            circuitSwitch.getSwitchModel().setComponentX(correctedX);
+        }
+
+        if (circuitSwitchBottom > canvasPane.getPrefHeight()) {
+            double correctedY = canvasPane.getPrefHeight() - circuitSwitch.getLayoutBounds().getHeight();
+            circuitSwitch.setLayoutY(correctedY);
+            circuitSwitch.getSwitchModel().setComponentY(correctedY);
+        }
+
         AddComponent add = new AddComponent(currentProject, canvasPane, circuitSwitch, circuitSwitch.getSwitchModel());
         add.performAction();
 
@@ -412,6 +466,24 @@ public class ProjectController {
 
     public void addLightbulb(double x, double y) {
         LightbulbNode lightbulb = new LightbulbNode(x, y);
+
+        double lightbulbRight = x + lightbulb.getLayoutBounds().getWidth();
+        double lightbulbBottom = y + lightbulb.getLayoutBounds().getHeight();
+
+        //Checks if the component would be out of bounds before adding it to the canvas, then calculates a position
+        //so that it is in bounds
+        if (lightbulbRight > canvasPane.getPrefWidth()) {
+            double correctedX = canvasPane.getPrefWidth() - lightbulb.getLayoutBounds().getWidth();
+            lightbulb.setLayoutX(correctedX);
+            lightbulb.getLightbulbModel().setComponentX(correctedX);
+        }
+
+        if (lightbulbBottom > canvasPane.getPrefHeight()) {
+            double correctedY = canvasPane.getPrefHeight() - lightbulb.getLayoutBounds().getHeight();
+            lightbulb.setLayoutY(correctedY);
+            lightbulb.getLightbulbModel().setComponentY(correctedY);
+        }
+
         AddComponent add = new AddComponent(currentProject, canvasPane, lightbulb, lightbulb.getLightbulbModel());
         add.performAction();
 
