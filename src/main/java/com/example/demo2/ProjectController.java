@@ -2,10 +2,7 @@ package com.example.demo2;
 
 import com.example.demo2.componentmodel.CircuitSwitchModel;
 import com.example.demo2.componentmodel.Component;
-import com.example.demo2.componentnode.BatteryNode;
-import com.example.demo2.componentnode.CircuitSwitchNode;
-import com.example.demo2.componentnode.LightbulbNode;
-import com.example.demo2.componentnode.ResistorNode;
+import com.example.demo2.componentnode.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -47,6 +44,8 @@ public class ProjectController {
     private Button homeButton;
     @FXML
     private Slider zoomSlider;
+    @FXML
+    private ImageView wireImageView;
     @FXML
     private ImageView batteryImageView;
     @FXML
@@ -92,8 +91,16 @@ public class ProjectController {
     }
 
     private void allowDragAndDrop() {
+        wireImageView.setOnDragDetected(mouseEvent -> {
+            Dragboard wireDragboard = wireImageView.startDragAndDrop(TransferMode.COPY);
+            ClipboardContent clipboardContent = new ClipboardContent();
+            clipboardContent.putString("wire");
+            wireDragboard.setContent(clipboardContent);
+            mouseEvent.consume();
+        });
+
         batteryImageView.setOnDragDetected(mouseEvent -> {
-            Dragboard batteryDragboard = batteryImageView.startDragAndDrop(TransferMode.MOVE);
+            Dragboard batteryDragboard = batteryImageView.startDragAndDrop(TransferMode.COPY);
             ClipboardContent clipboardContent = new ClipboardContent();
             clipboardContent.putString("battery");
             batteryDragboard.setContent(clipboardContent);
@@ -101,7 +108,7 @@ public class ProjectController {
         });
 
         resistorImageView.setOnDragDetected(mouseEvent -> {
-            Dragboard resistorDragboard = resistorImageView.startDragAndDrop(TransferMode.MOVE);
+            Dragboard resistorDragboard = resistorImageView.startDragAndDrop(TransferMode.COPY);
             ClipboardContent clipboardContent = new ClipboardContent();
             clipboardContent.putString("resistor");
             resistorDragboard.setContent(clipboardContent);
@@ -109,7 +116,7 @@ public class ProjectController {
         });
 
         switchImageView.setOnDragDetected(mouseEvent -> {
-            Dragboard switchDragboard = switchImageView.startDragAndDrop(TransferMode.MOVE);
+            Dragboard switchDragboard = switchImageView.startDragAndDrop(TransferMode.COPY);
             ClipboardContent switchClipboardContent = new ClipboardContent();
             switchClipboardContent.putString("switch");
             switchDragboard.setContent(switchClipboardContent);
@@ -117,7 +124,7 @@ public class ProjectController {
         });
 
         lightbulbImageView.setOnDragDetected(mouseEvent -> {
-            Dragboard lightbulbDragboard = lightbulbImageView.startDragAndDrop(TransferMode.MOVE);
+            Dragboard lightbulbDragboard = lightbulbImageView.startDragAndDrop(TransferMode.COPY);
             ClipboardContent lightbulbClipboardContent = new ClipboardContent();
             lightbulbClipboardContent.putString("lightbulb");
             lightbulbDragboard.setContent(lightbulbClipboardContent);
@@ -126,7 +133,7 @@ public class ProjectController {
 
         canvasPane.setOnDragOver(mouseEvent -> {
             if (mouseEvent.getGestureSource() != canvasPane && mouseEvent.getDragboard().hasString()) {
-                mouseEvent.acceptTransferModes(TransferMode.MOVE);
+                mouseEvent.acceptTransferModes(TransferMode.COPY);
             }
 
             mouseEvent.consume();
@@ -142,6 +149,7 @@ public class ProjectController {
                     case "resistor" -> addResistor(mouseEvent.getX(), mouseEvent.getY());
                     case "switch" -> addCircuitSwitch(mouseEvent.getX(), mouseEvent.getY());
                     case "lightbulb" -> addLightbulb(mouseEvent.getX(), mouseEvent.getY());
+                    case "wire" -> addWire(mouseEvent.getX(), mouseEvent.getY());
                 }
                 success = true;
             }
@@ -149,6 +157,7 @@ public class ProjectController {
             mouseEvent.setDropCompleted(success);
             mouseEvent.consume();
             canvasScrollPane.requestFocus();
+            canvasScrollPane.setPannable(true);
         });
     }
 
@@ -358,6 +367,42 @@ public class ProjectController {
                 component.setComponentY(componentNode.getLayoutY());
             }
         });
+    }
+
+    public void addWire(double leftX, double y) {
+        double rightX = leftX + 100.0;
+        double strokeOffsetLeftCorner = 9;
+        double strokeOffsetRightCorner = -9;
+        WireNode wire = new WireNode(leftX, y, rightX, y);
+
+        if (rightX > canvasPane.getPrefWidth()) {
+            double correctedLeftX = canvasPane.getPrefWidth() - 100.0;
+            double correctedRightX = canvasPane.getPrefWidth();
+            wire.setStartX(correctedLeftX + strokeOffsetLeftCorner);
+            wire.setEndX(correctedRightX + strokeOffsetRightCorner);
+            wire.getWireModel().setComponentX(correctedLeftX);
+            wire.getWireModel().setRightSideX(correctedRightX);
+        }
+
+        if (y + strokeOffsetLeftCorner > canvasPane.getPrefHeight()) {
+            double correctedY = (canvasPane.getPrefHeight() + strokeOffsetRightCorner);
+            wire.setStartY(correctedY);
+            wire.setEndY(correctedY);
+            wire.getWireModel().setComponentY(correctedY);
+            wire.getWireModel().setRightSideY(correctedY);
+        }
+
+        AddComponent add = new AddComponent(currentProject, canvasPane, wire, wire.getWireModel());
+        add.performAction();
+
+        //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
+        if (!currentProject.getRedoStack().isEmpty()) {
+            currentProject.clearRedoStack();
+            redoButton.setDisable(true);
+        }
+
+        undoButton.setDisable(false);
+        adjustComponentZoomScale(zoomScale);
     }
 
     public void addBattery(double x, double y) {
