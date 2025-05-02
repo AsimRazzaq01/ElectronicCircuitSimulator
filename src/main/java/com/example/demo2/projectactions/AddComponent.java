@@ -1,5 +1,6 @@
-package com.example.demo2;
+package com.example.demo2.projectactions;
 
+import com.example.demo2.Project;
 import com.example.demo2.componentmodel.Component;
 import com.example.demo2.componentnode.WireTerminalNode;
 import com.example.demo2.componentnode.WireNode;
@@ -13,7 +14,7 @@ public class AddComponent implements ProjectActions {
     private final Component COMPONENT;
 
 
-    AddComponent(Project currentProject, Pane currentCanvas, Node componentNode, Component com) {
+    public AddComponent(Project currentProject, Pane currentCanvas, Node componentNode, Component com) {
         PROJECT = currentProject;
         PROJECT_CANVAS = currentCanvas;
         COMPONENT_NODE = componentNode;

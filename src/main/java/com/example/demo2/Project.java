@@ -2,6 +2,7 @@ package com.example.demo2;
 
 import com.example.demo2.componentmodel.BatteryModel;
 import com.example.demo2.componentmodel.Component;
+import com.example.demo2.projectactions.ProjectActions;
 import javafx.scene.Node;
 
 import java.util.ArrayList;
@@ -45,19 +46,19 @@ public class Project {
         return redoStack;
     }
 
-    void addComponent(Component component, Node node) {
+    public void addComponent(Component component, Node node) {
         PROJECT_COMPONENTS.put(component, node);
     }
 
-    void removeComponent(Component component) {
+    public void removeComponent(Component component) {
         PROJECT_COMPONENTS.remove(component);
     }
 
-    void addToUndoStack(ProjectActions action) {
+    public void addToUndoStack(ProjectActions action) {
         undoStack.push(action);
     }
 
-    void addToRedoStack(ProjectActions action) {
+    public void addToRedoStack(ProjectActions action) {
         redoStack.push(action);
     }
 

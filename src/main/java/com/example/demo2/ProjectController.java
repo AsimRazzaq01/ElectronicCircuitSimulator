@@ -2,6 +2,8 @@ package com.example.demo2;
 
 import com.example.demo2.componentmodel.*;
 import com.example.demo2.componentnode.*;
+import com.example.demo2.projectactions.AddComponent;
+import com.example.demo2.projectactions.ProjectActions;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
