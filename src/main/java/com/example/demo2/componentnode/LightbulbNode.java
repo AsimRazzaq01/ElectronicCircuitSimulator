@@ -18,7 +18,6 @@ public class LightbulbNode extends Group {
             ImageView lightbulbImageView = new ImageView(lightbulbImage);
             lightbulbImageView.setFitWidth(70);
             lightbulbImageView.setPreserveRatio(true);
-            lightbulbImageView.setPickOnBounds(true);
             lightbulbModel = new LightbulbModel(x, y);
             this.getChildren().add(lightbulbImageView);
             this.setLayoutX(lightbulbModel.getComponentX());

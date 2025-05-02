@@ -1,8 +1,10 @@
 package com.example.demo2;
 
+import com.example.demo2.componentmodel.BatteryModel;
 import com.example.demo2.componentmodel.Component;
 import javafx.scene.Node;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -10,6 +12,7 @@ public class Project {
     private final int PROJECT_ID;
     private final String PROJECT_NAME;
     private final HashMap<Component, Node> PROJECT_COMPONENTS;
+    private final ArrayList<BatteryModel> BATTERY_LIST;
     Stack<ProjectActions> undoStack;
     Stack<ProjectActions> redoStack;
 
@@ -17,6 +20,7 @@ public class Project {
         PROJECT_ID = id;
         PROJECT_NAME = name;
         PROJECT_COMPONENTS = new HashMap<>();
+        BATTERY_LIST = new ArrayList<>();
         undoStack = new Stack<>();
         redoStack = new Stack<>();
     }

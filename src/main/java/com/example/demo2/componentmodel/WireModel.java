@@ -9,6 +9,14 @@ public class WireModel extends Component {
         super(startX, startY, "Wire");
         rightSideX = endX;
         rightSideY = endY;
+        current = 0;
+    }
+
+    public WireModel(double startX, double startY, double endX, double endY, double c) {
+        super(startX, startY, "Wire");
+        rightSideX = endX;
+        rightSideY = endY;
+        current = c;
     }
 
     public double getRightSideX() {
@@ -25,5 +33,13 @@ public class WireModel extends Component {
 
     public void setRightSideY(double endY) {
         rightSideY = endY;
+    }
+
+    public double getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(double current) {
+        this.current = current;
     }
 }
