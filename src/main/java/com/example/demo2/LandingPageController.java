@@ -22,7 +22,13 @@ public class LandingPageController {
     private Button newProjectButton;
 
     @FXML
+    private Label welcomeLabel;
+
+    @FXML
     public void initialize() {
+        // Will act as placeholder, when database in place will be changing to user sign up
+        String username = "Nelson";
+        welcomeLabel.setText("Welcome Back, " + username + "!");
         loadProjects();
     }
 
@@ -90,7 +96,7 @@ public class LandingPageController {
     private void logout() {
         try {
             Stage stage = (Stage) logoutButton.getScene().getWindow();
-            Parent root = FXMLLoader.load(getClass().getResource("SignIn.fxml")); // assuming SignIn.fxml is your login screen
+            Parent root = FXMLLoader.load(getClass().getResource("LoginRegister.fxml")); // assuming SignIn.fxml is your login screen
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
