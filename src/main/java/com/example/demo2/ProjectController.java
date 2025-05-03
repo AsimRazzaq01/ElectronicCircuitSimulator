@@ -778,4 +778,8 @@ public class ProjectController {
         adjustComponentZoomScale(zoomScale);
         makeDraggable(lightbulb, lightbulbModel);
     }
+
+    public void setProjectName(String name){
+        projectNameLabel.setText(name);
+    }
 }
