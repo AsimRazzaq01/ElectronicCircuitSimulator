@@ -14,7 +14,7 @@
     <VBox layoutX="50.0" layoutY="30.0" spacing="20" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
 
         <!-- Welcome Text -->
-        <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Welcome Back!" />
+        <Label fx:id="welcomeLabel" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Welcome Back!" />
 
         <!-- Scrollable Project List -->
         <ScrollPane fitToWidth="true" prefHeight="400">

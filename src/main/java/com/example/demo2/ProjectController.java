@@ -57,6 +57,11 @@ public class ProjectController {
     private double zoomScale = 1.0;
     private Project currentProject;
 
+    public void setProjectName(String name) {
+        projectNameLabel.setText(name);
+    }
+
+
     void setCurrentProject(Project project) {
         currentProject = project;
     }
@@ -181,7 +186,7 @@ public class ProjectController {
     @FXML
     protected void logout() throws IOException {
         Scene scene = this.logoutButton.getScene();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SignIn.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("LoginRegister.fxml"));
         scene.setRoot(fxmlLoader.load());
     }
 
@@ -779,7 +784,4 @@ public class ProjectController {
         makeDraggable(lightbulb, lightbulbModel);
     }
 
-    public void setProjectName(String name){
-        projectNameLabel.setText(name);
-    }
 }

@@ -83,7 +83,7 @@ public class LoginRegisterController implements Initializable {
     public void handleButton_login() throws IOException {
         // add DB code here
         Scene scene = this.vBox_existing_box.getScene();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("project-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("LandingPage.fxml"));
         Stage stage = (Stage) vBox_existing_box.getScene().getWindow();
         stage.setResizable(true);
         scene.setRoot(fxmlLoader.load());
