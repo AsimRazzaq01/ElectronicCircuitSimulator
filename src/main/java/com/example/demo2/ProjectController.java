@@ -2,10 +2,7 @@ package com.example.demo2;
 
 import com.example.demo2.componentmodel.*;
 import com.example.demo2.componentnode.*;
-import com.example.demo2.projectactions.AddComponent;
-import com.example.demo2.projectactions.MoveComponent;
-import com.example.demo2.projectactions.MoveWire;
-import com.example.demo2.projectactions.ProjectActions;
+import com.example.demo2.projectactions.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -515,11 +512,23 @@ public class ProjectController {
         Node canvas = canvasScrollPane.getContent();
         WireModel wireModel = wire.getWireModel();
 
+        final MoveWireTerminal[] leftSide = new MoveWireTerminal[1];
+        final MoveWireTerminal[] rightSide = new MoveWireTerminal[1];
+
         final Point2D[] cursorLeftTerminalOffset = new Point2D[1];
         final Point2D[] cursorRightTerminalOffset = new Point2D[1];
 
         leftTerminal.setOnMousePressed(mouseEvent -> {
             Point2D cursorInPane = canvas.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+
+            leftSide[0] = new MoveWireTerminal(currentProject, wire, leftTerminal);
+
+            leftSide[0].setInitialTerminalX(leftTerminal.getCenterX());
+            leftSide[0].setInitialTerminalY(leftTerminal.getCenterY());
+
+            leftSide[0].setInitialWireSideX(wire.getStartX());
+            leftSide[0].setInitialWireSideY(wire.getStartY());
+
             double cursorX = cursorInPane.getX() / zoomScale;
             double cursorY = cursorInPane.getY() / zoomScale;
 
@@ -562,10 +571,20 @@ public class ProjectController {
         leftTerminal.setOnMouseReleased(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                 canvasScrollPane.setPannable(true);
-                wireModel.setComponentX(wire.getStartX() - 12.5);
-                wireModel.setComponentY(wire.getStartY() - 12.5);
-                wireModel.setRightSideX(wire.getEndX() + 12.5);
-                wireModel.setRightSideY(wire.getEndY() - 12.5);
+
+                leftSide[0].setNewTerminalX(leftTerminal.getCenterX());
+                leftSide[0].setNewTerminalY(leftTerminal.getCenterY());
+
+                leftSide[0].setNewWireSideX(wire.getStartX());
+                leftSide[0].setNewWireSideY(wire.getStartY());
+
+                leftSide[0].performAction();
+
+                //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
+                if (!currentProject.getRedoStack().isEmpty()) {
+                    currentProject.clearRedoStack();
+                    redoButton.setDisable(true);
+                }
 
                 leftTerminal.toBack();
                 rightTerminal.toBack();
@@ -575,6 +594,15 @@ public class ProjectController {
 
         rightTerminal.setOnMousePressed(mouseEvent -> {
             Point2D cursorInPane = canvas.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+
+            rightSide[0] = new MoveWireTerminal(currentProject, wire, rightTerminal);
+
+            rightSide[0].setInitialTerminalX(rightTerminal.getCenterX());
+            rightSide[0].setInitialTerminalY(rightTerminal.getCenterY());
+
+            rightSide[0].setInitialWireSideX(wire.getEndX());
+            rightSide[0].setInitialWireSideY(wire.getEndY());
+
             double cursorX = cursorInPane.getX() / zoomScale;
             double cursorY = cursorInPane.getY() / zoomScale;
 
@@ -618,10 +646,20 @@ public class ProjectController {
         rightTerminal.setOnMouseReleased(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                 canvasScrollPane.setPannable(true);
-                wireModel.setComponentX(wire.getStartX() - 12.5);
-                wireModel.setComponentY(wire.getStartY() - 12.5);
-                wireModel.setRightSideX(wire.getEndX() + 12.5);
-                wireModel.setRightSideY(wire.getEndY() - 12.5);
+
+                rightSide[0].setNewTerminalX(rightTerminal.getCenterX());
+                rightSide[0].setNewTerminalY(rightTerminal.getCenterY());
+
+                rightSide[0].setNewWireSideX(wire.getEndX());
+                rightSide[0].setNewWireSideY(wire.getEndY());
+
+                rightSide[0].performAction();
+
+                //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
+                if (!currentProject.getRedoStack().isEmpty()) {
+                    currentProject.clearRedoStack();
+                    redoButton.setDisable(true);
+                }
 
                 leftTerminal.toBack();
                 rightTerminal.toBack();

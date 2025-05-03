@@ -6,6 +6,12 @@ import com.example.demo2.componentnode.TerminalNode;
 import com.example.demo2.componentnode.WireNode;
 
 public class MoveWire implements ProjectActions {
+    private final WireNode WIRE_NODE;
+    private final WireModel WIRE_MODEL;
+    private final Project PROJECT;
+    private final TerminalNode NEGATIVE;
+    private final TerminalNode POSITIVE;
+
     double initialStartX;
     double initialStartY;
     double initialEndX;
@@ -23,12 +29,6 @@ public class MoveWire implements ProjectActions {
     double newNegativeY;
     double newPositiveX;
     double newPositiveY;
-
-    private final WireNode WIRE_NODE;
-    private final WireModel WIRE_MODEL;
-    private final Project PROJECT;
-    private final TerminalNode NEGATIVE;
-    private final TerminalNode POSITIVE;
 
     public MoveWire(Project currentProject, WireNode componentNode, TerminalNode negative, TerminalNode positive) {
         PROJECT = currentProject;
@@ -85,36 +85,36 @@ public class MoveWire implements ProjectActions {
         this.performAction();
     }
 
-    public void setInitialStartX(double startX) {
-        initialStartX = startX;
+    public void setInitialStartX(double initialStartX) {
+        this.initialStartX = initialStartX;
     }
 
-    public void setInitialStartY(double startY) {
-        initialStartY = startY;
+    public void setInitialStartY(double initialStartY) {
+        this.initialStartY = initialStartY;
     }
 
-    public void setInitialEndX(double endX) {
-        initialEndX = endX;
+    public void setInitialEndX(double initialEndX) {
+        this.initialEndX = initialEndX;
     }
 
-    public void setInitialEndY(double endY) {
-        initialEndY = endY;
+    public void setInitialEndY(double initialEndY) {
+        this.initialEndY = initialEndY;
     }
 
-    public void setNewStartX(double startX) {
-        newStartX = startX;
+    public void setNewStartX(double newStartX) {
+        this.newStartX = newStartX;
     }
 
-    public void setNewStartY(double startY) {
-        newStartY = startY;
+    public void setNewStartY(double newStartY) {
+        this.newStartY = newStartY;
     }
 
-    public void setNewEndX(double endX) {
-        newEndX = endX;
+    public void setNewEndX(double newEndX) {
+        this.newEndX = newEndX;
     }
 
-    public void setNewEndY(double endY) {
-        newEndY = endY;
+    public void setNewEndY(double newEndY) {
+        this.newEndY = newEndY;
     }
 
     public void setInitialNegativeX(double initialNegativeX) {
