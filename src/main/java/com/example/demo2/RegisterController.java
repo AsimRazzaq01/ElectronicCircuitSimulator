@@ -25,4 +25,5 @@ public class RegisterController {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SignIn.fxml"));
         scene.setRoot(fxmlLoader.load());
     }
-    }
+
+}

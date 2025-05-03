@@ -1,18 +1,18 @@
 package com.example.demo2;
 
-import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class HelloApplication extends Application {
+public class Application extends javafx.application.Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("SignIn.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 700, 500);
+        FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("LoginRegister.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 680, 400);
         stage.setTitle("Electronic Circuit Simulator!");
+        stage.setResizable(false);
         stage.setScene(scene);
         stage.show();
     }
