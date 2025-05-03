@@ -3,6 +3,8 @@ package com.example.demo2;
 import com.example.demo2.componentmodel.*;
 import com.example.demo2.componentnode.*;
 import com.example.demo2.projectactions.AddComponent;
+import com.example.demo2.projectactions.MoveComponent;
+import com.example.demo2.projectactions.MoveWire;
 import com.example.demo2.projectactions.ProjectActions;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -335,11 +337,18 @@ public class ProjectController {
 
     public void makeDraggable(Node componentNode, Component component) {
         Node canvas = canvasScrollPane.getContent();
+        //Needs to be a different memory address for every time component is dragged
+        final MoveComponent[] moveComponent = new MoveComponent[1];
 
         componentNode.setOnMousePressed(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                 //Gets the coordinates of the cursor within the canvasPane
                 Point2D cursorInPane = canvas.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+
+                moveComponent[0] = new MoveComponent(currentProject, componentNode, component);
+
+                moveComponent[0].setInitialX(component.getComponentX());
+                moveComponent[0].setInitialY(component.getComponentY());
 
                 component.setComponentX((cursorInPane.getX() / zoomScale) - componentNode.getLayoutX());
                 component.setComponentY((cursorInPane.getY() / zoomScale) - componentNode.getLayoutY());
@@ -370,24 +379,48 @@ public class ProjectController {
         componentNode.setOnMouseReleased(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                 canvasScrollPane.setPannable(true);
-                component.setComponentX(componentNode.getLayoutX());
-                component.setComponentY(componentNode.getLayoutY());
+
+                moveComponent[0].setNewX(componentNode.getLayoutX());
+                moveComponent[0].setNewY(componentNode.getLayoutY());
+
+                moveComponent[0].performAction();
+
+                //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
+                if (!currentProject.getRedoStack().isEmpty()) {
+                    currentProject.clearRedoStack();
+                    redoButton.setDisable(true);
+                }
             }
         });
     }
 
-    public void makeWireDraggable(WireNode wire, Component wireComponent) {
+    public void makeWireDraggable(WireNode wire) {
         Node canvas = canvasScrollPane.getContent();
-        WireTerminalNode leftTerminal = wire.getLeftTerminalNode();
-        WireTerminalNode rightTerminal = wire.getRightTerminalNode();
-        WireModel wireModel = wire.getWireModel();
+        TerminalNode leftTerminal = wire.getLeftTerminalNode();
+        TerminalNode rightTerminal = wire.getRightTerminalNode();
 
         final Point2D[] cursorToStartOffset = new Point2D[1];
         final Point2D[] cursorToEndOffset = new Point2D[1];
 
+        final MoveWire[] moveWire = new MoveWire[1];
+
         wire.setOnMousePressed(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                 Point2D cursorInPane = canvas.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+
+                moveWire[0] = new MoveWire(currentProject, wire, leftTerminal, rightTerminal);
+
+                moveWire[0].setInitialStartX(wire.getStartX());
+                moveWire[0].setInitialStartY(wire.getStartY());
+                moveWire[0].setInitialEndX(wire.getEndX());
+                moveWire[0].setInitialEndY(wire.getEndY());
+
+                moveWire[0].setInitialNegativeX(leftTerminal.getCenterX());
+                moveWire[0].setInitialNegativeY(leftTerminal.getCenterY());
+
+                moveWire[0].setInitialPositiveX(rightTerminal.getCenterX());
+                moveWire[0].setInitialPositiveY(rightTerminal.getCenterY());
+
                 double cursorX = cursorInPane.getX() / zoomScale;
                 double cursorY = cursorInPane.getY() / zoomScale;
 
@@ -451,10 +484,25 @@ public class ProjectController {
         wire.setOnMouseReleased(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                 canvasScrollPane.setPannable(true);
-                wireModel.setComponentX(wire.getStartX() - 12.5);
-                wireModel.setComponentY(wire.getStartY() - 12.5);
-                wireModel.setRightSideX(wire.getEndX() + 12.5);
-                wireModel.setRightSideY(wire.getEndY() - 12.5);
+
+                moveWire[0].setNewStartX(wire.getStartX());
+                moveWire[0].setNewStartY(wire.getStartY());
+                moveWire[0].setNewEndX(wire.getEndX());
+                moveWire[0].setNewEndY(wire.getEndY());
+
+                moveWire[0].setNewNegativeX(leftTerminal.getCenterX());
+                moveWire[0].setNewNegativeY(leftTerminal.getCenterY());
+
+                moveWire[0].setNewPositiveX(rightTerminal.getCenterX());
+                moveWire[0].setNewPositiveY(rightTerminal.getCenterY());
+
+                moveWire[0].performAction();
+
+                //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
+                if (!currentProject.getRedoStack().isEmpty()) {
+                    currentProject.clearRedoStack();
+                    redoButton.setDisable(true);
+                }
 
                 leftTerminal.toBack();
                 rightTerminal.toBack();
@@ -463,7 +511,7 @@ public class ProjectController {
         });
     }
 
-    public void makeWireTerminalDraggable(WireTerminalNode leftTerminal, WireTerminalNode rightTerminal, WireNode wire) {
+    public void makeWireTerminalDraggable(TerminalNode leftTerminal, TerminalNode rightTerminal, WireNode wire) {
         Node canvas = canvasScrollPane.getContent();
         WireModel wireModel = wire.getWireModel();
 
@@ -590,8 +638,8 @@ public class ProjectController {
         WireNode wire = new WireNode(leftX, y, rightX, y);
         WireModel wireModel = wire.getWireModel();
 
-        WireTerminalNode leftTerminal = wire.getLeftTerminalNode();
-        WireTerminalNode rightTerminal = wire.getRightTerminalNode();
+        TerminalNode leftTerminal = wire.getLeftTerminalNode();
+        TerminalNode rightTerminal = wire.getRightTerminalNode();
 
         if (rightX > canvasPane.getPrefWidth()) {
             double correctedLeftX = canvasPane.getPrefWidth() - 100.0;
@@ -625,7 +673,7 @@ public class ProjectController {
 
         undoButton.setDisable(false);
         adjustComponentZoomScale(zoomScale);
-        makeWireDraggable(wire, wireModel);
+        makeWireDraggable(wire);
         makeWireTerminalDraggable(leftTerminal, rightTerminal, wire);
     }
 
