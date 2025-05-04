@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 import java.io.IOException;
@@ -12,6 +13,19 @@ public class SettingsController {
 
     @FXML
     private Button backButton;
+
+    @FXML
+    private TextField changeUserNameField;
+
+    @FXML
+    private void handleUsernameChange() {
+        String newUsername = changeUserNameField.getText().trim();
+        if (!newUsername.isEmpty()) {
+            System.out.println("Username would be changed to: " + newUsername);
+            // Later: update the database here
+        }
+    }
+
 
     @FXML
     private void goBack() {
