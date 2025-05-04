@@ -1,33 +1,44 @@
 package com.example.demo2;
 
+import com.example.demo2.db.ConnDbOps;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.PathTransition;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class LoginRegisterController implements Initializable {
 
-    @FXML
-    private Pane pane_box;
+    @FXML private Button button_existingAccount, button_existing_login, button_newAccount, button_new_register;
+    @FXML private ImageView logoImageView, logoImageViewNew;
+    @FXML private Pane pane_box;
+    @FXML private Rectangle rectangle;
+    @FXML private TextField textField_existing_email, textField_new_email1, textField_new_username;
+    @FXML private PasswordField textField_existing_pass, textField_new_pass1;
+    @FXML private VBox vBox_existing_box, vBox_existing_fields, vBox_new_box, vBox_new_fields;
 
-    @FXML
-    private VBox vBox_existing_fields, vBox_new_fields;
-
-    @FXML
-    private VBox vBox_existing_box, vBox_new_box;
+    private final ConnDbOps db = new ConnDbOps();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -35,62 +46,78 @@ public class LoginRegisterController implements Initializable {
     }
 
     public void showExisting() {
-        FadeTransition fadeInFields = createFade(vBox_existing_fields, 0.0, 1.0);
-        FadeTransition fadeInBox = createFade(vBox_existing_box, 0.0, 1.0);
-        FadeTransition fadeOutFields = createFade(vBox_new_fields, 1.0, 0.0);
-        FadeTransition fadeOutBox = createFade(vBox_new_box, 1.0, 0.0);
-        PathTransition slideLeft = createSlideTransition(510, 200, 170, 200);
-        ParallelTransition transition = new ParallelTransition(
-                slideLeft, fadeInFields, fadeInBox, fadeOutFields, fadeOutBox
-        );
-        vBox_existing_fields.setVisible(true);
-        vBox_existing_box.setVisible(true);
-        vBox_new_fields.setVisible(false);
-        vBox_new_box.setVisible(false);
-        transition.play();
+        fadeTransition(vBox_existing_fields, vBox_existing_box, vBox_new_fields, vBox_new_box, 510, 170);
     }
 
     public void showNew() {
-        FadeTransition fadeInFields = createFade(vBox_new_fields, 0.0, 1.0);
-        FadeTransition fadeInBox = createFade(vBox_new_box, 0.0, 1.0);
-        FadeTransition fadeOutFields = createFade(vBox_existing_fields, 1.0, 0.0);
-        FadeTransition fadeOutBox = createFade(vBox_existing_box, 1.0, 0.0);
-        PathTransition slideRight = createSlideTransition(170, 200, 510, 200);
-        ParallelTransition transition = new ParallelTransition(
-                slideRight, fadeInFields, fadeInBox, fadeOutFields, fadeOutBox
-        );
-        vBox_new_fields.setVisible(true);
-        vBox_new_box.setVisible(true);
-        vBox_existing_fields.setVisible(false);
-        vBox_existing_box.setVisible(false);
-        transition.play();
+        fadeTransition(vBox_new_fields, vBox_new_box, vBox_existing_fields, vBox_existing_box, 170, 510);
     }
 
-    private FadeTransition createFade(VBox node, double from, double to) {
-        FadeTransition fade = new FadeTransition(Duration.seconds(1.5), node);
-        fade.setFromValue(from);
-        fade.setToValue(to);
-        return fade;
-    }
+    private void fadeTransition(VBox fadeInFields, VBox fadeInBox, VBox fadeOutFields, VBox fadeOutBox, double fromX, double toX) {
+        FadeTransition inFields = new FadeTransition(Duration.seconds(1.5), fadeInFields);
+        FadeTransition inBox = new FadeTransition(Duration.seconds(1.5), fadeInBox);
+        FadeTransition outFields = new FadeTransition(Duration.seconds(1.5), fadeOutFields);
+        FadeTransition outBox = new FadeTransition(Duration.seconds(1.5), fadeOutBox);
 
-    private PathTransition createSlideTransition(double fromX, double fromY, double toX, double toY) {
-        Path path = new Path(new MoveTo(fromX, fromY), new LineTo(toX, toY));
-        PathTransition transition = new PathTransition(Duration.seconds(1.25), path, pane_box);
-        return transition;
+        inFields.setFromValue(0.0); inFields.setToValue(1.0);
+        inBox.setFromValue(0.0); inBox.setToValue(1.0);
+        outFields.setFromValue(1.0); outFields.setToValue(0.0);
+        outBox.setFromValue(1.0); outBox.setToValue(0.0);
+
+        Path path = new Path(new MoveTo(fromX, 200), new LineTo(toX, 200));
+        PathTransition slide = new PathTransition(Duration.seconds(1.25), path, pane_box);
+
+        fadeInFields.setVisible(true);
+        fadeInBox.setVisible(true);
+        fadeOutFields.setVisible(false);
+        fadeOutBox.setVisible(false);
+
+        new ParallelTransition(slide, inFields, inBox, outFields, outBox).play();
     }
 
     @FXML
-    public void handleButton_login() throws IOException {
-        // add DB code here
-        Scene scene = this.vBox_existing_box.getScene();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("LandingPage.fxml"));
-        Stage stage = (Stage) vBox_existing_box.getScene().getWindow();
-        stage.setResizable(true);
-        scene.setRoot(fxmlLoader.load());
+    void handleButton_login(ActionEvent event) {
+        String email = textField_existing_email.getText();
+        String password = textField_existing_pass.getText();
+
+        int userId = db.validateLoginAndGetUserId(email, password);
+        if (userId != -1) {
+            Session.loggedInUserId = userId; // Set user ID globally
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("LandingPage.fxml"));
+                Parent root = loader.load();
+                LandingPageController controller = loader.getController();
+                controller.start(); // Load welcome message
+                Scene scene = pane_box.getScene();
+                scene.setRoot(root);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            showAlert("Login Failed", "Invalid email or password.");
+        }
     }
 
     @FXML
-    public void handleButton_register() {
-        // add DB code here
+    void handleButton_register(ActionEvent event) {
+        String username = textField_new_username.getText().trim();
+        String email = textField_new_email1.getText().trim();
+        String password = textField_new_pass1.getText().trim();
+
+        if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            showAlert("Registration Failed", "All fields are required.");
+            return;
+        }
+
+        db.insertUser(username, email, password);
+        showAlert("Account Created", "Registration successful! You can now log in.");
+        showExisting();
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText(title);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
