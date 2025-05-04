@@ -1,6 +1,8 @@
 package com.example.demo2.db;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ConnDbOps {
@@ -201,6 +203,66 @@ public class ConnDbOps {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void insertProject(int userId, String projectName) {
+        String sql = "INSERT INTO projects (user_id, project_name) VALUES (?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, userId);
+            pstmt.setString(2, projectName);
+            pstmt.executeUpdate();
+
+            System.out.println("Project inserted successfully.");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteProject(int userId, String projectName) {
+        String sql = "DELETE FROM projects WHERE user_id = ? AND project_name = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            stmt.setString(2, projectName);
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                System.out.println("Project deleted successfully.");
+            } else {
+                System.out.println("No matching project found.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public List<String> getProjectsForUser(int userId) {
+        List<String> projectNames = new ArrayList<>();
+        String sql = "SELECT project_name FROM projects WHERE user_id = ?";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                projectNames.add(rs.getString("project_name"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return projectNames;
     }
 
 }

@@ -47,7 +47,7 @@ public class SettingsController {
             Parent root = loader.load();
 
             LandingPageController controller = loader.getController();
-            controller.start();
+            controller.initialize();
 
             Stage stage = (Stage) backButton.getScene().getWindow();
             stage.setScene(new Scene(root));
