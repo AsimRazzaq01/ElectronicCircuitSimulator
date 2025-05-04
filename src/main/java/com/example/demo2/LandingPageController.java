@@ -1,5 +1,6 @@
 package com.example.demo2;
 
+import com.example.demo2.db.ConnDbOps;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -24,11 +25,15 @@ public class LandingPageController {
     @FXML
     private Label welcomeLabel;
 
+
+    public void start() {
+        String username = new ConnDbOps().getUsernameById(Session.loggedInUserId);
+        welcomeLabel.setText("Welcome Back, " + (username != null ? username : "User") + "!");
+        loadProjects();
+    }
+
     @FXML
     public void initialize() {
-        // Will act as placeholder, when database in place will be changing to user sign up
-        String username = "Nelson";
-        welcomeLabel.setText("Welcome Back, " + username + "!");
         loadProjects();
     }
 
@@ -83,14 +88,20 @@ public class LandingPageController {
     @FXML
     private void openSettings() {
         try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("Settings.fxml"));
+            Parent root = loader.load();
+
+            SettingsController controller = loader.getController();
+            controller.start();  // SettingsController will also read from Session
+
             Stage stage = (Stage) settingsButton.getScene().getWindow();
-            Parent root = FXMLLoader.load(getClass().getResource("settings.fxml"));
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     @FXML
     private void logout() {

@@ -15,7 +15,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane stylesheets="@lrstyle.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo2.LoginRegisterController">
+<AnchorPane stylesheets="@lrstyle.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo2.LoginRegisterController">
     <children>
         <GridPane alignment="CENTER" prefHeight="400.0" prefWidth="680.0">
             <columnConstraints>
@@ -40,6 +40,7 @@
                 <VBox fx:id="vBox_new_fields" alignment="CENTER" spacing="15.0" visible="false">
                     <children>
                         <Text text="New Account" />
+                  <TextField fx:id="textField_new_username" promptText="Username" />
                         <TextField fx:id="textField_new_email1" promptText="E-mail" />
                         <PasswordField fx:id="textField_new_pass1" promptText="Password" />
                         <Button fx:id="button_new_register" onAction="#handleButton_register" text="Register" />
