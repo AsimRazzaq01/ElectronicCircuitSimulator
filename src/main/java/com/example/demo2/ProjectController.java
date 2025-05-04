@@ -6,20 +6,23 @@ import com.example.demo2.projectactions.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Slider;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
 
 public class ProjectController {
     @FXML
@@ -357,6 +360,9 @@ public class ProjectController {
                 canvasScrollPane.setPannable(false);
                 componentNode.toFront();
             }
+            if (mouseEvent.getButton() == MouseButton.SECONDARY) {
+                openComponentMenu(componentNode, component);
+            }
         });
 
         componentNode.setOnMouseDragged(mouseEvent -> {
@@ -434,6 +440,9 @@ public class ProjectController {
                 wire.toFront();
                 leftTerminal.toFront();
                 rightTerminal.toFront();
+            }
+            if (mouseEvent.getButton() == MouseButton.SECONDARY) {
+                openComponentMenu(wire, wire.getWireModel());
             }
         });
 
@@ -515,7 +524,6 @@ public class ProjectController {
 
     public void makeWireTerminalDraggable(TerminalNode leftTerminal, TerminalNode rightTerminal, WireNode wire) {
         Node canvas = canvasScrollPane.getContent();
-        WireModel wireModel = wire.getWireModel();
 
         final MoveWireTerminal[] leftSide = new MoveWireTerminal[1];
         final MoveWireTerminal[] rightSide = new MoveWireTerminal[1];
@@ -671,6 +679,101 @@ public class ProjectController {
                 wire.toBack();
             }
         });
+    }
+
+    private void openComponentMenu(Node componentNode, Component component) {
+        Dialog<Void> componentDialog = new Dialog<>();
+        componentDialog.setTitle("Edit " + component.getComponentType());
+
+        componentDialog.getDialogPane().setStyle("-fx-background-color: #6abce2");
+
+        ButtonType okType = new ButtonType("Done", ButtonBar.ButtonData.OK_DONE);
+        componentDialog.getDialogPane().getButtonTypes().add(okType);
+
+        VBox menuVbox = new VBox();
+
+        VBox headerVbox = new VBox();
+        headerVbox.setStyle(("-fx-background-color: #E0E0E0;"));
+        headerVbox.setPrefHeight(45);
+        headerVbox.setAlignment(Pos.CENTER_LEFT);
+        headerVbox.setPadding(new Insets(0,10,0,10));
+        Label headerLabel = new Label();
+        headerLabel.setStyle("-fx-font-family: System; -fx-font-weight: bold; -fx-font-size: 18px;");
+        headerVbox.getChildren().add(headerLabel);
+
+        Button updateValueButton;
+
+        if (!Objects.equals(component.getComponentType(), "Switch") && !Objects.equals(component.getComponentType(), "Wire")) {
+            menuVbox.setPrefWidth(300);
+            menuVbox.setPrefHeight(180);
+            menuVbox.setAlignment(Pos.TOP_CENTER);
+            menuVbox.setPadding(new Insets(0,0,0,0));
+
+            headerLabel.setText("Enter new value");
+
+            VBox subheaderVbox = new VBox();
+            subheaderVbox.setStyle(("-fx-background-color: #F6F6F6;"));
+            subheaderVbox.setPrefHeight(30);
+            subheaderVbox.setAlignment(Pos.CENTER_LEFT);
+            subheaderVbox.setPadding(new Insets(0,10,0,10));
+            Label subheaderLabel = new Label();
+            switch(component.getComponentType()) {
+                case "Battery" -> subheaderLabel.setText("Battery Voltage");
+                case "Resistor" -> subheaderLabel.setText("Resistor Resistance");
+                case "Light bulb" -> subheaderLabel.setText("Light Bulb Resistance");
+            }
+            subheaderLabel.setStyle("-fx-font-family: System; -fx-font-size: 15px;");
+            subheaderVbox.getChildren().add(subheaderLabel);
+
+            HBox valueHbox = new HBox();
+            valueHbox.setStyle(("-fx-background-color: #F6F6F6;"));
+            VBox.setVgrow(valueHbox, Priority.ALWAYS);
+            valueHbox.setPrefHeight(25);
+            valueHbox.setSpacing(10);
+            valueHbox.setAlignment(Pos.CENTER_LEFT);
+            valueHbox.setPadding(new Insets(0,10,0,10));
+            TextField valueTextField = new TextField();
+            valueTextField.setPromptText("Value must be between");
+            valueTextField.setPrefWidth(235);
+            updateValueButton = new Button("Update");
+            updateValueButton.setPrefWidth(80);
+
+            valueHbox.getChildren().addAll(valueTextField, updateValueButton);
+
+            menuVbox.getChildren().addAll(headerVbox, subheaderVbox, valueHbox);
+
+        }
+        else {
+            menuVbox.setPrefWidth(300);
+            menuVbox.setPrefHeight(80);
+            menuVbox.setAlignment(Pos.TOP_CENTER);
+            menuVbox.setPadding(new Insets(0,0,0,0));
+
+            headerLabel.setText("Delete " + component.getComponentType());
+
+            menuVbox.getChildren().addAll(headerVbox);
+        }
+
+        HBox optionsHbox = new HBox();
+        optionsHbox.setStyle(("-fx-background-color: #F6F6F6;"));
+        optionsHbox.setPrefHeight(35);
+        optionsHbox.setAlignment(Pos.CENTER);
+        optionsHbox.setSpacing(20);
+        Button deleteButton = new Button("Delete");
+
+        deleteButton.setOnAction(_ -> {
+            RemoveComponent removeComponent = new RemoveComponent(currentProject, canvasPane, componentNode, component);
+            removeComponent.performAction();
+            componentDialog.close();
+        });
+
+        optionsHbox.getChildren().addAll(deleteButton);
+
+        menuVbox.getChildren().add(optionsHbox);
+
+        componentDialog.getDialogPane().setContent(menuVbox);
+
+        componentDialog.showAndWait();
     }
 
     public void addWire(double leftX, double y) {
