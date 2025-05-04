@@ -4,6 +4,7 @@ import com.example.demo2.db.ConnDbOps;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.Node;
 import javafx.stage.Stage;
@@ -12,9 +13,16 @@ import javafx.scene.Scene;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextInputDialog;
 
+
 import java.io.IOException;
+import java.util.List;
 
 public class LandingPageController {
+    @FXML
+    private Button settingsButton;
+
+    @FXML
+    private Button logoutButton;
 
     @FXML
     private VBox projectListVBox;
@@ -26,26 +34,44 @@ public class LandingPageController {
     private Label welcomeLabel;
 
 
-    public void start() {
+    private final ConnDbOps dbOps = new ConnDbOps();
+    private int currentUserId = Session.getUserId(); // no getInstance needed
+
+    @FXML
+    public void initialize() {
         String username = new ConnDbOps().getUsernameById(Session.loggedInUserId);
         welcomeLabel.setText("Welcome Back, " + (username != null ? username : "User") + "!");
         loadProjects();
     }
 
-    @FXML
-    public void initialize() {
-        loadProjects();
-    }
-
     private void loadProjects() {
-        // Placeholder projects
-        for (int i = 1; i <= 3; i++) {
-            final int projectNumber = i;
+        List<String> projects = dbOps.getProjectsForUser(currentUserId);
 
-            Label projectLabel = new Label("Project " + projectNumber);
-            projectLabel.setStyle("-fx-font-size: 18px;");
-            projectLabel.setOnMouseClicked(event -> openProject("Project " + projectNumber));
-            projectListVBox.getChildren().add(projectLabel);
+        projectListVBox.getChildren().clear(); // Clear old content
+
+        if (projects.isEmpty()) {
+            Label noProjectsLabel = new Label("No projects yet. Click 'New Project' to get started!");
+            projectListVBox.getChildren().add(noProjectsLabel);
+        } else {
+            for (String name : projects) {
+                HBox row = new HBox(10);
+                row.setStyle("-fx-padding: 5px; -fx-alignment: center-left;");
+
+                Label projectLabel = new Label(name);
+                projectLabel.setStyle("-fx-font-size: 16px; -fx-cursor: hand;");
+                projectLabel.setOnMouseClicked(e -> openProject(name));
+
+                Button deleteButton = new Button("Delete");
+                deleteButton.setStyle("-fx-background-color: red; -fx-text-fill: white;");
+                deleteButton.setOnAction(e -> {
+                    dbOps.deleteProject(currentUserId, name);
+                    loadProjects(); // Refresh UI after deletion
+                });
+
+                row.getChildren().addAll(projectLabel, deleteButton);
+                projectListVBox.getChildren().add(row);
+
+            }
         }
     }
 
@@ -58,7 +84,14 @@ public class LandingPageController {
         dialog.setContentText("Project Name:");
 
         dialog.showAndWait().ifPresent(projectName -> {
-            openProject(projectName);
+            String trimmedName = projectName.trim();
+            if (!trimmedName.isEmpty()) {
+                dbOps.insertProject(currentUserId, trimmedName);
+                loadProjects(); // refresh UI
+                openProject(trimmedName);
+            } else {
+                System.out.println("Project name was empty or invalid.");
+            }
         });
     }
 
@@ -79,11 +112,6 @@ public class LandingPageController {
         }
     }
 
-    @FXML
-    private Button settingsButton;
-
-    @FXML
-    private Button logoutButton;
 
     @FXML
     private void openSettings() {
@@ -107,14 +135,12 @@ public class LandingPageController {
     private void logout() {
         try {
             Stage stage = (Stage) logoutButton.getScene().getWindow();
-            Parent root = FXMLLoader.load(getClass().getResource("LoginRegister.fxml")); // assuming SignIn.fxml is your login screen
+            Parent root = FXMLLoader.load(getClass().getResource("LoginRegister.fxml"));
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
 
 }

@@ -87,7 +87,7 @@ public class LoginRegisterController implements Initializable {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("LandingPage.fxml"));
                 Parent root = loader.load();
                 LandingPageController controller = loader.getController();
-                controller.start(); // Load welcome message
+                controller.initialize(); // Load welcome message
                 Scene scene = pane_box.getScene();
                 scene.setRoot(root);
             } catch (IOException e) {
