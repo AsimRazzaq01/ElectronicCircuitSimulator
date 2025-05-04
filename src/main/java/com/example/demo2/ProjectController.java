@@ -23,6 +23,8 @@ import javafx.scene.layout.VBox;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ProjectController {
     @FXML
@@ -717,11 +719,6 @@ public class ProjectController {
             subheaderVbox.setAlignment(Pos.CENTER_LEFT);
             subheaderVbox.setPadding(new Insets(0,10,0,10));
             Label subheaderLabel = new Label();
-            switch(component.getComponentType()) {
-                case "Battery" -> subheaderLabel.setText("Battery Voltage");
-                case "Resistor" -> subheaderLabel.setText("Resistor Resistance");
-                case "Light bulb" -> subheaderLabel.setText("Light Bulb Resistance");
-            }
             subheaderLabel.setStyle("-fx-font-family: System; -fx-font-size: 15px;");
             subheaderVbox.getChildren().add(subheaderLabel);
 
@@ -733,12 +730,111 @@ public class ProjectController {
             valueHbox.setAlignment(Pos.CENTER_LEFT);
             valueHbox.setPadding(new Insets(0,10,0,10));
             TextField valueTextField = new TextField();
-            valueTextField.setPromptText("Value must be between");
+            valueTextField.setPromptText("Value must be between 0 and 120");
             valueTextField.setPrefWidth(235);
             updateValueButton = new Button("Update");
             updateValueButton.setPrefWidth(80);
 
             valueHbox.getChildren().addAll(valueTextField, updateValueButton);
+
+            switch(component.getComponentType()) {
+                case "Battery" -> {
+                    BatteryModel batteryModel = (BatteryModel) component;
+                    subheaderLabel.setText("Battery Voltage (0 - 120 Volts)");
+                    valueTextField.setText(String.valueOf(batteryModel.getVoltage()));
+                    updateValueButton.setOnAction(_ -> {
+                        Pattern p = Pattern.compile("^\\d*\\.?\\d*$");
+
+                        double voltage;
+                        try {
+                            voltage = Double.parseDouble(valueTextField.getText());
+                        } catch (NumberFormatException e) {
+                            valueTextField.setText(String.valueOf(batteryModel.getVoltage()));
+                            return;
+                        }
+
+                        Matcher matcher = p.matcher(String.valueOf(voltage));
+                        if (voltage >= 0 && voltage <= 120.0 && matcher.find()) {
+                            ModifyComponent modifyBattery = new ModifyComponent(currentProject, batteryModel, batteryModel.getVoltage(), voltage);
+                            modifyBattery.performAction();
+
+                            if (!currentProject.getRedoStack().isEmpty()) {
+                                currentProject.clearRedoStack();
+                                redoButton.setDisable(true);
+                            }
+
+                            valueTextField.setText(batteryModel.getVoltage() + "");
+                        }
+                        else {
+                            valueTextField.setText(String.valueOf(batteryModel.getVoltage()));
+                        }
+                    });
+                }
+                case "Resistor" -> {
+                    ResistorModel resistorModel = (ResistorModel) component;
+                    subheaderLabel.setText("Resistor Resistance (0 - 120 Ohms)");
+                    valueTextField.setText(String.valueOf(resistorModel.getResistance()));
+                    updateValueButton.setOnAction(_ -> {
+                        Pattern p = Pattern.compile("^\\d*\\.?\\d*$");
+
+                        double resistance;
+                        try {
+                            resistance = Double.parseDouble(valueTextField.getText());
+                        } catch (NumberFormatException e) {
+                            valueTextField.setText(String.valueOf(resistorModel.getResistance()));
+                            return;
+                        }
+
+                        Matcher matcher = p.matcher(String.valueOf(resistance));
+                        if (resistance >= 0 && resistance <= 120.0 && matcher.find()) {
+                            ModifyComponent modifyResistor = new ModifyComponent(currentProject, resistorModel, resistorModel.getResistance(), resistance);
+                            modifyResistor.performAction();
+
+                            if (!currentProject.getRedoStack().isEmpty()) {
+                                currentProject.clearRedoStack();
+                                redoButton.setDisable(true);
+                            }
+
+                            valueTextField.setText(resistorModel.getResistance() + "");
+                        }
+                        else {
+                            valueTextField.setText(String.valueOf(resistorModel.getResistance()));
+                        }
+                    });
+                }
+                case "Light bulb" -> {
+                    LightbulbModel lightbulbModel = (LightbulbModel) component;
+                    subheaderLabel.setText("Light Bulb Resistance (0 - 120 Ohms)");
+                    valueTextField.setText(String.valueOf(lightbulbModel.getResistance()));
+                    updateValueButton.setOnAction(_ -> {
+                        Pattern p = Pattern.compile("^\\d*\\.?\\d*$");
+
+                        double resistance;
+                        try {
+                            resistance = Double.parseDouble(valueTextField.getText());
+                        } catch (NumberFormatException e) {
+                            valueTextField.setText(String.valueOf(lightbulbModel.getResistance()));
+                            return;
+                        }
+
+                        Matcher matcher = p.matcher(String.valueOf(resistance));
+                        if (resistance >= 0 && resistance <= 120.0 && matcher.find()) {
+                            ModifyComponent modifyLightbulb = new ModifyComponent(currentProject, lightbulbModel, lightbulbModel.getResistance(), resistance);
+                            modifyLightbulb.performAction();
+
+                            if (!currentProject.getRedoStack().isEmpty()) {
+                                currentProject.clearRedoStack();
+                                redoButton.setDisable(true);
+                            }
+
+                            valueTextField.setText(lightbulbModel.getResistance() + "");
+                        }
+                        else {
+                            valueTextField.setText(String.valueOf(lightbulbModel.getResistance()));
+                        }
+                    });
+                }
+            }
 
             menuVbox.getChildren().addAll(headerVbox, subheaderVbox, valueHbox);
 
