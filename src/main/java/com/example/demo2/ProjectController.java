@@ -2,11 +2,13 @@ package com.example.demo2;
 
 import com.example.demo2.componentmodel.*;
 import com.example.demo2.componentnode.*;
+import com.example.demo2.db.ConnDbOps;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -19,6 +21,8 @@ import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 public class ProjectController {
     @FXML
@@ -40,7 +44,7 @@ public class ProjectController {
     @FXML
     private Button undoButton;
     @FXML
-    private Button homeButton;
+    private Button homeButton, saveButton;
     @FXML
     private Slider zoomSlider;
     @FXML
@@ -53,18 +57,107 @@ public class ProjectController {
     private ImageView switchImageView;
     @FXML
     private ImageView lightbulbImageView;
-
     private double zoomScale = 1.0;
     private Project currentProject;
+    private Project project;
 
-    public void setProjectName(String name) {
-        projectNameLabel.setText(name);
+    public void setProject(Project project) {
+        this.project = project;
+        this.currentProject = project;
+
+        List<Component> components = ConnDbOps.loadComponentsForProject(project.getProjectID());
+
+        for (Component c : components) {
+            AddComponent add = AddComponent.fromComponent(currentProject, canvasPane, c);
+            if (add != null) {
+                add.performAction(); // ⬅️ Draws it + registers with project
+
+                Node node = add.getNode();
+
+                // Extra wire-specific handlers
+                if (node instanceof WireNode wire) {
+                    makeWireDraggable(wire, (WireModel) c);
+                    makeWireTerminalDraggable(wire.getLeftTerminalNode(), wire.getRightTerminalNode(), wire);
+                }
+
+                if (node instanceof CircuitSwitchNode) {
+                    setSwitchFunctionality((CircuitSwitchNode) node);
+                }
+
+                makeDraggable(node, c);
+            }
+        }
+
+        projectNameLabel.setText(project.getProjectName());
+        undoButton.setDisable(true);
+        redoButton.setDisable(true);
+        zoomSlider.setDisable(true);
     }
 
 
-    void setCurrentProject(Project project) {
-        currentProject = project;
+
+
+    @FXML
+    public void initialize() {
+        // Load visual assets
+        loadComponentPaneImages();
+
+        // Setup drag-and-drop from side panel to canvas
+        allowDragAndDrop();
+
+        // Disable controls until project is loaded
+        undoButton.setDisable(true);
+        redoButton.setDisable(true);
+        zoomSlider.setDisable(true);
+
+        // Optional: Center scroll on canvas
+        initializeScrollPosition();
     }
+
+
+    @FXML
+    protected void goHome() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("LandingPage.fxml"));
+        Parent root = loader.load();
+        Scene scene = homeButton.getScene();
+        scene.setRoot(root);
+    }
+
+    @FXML
+    private void handleSaveButton() {
+        if (project == null) {
+            System.out.println("❌ Project is null!");
+            return;
+        }
+
+        int count = 0;
+
+        for (Map.Entry<Component, Node> entry : project.getProjectComponents().entrySet()) {
+            Component model = entry.getKey();
+            Node view = entry.getValue();
+
+            // Update model position from UI
+            model.setComponentX(view.getLayoutX());
+            model.setComponentY(view.getLayoutY());
+
+            // Save to DB
+            ConnDbOps.saveComponent(project, model);
+            count++;
+        }
+
+        System.out.println("✅ " + count + " components attempted to save.");
+    }
+
+
+
+//    public void setProjectName(String name) {
+//        projectNameLabel.setText(name);
+//    }
+//
+//
+//    void setCurrentProject(Project project) {
+//        currentProject = project;
+//    }
 
     private void loadComponentPaneImages() {
         URL batteryImagePath = this.getClass().getResource("component_sprites/battery.png");
@@ -171,17 +264,7 @@ public class ProjectController {
         });
     }
 
-    @FXML
-    public void initialize() {
-        //Project data from database will be passed to the project view screen
-        setCurrentProject(new Project(101, "Test Project"));
-        projectNameLabel.setText(currentProject.getProjectName());
-        loadComponentPaneImages();
-        allowDragAndDrop();
-        undoButton.setDisable(true);
-        redoButton.setDisable(true);
-        zoomSlider.setDisable(true);
-    }
+
 
     @FXML
     protected void logout() throws IOException {

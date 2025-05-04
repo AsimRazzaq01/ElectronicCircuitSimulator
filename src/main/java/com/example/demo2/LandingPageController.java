@@ -100,17 +100,26 @@ public class LandingPageController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("project-view.fxml"));
             Parent root = loader.load();
 
-            // Get the controller and set project name
+            // Get the controller
             ProjectController projectController = loader.getController();
-            projectController.setProjectName(projectName);
 
+            // Retrieve project ID and create Project object
+            int projectId = dbOps.getProjectIdByName(currentUserId, projectName);
+            Project project = new Project(projectId, projectName);
+
+            // Inject the project once — this loads components and sets up everything
+            projectController.setProject(project);
+
+            // Show the new scene
             Stage stage = (Stage) newProjectButton.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
 
     @FXML

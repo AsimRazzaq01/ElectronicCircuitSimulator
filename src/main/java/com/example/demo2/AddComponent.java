@@ -1,8 +1,7 @@
 package com.example.demo2;
 
-import com.example.demo2.componentmodel.Component;
-import com.example.demo2.componentnode.WireTerminalNode;
-import com.example.demo2.componentnode.WireNode;
+import com.example.demo2.componentmodel.*;
+import com.example.demo2.componentnode.*;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
@@ -47,8 +46,46 @@ public class AddComponent implements ProjectActions {
         PROJECT.addToRedoStack(this);
     }
 
+
+
     @Override
     public void redo() {
         this.performAction();
     }
+
+    public static AddComponent fromComponent(Project project, Pane canvas, Component component) {
+        Node node = null;
+
+        if (component instanceof BatteryModel b) {
+            node = new BatteryNode(b.getComponentX(), b.getComponentY(), b.getVoltage());
+        }
+        else if (component instanceof ResistorModel r) {
+            node = new ResistorNode(r.getComponentX(), r.getComponentY(), r.getResistance());
+        }
+        else if (component instanceof LightbulbModel l) {
+            node = new LightbulbNode(l.getComponentX(), l.getComponentY(), l.getResistance());
+        }
+        else if (component instanceof CircuitSwitchModel s) {
+            node = new CircuitSwitchNode(s.getComponentX(), s.getComponentY(), s.isActive());
+        }
+        else if (component instanceof WireModel w) {
+            node = new WireNode(w.getComponentX(), w.getComponentY(), w.getRightSideX(), w.getRightSideY());
+        }
+
+        if (node == null) {
+            System.out.println("❌ Unknown component type: " + component.getComponentType());
+            return null;
+        }
+
+        node.setLayoutX(component.getComponentX());
+        node.setLayoutY(component.getComponentY());
+
+        return new AddComponent(project, canvas, node, component);
+    }
+
+    public Node getNode() {
+        return COMPONENT_NODE;
+    }
+
+
 }

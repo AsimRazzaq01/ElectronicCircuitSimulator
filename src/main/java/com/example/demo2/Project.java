@@ -29,7 +29,7 @@ public class Project {
         return PROJECT_NAME;
     }
 
-    int getProjectID() {
+    public int getProjectID() {
         return PROJECT_ID;
     }
 
