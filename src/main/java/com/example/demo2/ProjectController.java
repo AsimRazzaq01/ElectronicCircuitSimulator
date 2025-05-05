@@ -202,10 +202,9 @@ public class ProjectController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("LandingPage.fxml"));
         Parent root = loader.load();
         Stage stage = (Stage) logoutButton.getScene().getWindow();
-        Scene scene = new Scene(root, 680, 400); // width: 680, height: 400
+        Scene scene = new Scene(root, 1280, 720); // width: 680, height: 400
         stage.setScene(scene);
         stage.setResizable(false);
-        stage.centerOnScreen();
         stage.show();
     }
 

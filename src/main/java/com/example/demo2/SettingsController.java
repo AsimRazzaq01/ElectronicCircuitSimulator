@@ -45,13 +45,10 @@ public class SettingsController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("LandingPage.fxml"));
             Parent root = loader.load();
-
-            LandingPageController controller = loader.getController();
-            controller.initialize();
-
-            Stage stage = (Stage) backButton.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
+            Stage stage = (Stage) changeUserNameField.getScene().getWindow();
+            Scene scene = new Scene(root, 1200, 720); // width: 680, height: 400
+            stage.setScene(scene);
+            stage.setResizable(false);
         } catch (IOException e) {
             e.printStackTrace();
         }

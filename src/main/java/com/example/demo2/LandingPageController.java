@@ -119,13 +119,10 @@ public class LandingPageController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("Settings.fxml"));
             Parent root = loader.load();
-
-            SettingsController controller = loader.getController();
-            controller.start();  // SettingsController will also read from Session
-
-            Stage stage = (Stage) settingsButton.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
+            Stage stage = (Stage) logoutButton.getScene().getWindow();
+            Scene scene = new Scene(root, 1200, 720); // width: 680, height: 400
+            stage.setScene(scene);
+            stage.setResizable(false);
         } catch (IOException e) {
             e.printStackTrace();
         }
