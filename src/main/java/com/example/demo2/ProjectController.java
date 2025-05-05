@@ -725,7 +725,7 @@ public class ProjectController {
             HBox valueHbox = new HBox();
             valueHbox.setStyle(("-fx-background-color: #F6F6F6;"));
             VBox.setVgrow(valueHbox, Priority.ALWAYS);
-            valueHbox.setPrefHeight(25);
+            valueHbox.setPrefHeight(45);
             valueHbox.setSpacing(10);
             valueHbox.setAlignment(Pos.CENTER_LEFT);
             valueHbox.setPadding(new Insets(0,10,0,10));
@@ -839,6 +839,51 @@ public class ProjectController {
             menuVbox.getChildren().addAll(headerVbox, subheaderVbox, valueHbox);
 
         }
+        else if (Objects.equals(component.getComponentType(), "Switch")) {
+            headerLabel.setText("Edit " + component.getComponentType());
+
+            menuVbox.setPrefWidth(300);
+            menuVbox.setPrefHeight(100);
+            menuVbox.setAlignment(Pos.TOP_CENTER);
+            menuVbox.setPadding(new Insets(0,0,0,0));
+
+            HBox stateHbox = new HBox();
+            stateHbox.setStyle(("-fx-background-color: #F6F6F6;"));
+            stateHbox.setPrefHeight(35);
+            stateHbox.setAlignment(Pos.CENTER);
+            stateHbox.setSpacing(20);
+            Button stateButton = new Button("");
+            CircuitSwitchModel switchModel = (CircuitSwitchModel) component;
+            CircuitSwitchNode switchNode = (CircuitSwitchNode) componentNode;
+
+            if (switchModel.isActive()) {
+                stateButton.setText("Close");
+            }
+            else {
+                stateButton.setText("Open");
+            }
+
+            stateHbox.getChildren().add(stateButton);
+
+            stateButton.setOnAction(_ -> {
+                ModifySwitchState switchState = new ModifySwitchState(currentProject, switchNode, switchModel, switchModel.isActive(), !switchModel.isActive());
+                switchState.performAction();
+
+                if (!currentProject.getRedoStack().isEmpty()) {
+                    currentProject.clearRedoStack();
+                    redoButton.setDisable(true);
+                }
+
+                if (switchModel.isActive()) {
+                    stateButton.setText("Close");
+                }
+                else {
+                    stateButton.setText("Open");
+                }
+            });
+
+            menuVbox.getChildren().addAll(headerVbox, stateHbox);
+        }
         else {
             menuVbox.setPrefWidth(300);
             menuVbox.setPrefHeight(80);
@@ -847,7 +892,7 @@ public class ProjectController {
 
             headerLabel.setText("Delete " + component.getComponentType());
 
-            menuVbox.getChildren().addAll(headerVbox);
+            menuVbox.getChildren().add(headerVbox);
         }
 
         HBox optionsHbox = new HBox();
@@ -863,7 +908,7 @@ public class ProjectController {
             componentDialog.close();
         });
 
-        optionsHbox.getChildren().addAll(deleteButton);
+        optionsHbox.getChildren().add(deleteButton);
 
         menuVbox.getChildren().add(optionsHbox);
 
@@ -989,16 +1034,6 @@ public class ProjectController {
         makeDraggable(resistor, resistorModel);
     }
 
-    public void setSwitchFunctionality(CircuitSwitchNode circuitSwitch) {
-        circuitSwitch.setOnMouseClicked(mouseEvent -> {
-            CircuitSwitchModel circuitSwitchModel = circuitSwitch.getSwitchModel();
-            if (mouseEvent.isStillSincePress()) {
-                circuitSwitchModel.setActive();
-                circuitSwitch.setSwitchImageState();
-            }
-        });
-    }
-
     public void addCircuitSwitch(double x, double y) {
         CircuitSwitchNode circuitSwitch = new CircuitSwitchNode(x, y);
         CircuitSwitchModel circuitSwitchModel = circuitSwitch.getSwitchModel();
@@ -1028,8 +1063,6 @@ public class ProjectController {
             currentProject.clearRedoStack();
             redoButton.setDisable(true);
         }
-
-        setSwitchFunctionality(circuitSwitch);
 
         undoButton.setDisable(false);
         adjustComponentZoomScale(zoomScale);

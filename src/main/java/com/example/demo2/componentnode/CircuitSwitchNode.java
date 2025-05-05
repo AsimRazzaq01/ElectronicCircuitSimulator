@@ -42,7 +42,7 @@ public class CircuitSwitchNode extends Group {
             switchImageView = new ImageView();
             switchImageView.setFitWidth(70);
             switchImageView.setPreserveRatio(true);
-            setSwitchImageState();
+            setSwitchImageState(active);
             this.getChildren().add(switchImageView);
             switchImageView.setPickOnBounds(true);
             this.setLayoutX(switchModel.getComponentX());
@@ -54,8 +54,8 @@ public class CircuitSwitchNode extends Group {
         return switchModel;
     }
 
-    public void setSwitchImageState() {
-        if (switchModel.isActive()) {
+    public void setSwitchImageState(boolean active) {
+        if (active) {
             switchImageView.setImage(OPEN_SWITCH_IMAGE);
         }
         else {

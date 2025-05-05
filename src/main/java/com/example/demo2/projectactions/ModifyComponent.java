@@ -59,6 +59,6 @@ public class ModifyComponent implements ProjectActions {
 
     @Override
     public void redo() {
-
+        this.performAction();
     }
 }

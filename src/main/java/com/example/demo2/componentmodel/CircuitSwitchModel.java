@@ -13,8 +13,8 @@ public class CircuitSwitchModel extends Component {
         active = a;
     }
 
-    public void setActive() {
-        active = !active;
+    public void setActive(boolean a) {
+        active = a;
     }
 
     public boolean isActive() {
