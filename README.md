@@ -20,7 +20,7 @@ This project's main purpose is to create a simulation that lets users drag and d
 # Tech Stack
 - Frontend: JavaFX, CSS
 - Back End: Java
-- Database: Azure Database
+- Database: Azure Database, MySQL
 - Tools: Figma, GitHub, Intellij
 
 
