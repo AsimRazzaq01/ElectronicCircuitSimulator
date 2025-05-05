@@ -23,7 +23,12 @@ public class CircuitSwitchNode extends Group {
             OPEN_SWITCH_IMAGE = new Image(openSwitchPath.toExternalForm(),500,0,true,false);
             switchModel = new CircuitSwitchModel(x, y);
             switchImageView = new ImageView(CLOSED_SWITCH_IMAGE);
+            switchImageView.setLayoutX(20);
+            TerminalNode negative = new TerminalNode(switchModel, 10, 32.0, "Negative");
+            TerminalNode positive = new TerminalNode(switchModel, 100, 32.0, "Positive");
             this.getChildren().add(switchImageView);
+            this.getChildren().add(negative);
+            this.getChildren().add(positive);
             switchImageView.setFitWidth(70);
             switchImageView.setPreserveRatio(true);
             switchImageView.setPickOnBounds(true);
@@ -43,7 +48,12 @@ public class CircuitSwitchNode extends Group {
             switchImageView.setFitWidth(70);
             switchImageView.setPreserveRatio(true);
             setSwitchImageState(active);
+            switchImageView.setLayoutX(20);
+            TerminalNode negative = new TerminalNode(switchModel, 10, 32.0, "Negative");
+            TerminalNode positive = new TerminalNode(switchModel, 100, 32.0, "Positive");
             this.getChildren().add(switchImageView);
+            this.getChildren().add(negative);
+            this.getChildren().add(positive);
             switchImageView.setPickOnBounds(true);
             this.setLayoutX(switchModel.getComponentX());
             this.setLayoutY(switchModel.getComponentY());

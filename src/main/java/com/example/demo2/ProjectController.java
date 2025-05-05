@@ -377,7 +377,7 @@ public class ProjectController {
                 //The position of the component can only be in 0 and 1528 for x and 0 and 842.5 for y
                 //The new coordinate values are calculated by getting the maximum value of 0 and the minimum value of the new calculated coordinates and the maximum possible value
                 //Maximum value is determined by the size of the canvas - the size of the component
-                double newComponentX = Math.max(0, Math.min(potentialNewX, (canvasPane.getPrefWidth() - componentNode.getLayoutBounds().getWidth())));
+                double newComponentX = Math.max(0, Math.min(potentialNewX, (canvasPane.getPrefWidth() - componentNode.getLayoutBounds().getWidth() - 1)));
                 double newComponentY = Math.max(0, Math.min(potentialNewY, (canvasPane.getPrefHeight() - componentNode.getLayoutBounds().getHeight())));
 
                 //Set the new position of the component

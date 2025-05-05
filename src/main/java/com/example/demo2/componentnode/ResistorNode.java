@@ -17,9 +17,14 @@ public class ResistorNode extends Group {
             Image resistorImage = new Image(imagePath.toExternalForm(),500, 0, true, false);
             ImageView resistorImageView = new ImageView(resistorImage);
             resistorImageView.setFitWidth(70);
+            resistorImageView.setLayoutX(20);
             resistorImageView.setPreserveRatio(true);
             resistorModel = new ResistorModel(x, y);
+            TerminalNode negative = new TerminalNode(resistorModel, 10, 16.4, "Negative");
+            TerminalNode positive = new TerminalNode(resistorModel, 100, 16.4, "Positive");
             this.getChildren().add(resistorImageView);
+            this.getChildren().add(negative);
+            this.getChildren().add(positive);
             this.setLayoutX(resistorModel.getComponentX());
             this.setLayoutY(resistorModel.getComponentY());
         }
@@ -32,8 +37,13 @@ public class ResistorNode extends Group {
             ImageView resistorImageView = new ImageView(resistorImage);
             resistorImageView.setFitWidth(70);
             resistorImageView.setPreserveRatio(true);
+            resistorImageView.setLayoutX(20);
             resistorModel = new ResistorModel(x, y, r);
+            TerminalNode negative = new TerminalNode(resistorModel, 10, 16.4, "Negative");
+            TerminalNode positive = new TerminalNode(resistorModel, 100, 16.4, "Positive");
             this.getChildren().add(resistorImageView);
+            this.getChildren().add(negative);
+            this.getChildren().add(positive);
             this.setLayoutX(resistorModel.getComponentX());
             this.setLayoutY(resistorModel.getComponentY());
         }
