@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,6 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
@@ -185,9 +187,26 @@ public class ProjectController {
 
     @FXML
     protected void logout() throws IOException {
-        Scene scene = this.logoutButton.getScene();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("LoginRegister.fxml"));
-        scene.setRoot(fxmlLoader.load());
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginRegister.fxml"));
+        Parent root = loader.load();
+        Stage stage = (Stage) logoutButton.getScene().getWindow();
+        Scene scene = new Scene(root, 680, 400); // width: 680, height: 400
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.centerOnScreen();
+        stage.show();
+    }
+
+    @FXML
+    protected void returnHome() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("LandingPage.fxml"));
+        Parent root = loader.load();
+        Stage stage = (Stage) logoutButton.getScene().getWindow();
+        Scene scene = new Scene(root, 680, 400); // width: 680, height: 400
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.centerOnScreen();
+        stage.show();
     }
 
     private void adjustComponentZoomScale(double zoomScale) {
