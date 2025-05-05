@@ -83,6 +83,7 @@
             <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undo" text="Undo" />
             <Button fx:id="redoButton" mnemonicParsing="false" onAction="#redo" text="Redo" />
             <Button fx:id="saveButton" mnemonicParsing="false" onAction="#handleSaveButton" text="Save" />
+            <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDeleteButton" text="Delete" />
          </HBox>
          <ScrollPane fx:id="canvasScrollPane" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
             <StackPane prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #b9bbbd;">

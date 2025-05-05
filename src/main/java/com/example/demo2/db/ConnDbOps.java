@@ -241,6 +241,7 @@ public class ConnDbOps {
     public static void saveComponent(Project project, Component component) {
         try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
             if (!component.hasValidID()) {
+                // INSERT into components table
                 String insertSql = "INSERT INTO components (project_id, component_type, x_cord, y_cord) VALUES (?, ?, ?, ?)";
                 PreparedStatement insertStmt = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
 
@@ -256,11 +257,11 @@ public class ConnDbOps {
                     int generatedId = rs.getInt(1);
                     component.setComponentID(generatedId);
 
-                    insertIntoSubtypeTable(conn, component); // Insert into batteries, wires, etc.
+                    // INSERT into subtype table (e.g., wires, batteries)
+                    insertIntoSubtypeTable(conn, component);
                 }
-
             } else {
-                // UPDATE position of existing component
+                // UPDATE existing component position in components table
                 String updateSql = "UPDATE components SET x_cord = ?, y_cord = ? WHERE component_id = ?";
                 try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
                     updateStmt.setInt(1, (int) component.getComponentX());
@@ -268,12 +269,66 @@ public class ConnDbOps {
                     updateStmt.setInt(3, component.getComponentID());
                     updateStmt.executeUpdate();
                 }
+
+                // If it's a wire, also update the wires table
+                if (component instanceof WireModel wire) {
+                    String updateWireSql = "UPDATE wires SET rx_cord = ?, ry_cord = ? WHERE component_id = ?";
+                    try (PreparedStatement wireUpdateStmt = conn.prepareStatement(updateWireSql)) {
+                        wireUpdateStmt.setDouble(1, wire.getRightSideX());
+                        wireUpdateStmt.setDouble(2, wire.getRightSideY());
+                        wireUpdateStmt.setInt(3, wire.getComponentID());
+                        wireUpdateStmt.executeUpdate();
+                    }
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    public static void deleteComponent(Component component) {
+        try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
+            switch (component.getComponentType()) {
+                case "Wire" -> {
+                    try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM wires WHERE component_id = ?")) {
+                        stmt.setInt(1, component.getComponentID());
+                        stmt.executeUpdate();
+                    }
+                }
+                case "Battery" -> {
+                    try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM batteries WHERE component_id = ?")) {
+                        stmt.setInt(1, component.getComponentID());
+                        stmt.executeUpdate();
+                    }
+                }
+                case "Resistor" -> {
+                    try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM resistors WHERE component_id = ?")) {
+                        stmt.setInt(1, component.getComponentID());
+                        stmt.executeUpdate();
+                    }
+                }
+                case "Lightbulb" -> {
+                    try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM lightbulbs WHERE component_id = ?")) {
+                        stmt.setInt(1, component.getComponentID());
+                        stmt.executeUpdate();
+                    }
+                }
+                case "Switch" -> {
+                    try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM switches WHERE component_id = ?")) {
+                        stmt.setInt(1, component.getComponentID());
+                        stmt.executeUpdate();
+                    }
+                }
+            }
+            try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM components WHERE component_id = ?")) {
+                stmt.setInt(1, component.getComponentID());
+                stmt.executeUpdate();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     private static void insertIntoSubtypeTable(Connection conn, Component component) throws SQLException {
         switch (component.getComponentType()) {
@@ -389,8 +444,8 @@ public class ConnDbOps {
                         ResultSet wrs = wStmt.executeQuery();
                         double rx = 0, ry = 0;
                         if (wrs.next()) {
-                            rx = wrs.getInt("rx_cord");
-                            ry = wrs.getInt("ry_cord");
+                            rx = wrs.getDouble("rx_cord");
+                            ry = wrs.getDouble("ry_cord");
                         }
                         WireModel wire = new WireModel(x, y, rx, ry);
                         wire.setComponentID(componentId);
@@ -410,8 +465,5 @@ public class ConnDbOps {
 
         return components;
     }
-
-
-
 
 }

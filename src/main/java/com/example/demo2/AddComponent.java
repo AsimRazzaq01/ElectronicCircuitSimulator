@@ -2,7 +2,9 @@ package com.example.demo2;
 
 import com.example.demo2.componentmodel.*;
 import com.example.demo2.componentnode.*;
+import com.example.demo2.db.ConnDbOps;
 import javafx.scene.Node;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 
 public class AddComponent implements ProjectActions {
@@ -29,8 +31,15 @@ public class AddComponent implements ProjectActions {
             PROJECT_CANVAS.getChildren().add(rightTerminal);
         }
 
+        COMPONENT_NODE.setOnMouseClicked(e -> {
+            if (e.getButton() == MouseButton.PRIMARY) {
+            }
+        });
+
         PROJECT.addComponent(COMPONENT, COMPONENT_NODE);
+        ConnDbOps.saveComponent(PROJECT, COMPONENT);
         PROJECT.addToUndoStack(this);
+
     }
 
     @Override
@@ -43,6 +52,7 @@ public class AddComponent implements ProjectActions {
             PROJECT_CANVAS.getChildren().remove(rightTerminal);
         }
         PROJECT.removeComponent(COMPONENT);
+        ConnDbOps.deleteComponent(COMPONENT);
         PROJECT.addToRedoStack(this);
     }
 
@@ -69,19 +79,23 @@ public class AddComponent implements ProjectActions {
             node = new CircuitSwitchNode(s.getComponentX(), s.getComponentY(), s.isActive());
         }
         else if (component instanceof WireModel w) {
-            node = new WireNode(w.getComponentX(), w.getComponentY(), w.getRightSideX(), w.getRightSideY());
+            node = new WireNode(w);  // already sets start/end X/Y from model
         }
 
         if (node == null) {
-            System.out.println("❌ Unknown component type: " + component.getComponentType());
+            System.out.println("Unknown component type: " + component.getComponentType());
             return null;
         }
 
-        node.setLayoutX(component.getComponentX());
-        node.setLayoutY(component.getComponentY());
+        // Only call setLayoutX/Y if it's NOT a WireNode (Line-based)
+        if (!(node instanceof WireNode)) {
+            node.setLayoutX(component.getComponentX());
+            node.setLayoutY(component.getComponentY());
+        }
 
         return new AddComponent(project, canvas, node, component);
     }
+
 
     public Node getNode() {
         return COMPONENT_NODE;

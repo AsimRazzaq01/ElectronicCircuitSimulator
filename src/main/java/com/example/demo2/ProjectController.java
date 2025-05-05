@@ -44,7 +44,7 @@ public class ProjectController {
     @FXML
     private Button undoButton;
     @FXML
-    private Button homeButton, saveButton;
+    private Button homeButton, saveButton, deleteButton;
     @FXML
     private Slider zoomSlider;
     @FXML
@@ -62,6 +62,10 @@ public class ProjectController {
     private Project project;
 
     public void setProject(Project project) {
+        zoomScale = 1.0;
+        canvasPane.setScaleX(1.0);
+        canvasPane.setScaleY(1.0);
+
         this.project = project;
         this.currentProject = project;
 
@@ -69,23 +73,27 @@ public class ProjectController {
 
         for (Component c : components) {
             AddComponent add = AddComponent.fromComponent(currentProject, canvasPane, c);
-            if (add != null) {
-                add.performAction(); // ⬅️ Draws it + registers with project
+            if (add == null) continue;
+            add.performAction();
+            Node node = add.getNode();
 
-                Node node = add.getNode();
-
-                // Extra wire-specific handlers
-                if (node instanceof WireNode wire) {
-                    makeWireDraggable(wire, (WireModel) c);
-                    makeWireTerminalDraggable(wire.getLeftTerminalNode(), wire.getRightTerminalNode(), wire);
+            node.setOnMouseClicked(e -> {
+                if (e.getButton() == MouseButton.PRIMARY) {
+                    setSelected(node);
                 }
+            });
 
-                if (node instanceof CircuitSwitchNode) {
-                    setSwitchFunctionality((CircuitSwitchNode) node);
-                }
-
-                makeDraggable(node, c);
+            if (node instanceof WireNode wire) {
+                // These terminals are already added in performAction(), don’t repeat!
+                makeWireDraggable(wire, (WireModel) c);
+                makeWireTerminalDraggable(wire.getLeftTerminalNode(), wire.getRightTerminalNode(), wire);
             }
+
+            if (node instanceof CircuitSwitchNode) {
+                setSwitchFunctionality((CircuitSwitchNode) node);
+            }
+
+            makeDraggable(node, c);
         }
 
         projectNameLabel.setText(project.getProjectName());
@@ -93,9 +101,6 @@ public class ProjectController {
         redoButton.setDisable(true);
         zoomSlider.setDisable(true);
     }
-
-
-
 
     @FXML
     public void initialize() {
@@ -110,7 +115,6 @@ public class ProjectController {
         redoButton.setDisable(true);
         zoomSlider.setDisable(true);
 
-        // Optional: Center scroll on canvas
         initializeScrollPosition();
     }
 
@@ -126,7 +130,7 @@ public class ProjectController {
     @FXML
     private void handleSaveButton() {
         if (project == null) {
-            System.out.println("❌ Project is null!");
+            System.out.println("Project is null!");
             return;
         }
 
@@ -136,28 +140,74 @@ public class ProjectController {
             Component model = entry.getKey();
             Node view = entry.getValue();
 
-            // Update model position from UI
-            model.setComponentX(view.getLayoutX());
-            model.setComponentY(view.getLayoutY());
+            if (model instanceof WireModel wireModel && view instanceof WireNode wireNode) {
+                // Update start and end points for wire
+                wireModel.setComponentX(wireNode.getStartX());
+                wireModel.setComponentY(wireNode.getStartY());
+                wireModel.setRightSideX(wireNode.getEndX());
+                wireModel.setRightSideY(wireNode.getEndY());
 
-            // Save to DB
+            } else {
+                // Use layoutX/Y for normal components
+                model.setComponentX(view.getLayoutX());
+                model.setComponentY(view.getLayoutY());
+            }
+
+            // Save after model update
             ConnDbOps.saveComponent(project, model);
             count++;
         }
 
-        System.out.println("✅ " + count + " components attempted to save.");
+        System.out.println("Success: " + count + " components attempted to save.");
+    }
+
+    @FXML
+    private void handleDeleteButton() {
+        if (selectedNode == null) {
+            System.out.println("No component selected for deletion.");
+            return;
+        }
+
+        // Find component in project map
+        Component toDelete = null;
+        for (Map.Entry<Component, Node> entry : currentProject.getProjectComponents().entrySet()) {
+            if (entry.getValue().equals(selectedNode)) {
+                toDelete = entry.getKey();
+                break;
+            }
+        }
+
+        if (toDelete != null) {
+            // 1. Remove from canvas
+            canvasPane.getChildren().remove(selectedNode);
+            if (selectedNode instanceof WireNode wire) {
+                canvasPane.getChildren().remove(wire.getLeftTerminalNode());
+                canvasPane.getChildren().remove(wire.getRightTerminalNode());
+            }
+
+            // 2. Remove from project data
+            currentProject.removeComponent(toDelete);
+
+            // 3. Remove from database
+            ConnDbOps.deleteComponent(toDelete);
+
+            selectedNode = null;
+            System.out.println("Component deleted.");
+        }
     }
 
 
-
-//    public void setProjectName(String name) {
-//        projectNameLabel.setText(name);
-//    }
-//
-//
-//    void setCurrentProject(Project project) {
-//        currentProject = project;
-//    }
+    // Selects Component
+    private Node selectedNode = null;
+    private void setSelected(Node node) {
+        if (selectedNode != null) {
+            selectedNode.setStyle(""); // Clear previous selection
+        }
+        selectedNode = node;
+        if (selectedNode != null) {
+            selectedNode.setStyle("-fx-effect: dropshadow(gaussian, red, 10, 0.5, 0, 0);");
+        }
+    }
 
     private void loadComponentPaneImages() {
         URL batteryImagePath = this.getClass().getResource("component_sprites/battery.png");
@@ -537,10 +587,11 @@ public class ProjectController {
         wire.setOnMouseReleased(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                 canvasScrollPane.setPannable(true);
-                wireModel.setComponentX(wire.getStartX() - 12.5);
-                wireModel.setComponentY(wire.getStartY() - 12.5);
-                wireModel.setRightSideX(wire.getEndX() + 12.5);
-                wireModel.setRightSideY(wire.getEndY() - 12.5);
+                wireModel.setComponentX(wire.getStartX());
+                wireModel.setComponentY(wire.getStartY());
+                wireModel.setRightSideX(wire.getEndX());
+                wireModel.setRightSideY(wire.getEndY());
+
 
                 leftTerminal.toBack();
                 rightTerminal.toBack();
@@ -553,157 +604,67 @@ public class ProjectController {
         Node canvas = canvasScrollPane.getContent();
         WireModel wireModel = wire.getWireModel();
 
-        final Point2D[] cursorLeftTerminalOffset = new Point2D[1];
-        final Point2D[] cursorRightTerminalOffset = new Point2D[1];
+        final Point2D[] offsetLeft = new Point2D[1];
+        final Point2D[] offsetRight = new Point2D[1];
 
-        leftTerminal.setOnMousePressed(mouseEvent -> {
-            Point2D cursorInPane = canvas.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
-            double cursorX = cursorInPane.getX() / zoomScale;
-            double cursorY = cursorInPane.getY() / zoomScale;
-
-            //Stores offset from cursor to both endpoints, coordinates within the wire terminal
-            cursorLeftTerminalOffset[0] = new Point2D(leftTerminal.getCenterX() - cursorX, leftTerminal.getCenterY() - cursorY);
+        leftTerminal.setOnMousePressed(e -> {
+            Point2D p = canvas.sceneToLocal(e.getSceneX(), e.getSceneY());
+            offsetLeft[0] = new Point2D(p.getX() / zoomScale - wire.getStartX(), p.getY() / zoomScale - wire.getStartY());
             canvasScrollPane.setPannable(false);
         });
 
-        leftTerminal.setOnMouseDragged(mouseEvent -> {
-            Point2D cursorInPane = canvas.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
-            double cursorX = cursorInPane.getX() / zoomScale;
-            double cursorY = cursorInPane.getY() / zoomScale;
-
-            double potentialCenterX = cursorX + cursorLeftTerminalOffset[0].getX();
-            double potentialCenterY = cursorY + cursorLeftTerminalOffset[0].getY();
-
-            double offsetX = 0;
-            double offsetY = 0;
-
-            //12.5 is the minimum value that makes it so the line is still in the canvas
-            if (potentialCenterX < 12.5) {
-                offsetX = 12.5 - potentialCenterX;
-            }
-            if (potentialCenterX > canvasPane.getPrefWidth() - 12.5) {
-                offsetX = (canvasPane.getPrefWidth() - 12.5) - potentialCenterX;
-            }
-            if (potentialCenterY < 12.5) {
-                offsetY = 12.5 - potentialCenterY;
-            }
-            if (potentialCenterY > canvasPane.getPrefHeight() - 12.5) {
-                offsetY = (canvasPane.getPrefHeight() - 12.5) - potentialCenterY;
-            }
-
-            leftTerminal.setTerminalX(potentialCenterX + offsetX);
-            leftTerminal.setTerminalY(potentialCenterY + offsetY);
-            wire.setStartX(potentialCenterX + offsetX);
-            wire.setStartY(potentialCenterY + offsetY);
+        leftTerminal.setOnMouseDragged(e -> {
+            Point2D p = canvas.sceneToLocal(e.getSceneX(), e.getSceneY());
+            double newX = (p.getX() / zoomScale) - offsetLeft[0].getX();
+            double newY = (p.getY() / zoomScale) - offsetLeft[0].getY();
+            wire.setStartX(newX);
+            wire.setStartY(newY);
         });
 
-        leftTerminal.setOnMouseReleased(mouseEvent -> {
-            if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                canvasScrollPane.setPannable(true);
-                wireModel.setComponentX(wire.getStartX() - 12.5);
-                wireModel.setComponentY(wire.getStartY() - 12.5);
-                wireModel.setRightSideX(wire.getEndX() + 12.5);
-                wireModel.setRightSideY(wire.getEndY() - 12.5);
-
-                leftTerminal.toBack();
-                rightTerminal.toBack();
-                wire.toBack();
-            }
-        });
-
-        rightTerminal.setOnMousePressed(mouseEvent -> {
-            Point2D cursorInPane = canvas.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
-            double cursorX = cursorInPane.getX() / zoomScale;
-            double cursorY = cursorInPane.getY() / zoomScale;
-
-            //Stores offset from cursor to both endpoints, coordinates within the wire terminal
-            cursorRightTerminalOffset[0] = new Point2D(rightTerminal.getCenterX() - cursorX, rightTerminal.getCenterY() - cursorY);
+        rightTerminal.setOnMousePressed(e -> {
+            Point2D p = canvas.sceneToLocal(e.getSceneX(), e.getSceneY());
+            offsetRight[0] = new Point2D(p.getX() / zoomScale - wire.getEndX(), p.getY() / zoomScale - wire.getEndY());
             canvasScrollPane.setPannable(false);
         });
 
-        rightTerminal.setOnMouseDragged(mouseEvent -> {
-            Point2D cursorInPane = canvas.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
-
-            double cursorX = cursorInPane.getX() / zoomScale;
-            double cursorY = cursorInPane.getY() / zoomScale;
-
-            double potentialCenterX = cursorX + cursorRightTerminalOffset[0].getX();
-            double potentialCenterY = cursorY + cursorRightTerminalOffset[0].getY();
-
-            double offsetX = 0;
-            double offsetY = 0;
-
-            //12.5 is the minimum value that makes it so the line is still in the canvas
-            if (potentialCenterX < 12.5) {
-                offsetX = 12.5 - potentialCenterX;
-            }
-            if (potentialCenterX > canvasPane.getPrefWidth() - 12.5) {
-                offsetX = (canvasPane.getPrefWidth() - 12.5) - potentialCenterX;
-            }
-            if (potentialCenterY < 12.5) {
-                offsetY = 12.5 - potentialCenterY;
-            }
-            if (potentialCenterY > canvasPane.getPrefHeight() - 12.5) {
-                offsetY = (canvasPane.getPrefHeight() - 12.5) - potentialCenterY;
-            }
-
-            rightTerminal.setTerminalX(potentialCenterX + offsetX);
-            rightTerminal.setTerminalY(potentialCenterY + offsetY);
-            wire.setEndX(potentialCenterX + offsetX);
-            wire.setEndY(potentialCenterY + offsetY);
+        rightTerminal.setOnMouseDragged(e -> {
+            Point2D p = canvas.sceneToLocal(e.getSceneX(), e.getSceneY());
+            double newX = (p.getX() / zoomScale) - offsetRight[0].getX();
+            double newY = (p.getY() / zoomScale) - offsetRight[0].getY();
+            wire.setEndX(newX);
+            wire.setEndY(newY);
         });
 
-        rightTerminal.setOnMouseReleased(mouseEvent -> {
-            if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                canvasScrollPane.setPannable(true);
-                wireModel.setComponentX(wire.getStartX() - 12.5);
-                wireModel.setComponentY(wire.getStartY() - 12.5);
-                wireModel.setRightSideX(wire.getEndX() + 12.5);
-                wireModel.setRightSideY(wire.getEndY() - 12.5);
+        leftTerminal.setOnMouseReleased(e -> {
+            canvasScrollPane.setPannable(true);
+            wireModel.setComponentX(wire.getStartX());
+            wireModel.setComponentY(wire.getStartY());
+            wireModel.setRightSideX(wire.getEndX());
+            wireModel.setRightSideY(wire.getEndY());
+        });
 
-                leftTerminal.toBack();
-                rightTerminal.toBack();
-                wire.toBack();
-            }
+        rightTerminal.setOnMouseReleased(e -> {
+            canvasScrollPane.setPannable(true);
+            wireModel.setComponentX(wire.getStartX());
+            wireModel.setComponentY(wire.getStartY());
+            wireModel.setRightSideX(wire.getEndX());
+            wireModel.setRightSideY(wire.getEndY());
         });
     }
 
+
     public void addWire(double leftX, double y) {
         double rightX = leftX + 100.0;
-        double strokeOffsetLeftCorner = 12.5;
-        double strokeOffsetRightCorner = -12.5;
 
-        WireNode wire = new WireNode(leftX, y, rightX, y);
-        WireModel wireModel = wire.getWireModel();
+        WireModel wireModel = new WireModel(leftX, y, rightX, y);
+        WireNode wire = new WireNode(wireModel);
 
         WireTerminalNode leftTerminal = wire.getLeftTerminalNode();
         WireTerminalNode rightTerminal = wire.getRightTerminalNode();
 
-        if (rightX > canvasPane.getPrefWidth()) {
-            double correctedLeftX = canvasPane.getPrefWidth() - 100.0;
-            double correctedRightX = canvasPane.getPrefWidth();
-            wire.setStartX(correctedLeftX + strokeOffsetLeftCorner);
-            wire.setEndX(correctedRightX + strokeOffsetRightCorner);
-            wireModel.setComponentX(correctedLeftX);
-            wireModel.setRightSideX(correctedRightX);
-            leftTerminal.setTerminalX(wire.getStartX());
-            rightTerminal.setTerminalX(wire.getEndX());
-        }
-
-        if (y + strokeOffsetLeftCorner > canvasPane.getPrefHeight()) {
-            double correctedY = (canvasPane.getPrefHeight() + strokeOffsetRightCorner);
-            wire.setStartY(correctedY);
-            wire.setEndY(correctedY);
-            wireModel.setComponentY(correctedY);
-            wireModel.setRightSideY(correctedY);
-            leftTerminal.setTerminalY(wire.getStartY());
-            rightTerminal.setTerminalY(wire.getEndY());
-        }
-
         AddComponent add = new AddComponent(currentProject, canvasPane, wire, wireModel);
         add.performAction();
 
-        //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
         if (!currentProject.getRedoStack().isEmpty()) {
             currentProject.clearRedoStack();
             redoButton.setDisable(true);
@@ -713,7 +674,9 @@ public class ProjectController {
         adjustComponentZoomScale(zoomScale);
         makeWireDraggable(wire, wireModel);
         makeWireTerminalDraggable(leftTerminal, rightTerminal, wire);
+        setSelected(wire);
     }
+
 
     public void addBattery(double x, double y) {
         BatteryNode battery = new BatteryNode(x, y);
@@ -748,6 +711,8 @@ public class ProjectController {
         undoButton.setDisable(false);
         adjustComponentZoomScale(zoomScale);
         makeDraggable(battery, batteryModel);
+        setSelected(battery);
+
     }
 
     public void addResistor(double x, double y) {
@@ -783,6 +748,7 @@ public class ProjectController {
         undoButton.setDisable(false);
         adjustComponentZoomScale(zoomScale);
         makeDraggable(resistor, resistorModel);
+        setSelected(resistor);
     }
 
     public void setSwitchFunctionality(CircuitSwitchNode circuitSwitch) {
@@ -830,6 +796,7 @@ public class ProjectController {
         undoButton.setDisable(false);
         adjustComponentZoomScale(zoomScale);
         makeDraggable(circuitSwitch, circuitSwitchModel);
+        setSelected(circuitSwitch);
     }
 
     public void addLightbulb(double x, double y) {
@@ -865,6 +832,7 @@ public class ProjectController {
         undoButton.setDisable(false);
         adjustComponentZoomScale(zoomScale);
         makeDraggable(lightbulb, lightbulbModel);
+        setSelected(lightbulb);
     }
 
 }

@@ -10,6 +10,7 @@ public class WireModel extends Component {
         rightSideX = endX;
         rightSideY = endY;
         current = 0;
+
     }
 
     public WireModel(double startX, double startY, double endX, double endY, double c) {
@@ -18,6 +19,7 @@ public class WireModel extends Component {
         rightSideY = endY;
         current = c;
     }
+
 
     public double getRightSideX() {
         return rightSideX;

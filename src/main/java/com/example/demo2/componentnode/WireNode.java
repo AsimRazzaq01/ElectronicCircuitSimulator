@@ -12,18 +12,26 @@ public class WireNode extends Line {
     double strokeOffsetLeftCorner = 12.5;
     double strokeOffsetRight = -12.5;
 
-    public WireNode(double startX, double startY, double endX, double endY) {
-        this.setStroke(Paint.valueOf("#1D1542"));
+    public WireNode(WireModel model) {
+        this.setStroke(Paint.valueOf("#1D1542")); // Blue
         this.setStrokeLineCap(StrokeLineCap.ROUND);
         this.setStrokeWidth(18);
-        wireModel = new WireModel(startX, startY, endX, endY);
-        this.setStartX(startX + strokeOffsetLeftCorner);
-        this.setStartY(startY + strokeOffsetLeftCorner);
-        leftWireTerminalNode = new WireTerminalNode(getWireModel(), startX + strokeOffsetLeftCorner, startY + strokeOffsetLeftCorner, "Negative");
-        rightWireTerminalNode = new WireTerminalNode(getWireModel(), endX + strokeOffsetRight, endY + strokeOffsetLeftCorner, "Positive");
-        this.setEndX(endX + strokeOffsetRight);
-        this.setEndY(endY + strokeOffsetLeftCorner);
+        this.wireModel = model;
+
+        this.setStartX(model.getComponentX());
+        this.setStartY(model.getComponentY());
+        this.setEndX(model.getRightSideX());
+        this.setEndY(model.getRightSideY());
+
+        this.leftWireTerminalNode = new WireTerminalNode(model, getStartX(), getStartY(), "Negative");
+        this.rightWireTerminalNode = new WireTerminalNode(model, getEndX(), getEndY(), "Positive");
+
+        leftWireTerminalNode.centerXProperty().bind(startXProperty());
+        leftWireTerminalNode.centerYProperty().bind(startYProperty());
+        rightWireTerminalNode.centerXProperty().bind(endXProperty());
+        rightWireTerminalNode.centerYProperty().bind(endYProperty());
     }
+
 
     public WireModel getWireModel() {
         return wireModel;

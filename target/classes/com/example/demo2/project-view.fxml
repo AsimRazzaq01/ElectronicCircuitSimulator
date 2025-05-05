@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo2.ProjectController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo2.ProjectController">
    <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
       <VBox prefHeight="400.0" prefWidth="115.0">
          <GridPane minHeight="72.0">
@@ -27,7 +27,7 @@
                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
-            <Button fx:id="homeButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Home" />
+            <Button fx:id="homeButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goHome" text="Home" />
             <Button fx:id="logoutButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#logout" text="Log out" GridPane.rowIndex="1" />
          </GridPane>
          <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
@@ -64,9 +64,8 @@
                      <Label text="Light bulb" />
                   </VBox>
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
-                     <ImageView fx:id="wireImageView" fitHeight="34.0" fitWidth="66.0" pickOnBounds="true"
-                                preserveRatio="true"/>
-                     <Label text="Wire"/>
+                     <ImageView fx:id="wireImageView" fitHeight="34.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" />
+                     <Label text="Wire" />
                   </VBox>
                </GridPane>
             </VBox>
@@ -83,6 +82,8 @@
          <HBox alignment="CENTER" minHeight="32.0" prefHeight="32.0" prefWidth="485.0" spacing="50.0">
             <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undo" text="Undo" />
             <Button fx:id="redoButton" mnemonicParsing="false" onAction="#redo" text="Redo" />
+            <Button fx:id="saveButton" mnemonicParsing="false" onAction="#handleSaveButton" text="Save" />
+            <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDeleteButton" text="Delete" />
          </HBox>
          <ScrollPane fx:id="canvasScrollPane" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
             <StackPane prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #b9bbbd;">

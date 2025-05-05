@@ -10,19 +10,16 @@ public class WireTerminalNode extends Circle {
 
     public WireTerminalNode(Component c, double centerX, double centerY, String charge) {
         this.setRadius(9);
-        this.setCenterY(centerY);
+
         if (charge.equals("Positive")) {
             this.setFill(Color.RED);
-            this.setStroke(Color.BLACK);
-            this.setCenterX(centerX);
-            terminalModel = new TerminalModel(charge, c);
-        }
-        else if (charge.equals("Negative")) {
+        } else if (charge.equals("Negative")) {
             this.setFill(Color.GRAY);
-            this.setStroke(Color.BLACK);
-            this.setCenterX(centerX);
-            terminalModel = new TerminalModel(charge, c);
         }
+
+        this.setStroke(Color.BLACK);
+
+        terminalModel = new TerminalModel(charge, c);
     }
 
     public TerminalModel getTerminalModel() {
@@ -30,14 +27,15 @@ public class WireTerminalNode extends Circle {
     }
 
     public void setTerminalX(double centerX) {
-        if (getTerminalModel().getCharge().equals("Positive")) {
-            this.setCenterX(centerX);
-        }
-        else if (getTerminalModel().getCharge().equals("Negative")) {
-            this.setCenterX(centerX);
+        // Safely update only if not bound
+        if (!centerXProperty().isBound()) {
+            setCenterX(centerX);
         }
     }
+
     public void setTerminalY(double centerY) {
-        this.setCenterY(centerY);
+        if (!centerYProperty().isBound()) {
+            setCenterY(centerY);
+        }
     }
 }
