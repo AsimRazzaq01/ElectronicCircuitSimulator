@@ -74,6 +74,17 @@ public class ProjectController {
         currentProject = project;
     }
 
+    @FXML
+    protected void returnHome() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("LandingPage.fxml"));
+        Parent root = loader.load();
+        Stage stage = (Stage) logoutButton.getScene().getWindow();
+        Scene scene = new Scene(root, 1280, 720); // width: 680, height: 400
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.show();
+    }
+
     private void loadComponentPaneImages() {
         URL batteryImagePath = this.getClass().getResource("component_sprites/battery.png");
         URL resistorImagePath = this.getClass().getResource("component_sprites/resistor_default.png");
@@ -193,9 +204,14 @@ public class ProjectController {
 
     @FXML
     protected void logout() throws IOException {
-        Scene scene = this.logoutButton.getScene();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("LoginRegister.fxml"));
-        scene.setRoot(fxmlLoader.load());
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginRegister.fxml"));
+        Parent root = loader.load();
+        Stage stage = (Stage) logoutButton.getScene().getWindow();
+        Scene scene = new Scene(root, 680, 400); // width: 680, height: 400
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.centerOnScreen();
+        stage.show();
     }
 
     private void adjustComponentZoomScale(double zoomScale) {

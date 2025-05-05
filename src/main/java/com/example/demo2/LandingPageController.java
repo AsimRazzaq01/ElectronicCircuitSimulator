@@ -6,7 +6,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.Node;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -59,11 +58,11 @@ public class LandingPageController {
 
                 Label projectLabel = new Label(name);
                 projectLabel.setStyle("-fx-font-size: 16px; -fx-cursor: hand;");
-                projectLabel.setOnMouseClicked(e -> openProject(name));
+                projectLabel.setOnMouseClicked(_ -> openProject(name));
 
                 Button deleteButton = new Button("Delete");
                 deleteButton.setStyle("-fx-background-color: red; -fx-text-fill: white;");
-                deleteButton.setOnAction(e -> {
+                deleteButton.setOnAction(_ -> {
                     dbOps.deleteProject(currentUserId, name);
                     loadProjects(); // Refresh UI after deletion
                 });
@@ -127,7 +126,6 @@ public class LandingPageController {
             e.printStackTrace();
         }
     }
-
 
     @FXML
     private void logout() {

@@ -6,10 +6,131 @@ import java.util.List;
 
 
 public class ConnDbOps {
-    final String MYSQL_SERVER_URL = "jdbc:mysql://mesqd1.mysql.database.azure.com/";
-    final String DB_URL = MYSQL_SERVER_URL + "csc311capstonedb";
-    final String USERNAME = "mesqd";
-    final String PASSWORD = "csc311DB25";
+    final String MYSQL_SERVER_URL = "jdbc:mysql://csc311mojica04.mysql.database.azure.com/";
+    final String DB_URL = MYSQL_SERVER_URL + "DBname";
+    final String USERNAME = "mojin";
+    final String PASSWORD = "FARM123$";
+
+    public boolean connectToDatabase() {
+        boolean hasRegisteredUsers = false;
+
+        try {
+            // Step 1: Create database if it doesn't exist
+            Connection conn = DriverManager.getConnection(MYSQL_SERVER_URL, USERNAME, PASSWORD);
+            Statement statement = conn.createStatement();
+            statement.executeUpdate("CREATE DATABASE IF NOT EXISTS DBname");
+            statement.close();
+            conn.close();
+
+            // Step 2: Connect to DB and create tables
+            conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+            statement = conn.createStatement();
+//            createTables(statement);
+
+            // Step 3: Check if users exist
+            ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM users");
+            if (resultSet.next()) {
+                hasRegisteredUsers = resultSet.getInt(1) > 0;
+            }
+
+            statement.close();
+            conn.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return hasRegisteredUsers;
+    }
+
+//    private void createTables(Statement statement) throws SQLException {
+//
+//        // Projects table
+//        statement.executeUpdate("CREATE TABLE IF NOT EXISTS projects (" +
+//                "project_id INT AUTO_INCREMENT PRIMARY KEY," +
+//                "user_id INT NOT NULL," +
+//                "project_name VARCHAR(255) NOT NULL," +
+//                "last_accessed TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+//                "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE)");
+//
+//        // Components table
+//        statement.executeUpdate("CREATE TABLE IF NOT EXISTS components (" +
+//                "component_id INT AUTO_INCREMENT PRIMARY KEY," +
+//                "project_id INT NOT NULL," +
+//                "component_type ENUM('Wire', 'Battery', 'Resistor', 'Switch', 'Light bulb') NOT NULL," +
+//                "x_cord INT NOT NULL," +
+//                "y_cord INT NOT NULL," +
+//                "FOREIGN KEY (project_id) REFERENCES projects(project_id) ON DELETE CASCADE)");
+//
+//        // Batteries table
+//        statement.executeUpdate("CREATE TABLE IF NOT EXISTS batteries (" +
+//                "component_id INT PRIMARY KEY," +
+//                "voltage FLOAT NOT NULL," +
+//                "FOREIGN KEY (component_id) REFERENCES components(component_id) ON DELETE CASCADE)");
+//
+//        // Resistors table
+//        statement.executeUpdate("CREATE TABLE IF NOT EXISTS resistors (" +
+//                "component_id INT PRIMARY KEY," +
+//                "resistance FLOAT NOT NULL," +
+//                "FOREIGN KEY (component_id) REFERENCES components(component_id) ON DELETE CASCADE)");
+//
+//        // Light bulbs table
+//        statement.executeUpdate("CREATE TABLE IF NOT EXISTS light_bulbs (" +
+//                "component_id INT PRIMARY KEY," +
+//                "resistance FLOAT NOT NULL," +
+//                "FOREIGN KEY (component_id) REFERENCES components(component_id) ON DELETE CASCADE)");
+//
+//        // Switches table
+//        statement.executeUpdate("CREATE TABLE IF NOT EXISTS switches (" +
+//                "component_id INT PRIMARY KEY," +
+//                "is_active BOOLEAN NOT NULL," +
+//                "FOREIGN KEY (component_id) REFERENCES components(component_id) ON DELETE CASCADE)");
+//
+//        // Wires table
+//        statement.executeUpdate("CREATE TABLE IF NOT EXISTS wires (" +
+//                "component_id INT PRIMARY KEY," +
+//                "rx_cord INT NOT NULL," +
+//                "ry_cord INT NOT NULL," +
+//                "FOREIGN KEY (component_id) REFERENCES components(component_id) ON DELETE CASCADE)");
+//    }
+
+
+    public void queryUserByUsername(String username) {
+        try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+             PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM users WHERE username = ?")) {
+
+            preparedStatement.setString(1, username);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String email = resultSet.getString("email");
+                System.out.println("ID: " + id + ", Username: " + username + ", Email: " + email);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void listAllUsers() {
+        try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+             PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM users")) {
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String username = resultSet.getString("username");
+                String email = resultSet.getString("email");
+                System.out.println("ID: " + id + ", Username: " + username + ", Email: " + email);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void insertUser(String username, String email, String password) {
         try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
@@ -31,17 +152,16 @@ public class ConnDbOps {
     }
 
     public int validateLoginAndGetUserId(String email, String password) {
-        String query = "SELECT user_id FROM users WHERE LOWER(email) = LOWER(?) AND password = ?";
+        String query = "SELECT id FROM users WHERE email = ? AND password = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setString(1, email.trim());
-            stmt.setString(2, password.trim());
-
+            stmt.setString(1, email);
+            stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return rs.getInt("user_id");  // Use correct column name
+                return rs.getInt("id");  // Login success: return user ID
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -50,7 +170,7 @@ public class ConnDbOps {
     }
 
     public String getUsernameById(int userId) {
-        String query = "SELECT username FROM users WHERE user_id = ?";
+        String query = "SELECT username FROM users WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
@@ -67,7 +187,7 @@ public class ConnDbOps {
     }
 
     public void updateUsernameById(int userId, String newUsername) {
-        String sql = "UPDATE users SET username = ? WHERE user_id = ?";
+        String sql = "UPDATE users SET username = ? WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -123,6 +243,7 @@ public class ConnDbOps {
         }
     }
 
+
     public List<String> getProjectsForUser(int userId) {
         List<String> projectNames = new ArrayList<>();
         String sql = "SELECT project_name FROM projects WHERE user_id = ?";
@@ -143,5 +264,4 @@ public class ConnDbOps {
 
         return projectNames;
     }
-
 }

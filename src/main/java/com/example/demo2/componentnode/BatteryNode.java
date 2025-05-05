@@ -27,7 +27,6 @@ public class BatteryNode extends Group {
             this.getChildren().add(positive);
             this.setLayoutX(batteryModel.getComponentX());
             this.setLayoutY(batteryModel.getComponentY());
-            System.out.println(this.getLayoutX());
         }
     }
 
