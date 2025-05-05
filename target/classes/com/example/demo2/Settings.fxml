@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo2.SettingsController">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo2.SettingsController">
 
     <!-- VBox to organize everything vertically -->
     <VBox layoutX="50.0" layoutY="30.0" spacing="20" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
@@ -36,7 +36,7 @@
                <children>
             
                     <!-- Back Button -->
-                    <Button fx:id="backButton" onAction="#goBack" prefHeight="25.0" prefWidth="148.0" text="🔙 Back to Home" />
+                    <Button fx:id="backButton" onAction="#goBack" prefHeight="38.0" prefWidth="168.0" text="🔙 Back to Home" />
                </children>
             </VBox>
          </children>

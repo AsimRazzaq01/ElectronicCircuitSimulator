@@ -97,7 +97,7 @@ public class LandingPageController {
 
     private void openProject(String projectName) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("project-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("Project-view.fxml"));
             Parent root = loader.load();
 
             // Get the controller and set project name
@@ -105,7 +105,8 @@ public class LandingPageController {
             projectController.setProjectName(projectName);
 
             Stage stage = (Stage) newProjectButton.getScene().getWindow();
-            stage.setScene(new Scene(root));
+            stage.setResizable(true);
+            stage.setScene(new Scene(root, 1280, 720));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -118,13 +119,10 @@ public class LandingPageController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("Settings.fxml"));
             Parent root = loader.load();
-
-            SettingsController controller = loader.getController();
-            controller.start();  // SettingsController will also read from Session
-
-            Stage stage = (Stage) settingsButton.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
+            Stage stage = (Stage) logoutButton.getScene().getWindow();
+            Scene scene = new Scene(root, 1200, 720); // width: 680, height: 400
+            stage.setScene(scene);
+            stage.setResizable(false);
         } catch (IOException e) {
             e.printStackTrace();
         }
