@@ -2,6 +2,9 @@ package com.example.demo2;
 
 import com.example.demo2.componentmodel.BatteryModel;
 import com.example.demo2.componentmodel.Component;
+import com.example.demo2.componentnode.BatteryNode;
+import com.example.demo2.componentnode.TerminalNode;
+import com.example.demo2.projectactions.ProjectActions;
 import javafx.scene.Node;
 
 import java.util.ArrayList;
@@ -12,7 +15,8 @@ public class Project {
     private final int PROJECT_ID;
     private final String PROJECT_NAME;
     private final HashMap<Component, Node> PROJECT_COMPONENTS;
-    private final ArrayList<BatteryModel> BATTERY_LIST;
+    private final HashMap<BatteryModel, BatteryNode> BATTERY_LIST;
+    private final ArrayList<TerminalNode> TERMINAL_LIST;
     Stack<ProjectActions> undoStack;
     Stack<ProjectActions> redoStack;
 
@@ -20,7 +24,8 @@ public class Project {
         PROJECT_ID = id;
         PROJECT_NAME = name;
         PROJECT_COMPONENTS = new HashMap<>();
-        BATTERY_LIST = new ArrayList<>();
+        BATTERY_LIST = new HashMap<>();
+        TERMINAL_LIST = new ArrayList<>();
         undoStack = new Stack<>();
         redoStack = new Stack<>();
     }
@@ -45,19 +50,19 @@ public class Project {
         return redoStack;
     }
 
-    void addComponent(Component component, Node node) {
+    public void addComponent(Component component, Node node) {
         PROJECT_COMPONENTS.put(component, node);
     }
 
-    void removeComponent(Component component) {
+    public void removeComponent(Component component) {
         PROJECT_COMPONENTS.remove(component);
     }
 
-    void addToUndoStack(ProjectActions action) {
+    public void addToUndoStack(ProjectActions action) {
         undoStack.push(action);
     }
 
-    void addToRedoStack(ProjectActions action) {
+    public void addToRedoStack(ProjectActions action) {
         redoStack.push(action);
     }
 

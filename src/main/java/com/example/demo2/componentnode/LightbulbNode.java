@@ -19,7 +19,11 @@ public class LightbulbNode extends Group {
             lightbulbImageView.setFitWidth(70);
             lightbulbImageView.setPreserveRatio(true);
             lightbulbModel = new LightbulbModel(x, y);
+            TerminalNode negative = new TerminalNode(lightbulbModel, 62, 95, "Negative");
+            TerminalNode positive = new TerminalNode(lightbulbModel, 35, 125, "Positive");
             this.getChildren().add(lightbulbImageView);
+            this.getChildren().add(negative);
+            this.getChildren().add(positive);
             this.setLayoutX(lightbulbModel.getComponentX());
             this.setLayoutY(lightbulbModel.getComponentY());
         }
@@ -34,7 +38,11 @@ public class LightbulbNode extends Group {
             lightbulbImageView.setPreserveRatio(true);
             lightbulbImageView.setPickOnBounds(true);
             lightbulbModel = new LightbulbModel(x, y, r);
+            TerminalNode negative = new TerminalNode(lightbulbModel, 62, 95, "Negative");
+            TerminalNode positive = new TerminalNode(lightbulbModel, 35, 125, "Positive");
             this.getChildren().add(lightbulbImageView);
+            this.getChildren().add(negative);
+            this.getChildren().add(positive);
             this.setLayoutX(lightbulbModel.getComponentX());
             this.setLayoutY(lightbulbModel.getComponentY());
         }

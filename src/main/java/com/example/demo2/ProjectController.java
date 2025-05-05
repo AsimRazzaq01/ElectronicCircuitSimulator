@@ -2,25 +2,31 @@ package com.example.demo2;
 
 import com.example.demo2.componentmodel.*;
 import com.example.demo2.componentnode.*;
+import com.example.demo2.projectactions.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Slider;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ProjectController {
     @FXML
@@ -187,25 +193,9 @@ public class ProjectController {
 
     @FXML
     protected void logout() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginRegister.fxml"));
-        Parent root = loader.load();
-        Stage stage = (Stage) logoutButton.getScene().getWindow();
-        Scene scene = new Scene(root, 680, 400); // width: 680, height: 400
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.centerOnScreen();
-        stage.show();
-    }
-
-    @FXML
-    protected void returnHome() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("LandingPage.fxml"));
-        Parent root = loader.load();
-        Stage stage = (Stage) logoutButton.getScene().getWindow();
-        Scene scene = new Scene(root, 1280, 720); // width: 680, height: 400
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
+        Scene scene = this.logoutButton.getScene();
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("LoginRegister.fxml"));
+        scene.setRoot(fxmlLoader.load());
     }
 
     private void adjustComponentZoomScale(double zoomScale) {
@@ -356,16 +346,26 @@ public class ProjectController {
 
     public void makeDraggable(Node componentNode, Component component) {
         Node canvas = canvasScrollPane.getContent();
+        //Needs to be a different memory address for every time component is dragged
+        final MoveComponent[] moveComponent = new MoveComponent[1];
 
         componentNode.setOnMousePressed(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                 //Gets the coordinates of the cursor within the canvasPane
                 Point2D cursorInPane = canvas.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
+                moveComponent[0] = new MoveComponent(currentProject, componentNode, component);
+
+                moveComponent[0].setInitialX(component.getComponentX());
+                moveComponent[0].setInitialY(component.getComponentY());
+
                 component.setComponentX((cursorInPane.getX() / zoomScale) - componentNode.getLayoutX());
                 component.setComponentY((cursorInPane.getY() / zoomScale) - componentNode.getLayoutY());
                 canvasScrollPane.setPannable(false);
                 componentNode.toFront();
+            }
+            if (mouseEvent.getButton() == MouseButton.SECONDARY) {
+                openComponentMenu(componentNode, component);
             }
         });
 
@@ -379,7 +379,7 @@ public class ProjectController {
                 //The position of the component can only be in 0 and 1528 for x and 0 and 842.5 for y
                 //The new coordinate values are calculated by getting the maximum value of 0 and the minimum value of the new calculated coordinates and the maximum possible value
                 //Maximum value is determined by the size of the canvas - the size of the component
-                double newComponentX = Math.max(0, Math.min(potentialNewX, (canvasPane.getPrefWidth() - componentNode.getLayoutBounds().getWidth())));
+                double newComponentX = Math.max(0, Math.min(potentialNewX, (canvasPane.getPrefWidth() - componentNode.getLayoutBounds().getWidth() - 1)));
                 double newComponentY = Math.max(0, Math.min(potentialNewY, (canvasPane.getPrefHeight() - componentNode.getLayoutBounds().getHeight())));
 
                 //Set the new position of the component
@@ -391,24 +391,48 @@ public class ProjectController {
         componentNode.setOnMouseReleased(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                 canvasScrollPane.setPannable(true);
-                component.setComponentX(componentNode.getLayoutX());
-                component.setComponentY(componentNode.getLayoutY());
+
+                moveComponent[0].setNewX(componentNode.getLayoutX());
+                moveComponent[0].setNewY(componentNode.getLayoutY());
+
+                moveComponent[0].performAction();
+
+                //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
+                if (!currentProject.getRedoStack().isEmpty()) {
+                    currentProject.clearRedoStack();
+                    redoButton.setDisable(true);
+                }
             }
         });
     }
 
-    public void makeWireDraggable(WireNode wire, Component wireComponent) {
+    public void makeWireDraggable(WireNode wire) {
         Node canvas = canvasScrollPane.getContent();
-        WireTerminalNode leftTerminal = wire.getLeftTerminalNode();
-        WireTerminalNode rightTerminal = wire.getRightTerminalNode();
-        WireModel wireModel = wire.getWireModel();
+        TerminalNode leftTerminal = wire.getLeftTerminalNode();
+        TerminalNode rightTerminal = wire.getRightTerminalNode();
 
         final Point2D[] cursorToStartOffset = new Point2D[1];
         final Point2D[] cursorToEndOffset = new Point2D[1];
 
+        final MoveWire[] moveWire = new MoveWire[1];
+
         wire.setOnMousePressed(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                 Point2D cursorInPane = canvas.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+
+                moveWire[0] = new MoveWire(currentProject, wire, leftTerminal, rightTerminal);
+
+                moveWire[0].setInitialStartX(wire.getStartX());
+                moveWire[0].setInitialStartY(wire.getStartY());
+                moveWire[0].setInitialEndX(wire.getEndX());
+                moveWire[0].setInitialEndY(wire.getEndY());
+
+                moveWire[0].setInitialNegativeX(leftTerminal.getCenterX());
+                moveWire[0].setInitialNegativeY(leftTerminal.getCenterY());
+
+                moveWire[0].setInitialPositiveX(rightTerminal.getCenterX());
+                moveWire[0].setInitialPositiveY(rightTerminal.getCenterY());
+
                 double cursorX = cursorInPane.getX() / zoomScale;
                 double cursorY = cursorInPane.getY() / zoomScale;
 
@@ -420,6 +444,9 @@ public class ProjectController {
                 wire.toFront();
                 leftTerminal.toFront();
                 rightTerminal.toFront();
+            }
+            if (mouseEvent.getButton() == MouseButton.SECONDARY) {
+                openComponentMenu(wire, wire.getWireModel());
             }
         });
 
@@ -472,10 +499,25 @@ public class ProjectController {
         wire.setOnMouseReleased(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                 canvasScrollPane.setPannable(true);
-                wireModel.setComponentX(wire.getStartX() - 12.5);
-                wireModel.setComponentY(wire.getStartY() - 12.5);
-                wireModel.setRightSideX(wire.getEndX() + 12.5);
-                wireModel.setRightSideY(wire.getEndY() - 12.5);
+
+                moveWire[0].setNewStartX(wire.getStartX());
+                moveWire[0].setNewStartY(wire.getStartY());
+                moveWire[0].setNewEndX(wire.getEndX());
+                moveWire[0].setNewEndY(wire.getEndY());
+
+                moveWire[0].setNewNegativeX(leftTerminal.getCenterX());
+                moveWire[0].setNewNegativeY(leftTerminal.getCenterY());
+
+                moveWire[0].setNewPositiveX(rightTerminal.getCenterX());
+                moveWire[0].setNewPositiveY(rightTerminal.getCenterY());
+
+                moveWire[0].performAction();
+
+                //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
+                if (!currentProject.getRedoStack().isEmpty()) {
+                    currentProject.clearRedoStack();
+                    redoButton.setDisable(true);
+                }
 
                 leftTerminal.toBack();
                 rightTerminal.toBack();
@@ -484,15 +526,26 @@ public class ProjectController {
         });
     }
 
-    public void makeWireTerminalDraggable(WireTerminalNode leftTerminal, WireTerminalNode rightTerminal, WireNode wire) {
+    public void makeWireTerminalDraggable(TerminalNode leftTerminal, TerminalNode rightTerminal, WireNode wire) {
         Node canvas = canvasScrollPane.getContent();
-        WireModel wireModel = wire.getWireModel();
+
+        final MoveWireTerminal[] leftSide = new MoveWireTerminal[1];
+        final MoveWireTerminal[] rightSide = new MoveWireTerminal[1];
 
         final Point2D[] cursorLeftTerminalOffset = new Point2D[1];
         final Point2D[] cursorRightTerminalOffset = new Point2D[1];
 
         leftTerminal.setOnMousePressed(mouseEvent -> {
             Point2D cursorInPane = canvas.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+
+            leftSide[0] = new MoveWireTerminal(currentProject, wire, leftTerminal);
+
+            leftSide[0].setInitialTerminalX(leftTerminal.getCenterX());
+            leftSide[0].setInitialTerminalY(leftTerminal.getCenterY());
+
+            leftSide[0].setInitialWireSideX(wire.getStartX());
+            leftSide[0].setInitialWireSideY(wire.getStartY());
+
             double cursorX = cursorInPane.getX() / zoomScale;
             double cursorY = cursorInPane.getY() / zoomScale;
 
@@ -535,10 +588,20 @@ public class ProjectController {
         leftTerminal.setOnMouseReleased(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                 canvasScrollPane.setPannable(true);
-                wireModel.setComponentX(wire.getStartX() - 12.5);
-                wireModel.setComponentY(wire.getStartY() - 12.5);
-                wireModel.setRightSideX(wire.getEndX() + 12.5);
-                wireModel.setRightSideY(wire.getEndY() - 12.5);
+
+                leftSide[0].setNewTerminalX(leftTerminal.getCenterX());
+                leftSide[0].setNewTerminalY(leftTerminal.getCenterY());
+
+                leftSide[0].setNewWireSideX(wire.getStartX());
+                leftSide[0].setNewWireSideY(wire.getStartY());
+
+                leftSide[0].performAction();
+
+                //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
+                if (!currentProject.getRedoStack().isEmpty()) {
+                    currentProject.clearRedoStack();
+                    redoButton.setDisable(true);
+                }
 
                 leftTerminal.toBack();
                 rightTerminal.toBack();
@@ -548,6 +611,15 @@ public class ProjectController {
 
         rightTerminal.setOnMousePressed(mouseEvent -> {
             Point2D cursorInPane = canvas.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
+
+            rightSide[0] = new MoveWireTerminal(currentProject, wire, rightTerminal);
+
+            rightSide[0].setInitialTerminalX(rightTerminal.getCenterX());
+            rightSide[0].setInitialTerminalY(rightTerminal.getCenterY());
+
+            rightSide[0].setInitialWireSideX(wire.getEndX());
+            rightSide[0].setInitialWireSideY(wire.getEndY());
+
             double cursorX = cursorInPane.getX() / zoomScale;
             double cursorY = cursorInPane.getY() / zoomScale;
 
@@ -591,16 +663,260 @@ public class ProjectController {
         rightTerminal.setOnMouseReleased(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                 canvasScrollPane.setPannable(true);
-                wireModel.setComponentX(wire.getStartX() - 12.5);
-                wireModel.setComponentY(wire.getStartY() - 12.5);
-                wireModel.setRightSideX(wire.getEndX() + 12.5);
-                wireModel.setRightSideY(wire.getEndY() - 12.5);
+
+                rightSide[0].setNewTerminalX(rightTerminal.getCenterX());
+                rightSide[0].setNewTerminalY(rightTerminal.getCenterY());
+
+                rightSide[0].setNewWireSideX(wire.getEndX());
+                rightSide[0].setNewWireSideY(wire.getEndY());
+
+                rightSide[0].performAction();
+
+                //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
+                if (!currentProject.getRedoStack().isEmpty()) {
+                    currentProject.clearRedoStack();
+                    redoButton.setDisable(true);
+                }
 
                 leftTerminal.toBack();
                 rightTerminal.toBack();
                 wire.toBack();
             }
         });
+    }
+
+    private void openComponentMenu(Node componentNode, Component component) {
+        Dialog<Void> componentDialog = new Dialog<>();
+        componentDialog.setTitle("Edit " + component.getComponentType());
+
+        componentDialog.getDialogPane().setStyle("-fx-background-color: #6abce2");
+
+        ButtonType okType = new ButtonType("Done", ButtonBar.ButtonData.OK_DONE);
+        componentDialog.getDialogPane().getButtonTypes().add(okType);
+
+        VBox menuVbox = new VBox();
+
+        VBox headerVbox = new VBox();
+        headerVbox.setStyle(("-fx-background-color: #E0E0E0;"));
+        headerVbox.setPrefHeight(45);
+        headerVbox.setAlignment(Pos.CENTER_LEFT);
+        headerVbox.setPadding(new Insets(0,10,0,10));
+        Label headerLabel = new Label();
+        headerLabel.setStyle("-fx-font-family: System; -fx-font-weight: bold; -fx-font-size: 18px;");
+        headerVbox.getChildren().add(headerLabel);
+
+        Button updateValueButton;
+
+        if (!Objects.equals(component.getComponentType(), "Switch") && !Objects.equals(component.getComponentType(), "Wire")) {
+            menuVbox.setPrefWidth(300);
+            menuVbox.setPrefHeight(180);
+            menuVbox.setAlignment(Pos.TOP_CENTER);
+            menuVbox.setPadding(new Insets(0,0,0,0));
+
+            headerLabel.setText("Enter new value");
+
+            VBox subheaderVbox = new VBox();
+            subheaderVbox.setStyle(("-fx-background-color: #F6F6F6;"));
+            subheaderVbox.setPrefHeight(30);
+            subheaderVbox.setAlignment(Pos.CENTER_LEFT);
+            subheaderVbox.setPadding(new Insets(0,10,0,10));
+            Label subheaderLabel = new Label();
+            subheaderLabel.setStyle("-fx-font-family: System; -fx-font-size: 15px;");
+            subheaderVbox.getChildren().add(subheaderLabel);
+
+            HBox valueHbox = new HBox();
+            valueHbox.setStyle(("-fx-background-color: #F6F6F6;"));
+            VBox.setVgrow(valueHbox, Priority.ALWAYS);
+            valueHbox.setPrefHeight(45);
+            valueHbox.setSpacing(10);
+            valueHbox.setAlignment(Pos.CENTER_LEFT);
+            valueHbox.setPadding(new Insets(0,10,0,10));
+            TextField valueTextField = new TextField();
+            valueTextField.setPromptText("Value must be between 0 and 120");
+            valueTextField.setPrefWidth(235);
+            updateValueButton = new Button("Update");
+            updateValueButton.setPrefWidth(80);
+
+            valueHbox.getChildren().addAll(valueTextField, updateValueButton);
+
+            switch(component.getComponentType()) {
+                case "Battery" -> {
+                    BatteryModel batteryModel = (BatteryModel) component;
+                    subheaderLabel.setText("Battery Voltage (0 - 120 Volts)");
+                    valueTextField.setText(String.valueOf(batteryModel.getVoltage()));
+                    updateValueButton.setOnAction(_ -> {
+                        Pattern p = Pattern.compile("^\\d*\\.?\\d*$");
+
+                        double voltage;
+                        try {
+                            voltage = Double.parseDouble(valueTextField.getText());
+                        } catch (NumberFormatException e) {
+                            valueTextField.setText(String.valueOf(batteryModel.getVoltage()));
+                            return;
+                        }
+
+                        Matcher matcher = p.matcher(String.valueOf(voltage));
+                        if (voltage >= 0 && voltage <= 120.0 && matcher.find()) {
+                            ModifyComponent modifyBattery = new ModifyComponent(currentProject, batteryModel, batteryModel.getVoltage(), voltage);
+                            modifyBattery.performAction();
+
+                            if (!currentProject.getRedoStack().isEmpty()) {
+                                currentProject.clearRedoStack();
+                                redoButton.setDisable(true);
+                            }
+
+                            valueTextField.setText(batteryModel.getVoltage() + "");
+                        }
+                        else {
+                            valueTextField.setText(String.valueOf(batteryModel.getVoltage()));
+                        }
+                    });
+                }
+                case "Resistor" -> {
+                    ResistorModel resistorModel = (ResistorModel) component;
+                    subheaderLabel.setText("Resistor Resistance (0 - 120 Ohms)");
+                    valueTextField.setText(String.valueOf(resistorModel.getResistance()));
+                    updateValueButton.setOnAction(_ -> {
+                        Pattern p = Pattern.compile("^\\d*\\.?\\d*$");
+
+                        double resistance;
+                        try {
+                            resistance = Double.parseDouble(valueTextField.getText());
+                        } catch (NumberFormatException e) {
+                            valueTextField.setText(String.valueOf(resistorModel.getResistance()));
+                            return;
+                        }
+
+                        Matcher matcher = p.matcher(String.valueOf(resistance));
+                        if (resistance >= 0 && resistance <= 120.0 && matcher.find()) {
+                            ModifyComponent modifyResistor = new ModifyComponent(currentProject, resistorModel, resistorModel.getResistance(), resistance);
+                            modifyResistor.performAction();
+
+                            if (!currentProject.getRedoStack().isEmpty()) {
+                                currentProject.clearRedoStack();
+                                redoButton.setDisable(true);
+                            }
+
+                            valueTextField.setText(resistorModel.getResistance() + "");
+                        }
+                        else {
+                            valueTextField.setText(String.valueOf(resistorModel.getResistance()));
+                        }
+                    });
+                }
+                case "Light bulb" -> {
+                    LightbulbModel lightbulbModel = (LightbulbModel) component;
+                    subheaderLabel.setText("Light Bulb Resistance (0 - 120 Ohms)");
+                    valueTextField.setText(String.valueOf(lightbulbModel.getResistance()));
+                    updateValueButton.setOnAction(_ -> {
+                        Pattern p = Pattern.compile("^\\d*\\.?\\d*$");
+
+                        double resistance;
+                        try {
+                            resistance = Double.parseDouble(valueTextField.getText());
+                        } catch (NumberFormatException e) {
+                            valueTextField.setText(String.valueOf(lightbulbModel.getResistance()));
+                            return;
+                        }
+
+                        Matcher matcher = p.matcher(String.valueOf(resistance));
+                        if (resistance >= 0 && resistance <= 120.0 && matcher.find()) {
+                            ModifyComponent modifyLightbulb = new ModifyComponent(currentProject, lightbulbModel, lightbulbModel.getResistance(), resistance);
+                            modifyLightbulb.performAction();
+
+                            if (!currentProject.getRedoStack().isEmpty()) {
+                                currentProject.clearRedoStack();
+                                redoButton.setDisable(true);
+                            }
+
+                            valueTextField.setText(lightbulbModel.getResistance() + "");
+                        }
+                        else {
+                            valueTextField.setText(String.valueOf(lightbulbModel.getResistance()));
+                        }
+                    });
+                }
+            }
+
+            menuVbox.getChildren().addAll(headerVbox, subheaderVbox, valueHbox);
+
+        }
+        else if (Objects.equals(component.getComponentType(), "Switch")) {
+            headerLabel.setText("Edit " + component.getComponentType());
+
+            menuVbox.setPrefWidth(300);
+            menuVbox.setPrefHeight(100);
+            menuVbox.setAlignment(Pos.TOP_CENTER);
+            menuVbox.setPadding(new Insets(0,0,0,0));
+
+            HBox stateHbox = new HBox();
+            stateHbox.setStyle(("-fx-background-color: #F6F6F6;"));
+            stateHbox.setPrefHeight(35);
+            stateHbox.setAlignment(Pos.CENTER);
+            stateHbox.setSpacing(20);
+            Button stateButton = new Button("");
+            CircuitSwitchModel switchModel = (CircuitSwitchModel) component;
+            CircuitSwitchNode switchNode = (CircuitSwitchNode) componentNode;
+
+            if (switchModel.isActive()) {
+                stateButton.setText("Close");
+            }
+            else {
+                stateButton.setText("Open");
+            }
+
+            stateHbox.getChildren().add(stateButton);
+
+            stateButton.setOnAction(_ -> {
+                ModifySwitchState switchState = new ModifySwitchState(currentProject, switchNode, switchModel, switchModel.isActive(), !switchModel.isActive());
+                switchState.performAction();
+
+                if (!currentProject.getRedoStack().isEmpty()) {
+                    currentProject.clearRedoStack();
+                    redoButton.setDisable(true);
+                }
+
+                if (switchModel.isActive()) {
+                    stateButton.setText("Close");
+                }
+                else {
+                    stateButton.setText("Open");
+                }
+            });
+
+            menuVbox.getChildren().addAll(headerVbox, stateHbox);
+        }
+        else {
+            menuVbox.setPrefWidth(300);
+            menuVbox.setPrefHeight(80);
+            menuVbox.setAlignment(Pos.TOP_CENTER);
+            menuVbox.setPadding(new Insets(0,0,0,0));
+
+            headerLabel.setText("Delete " + component.getComponentType());
+
+            menuVbox.getChildren().add(headerVbox);
+        }
+
+        HBox optionsHbox = new HBox();
+        optionsHbox.setStyle(("-fx-background-color: #F6F6F6;"));
+        optionsHbox.setPrefHeight(35);
+        optionsHbox.setAlignment(Pos.CENTER);
+        optionsHbox.setSpacing(20);
+        Button deleteButton = new Button("Delete");
+
+        deleteButton.setOnAction(_ -> {
+            RemoveComponent removeComponent = new RemoveComponent(currentProject, canvasPane, componentNode, component);
+            removeComponent.performAction();
+            componentDialog.close();
+        });
+
+        optionsHbox.getChildren().add(deleteButton);
+
+        menuVbox.getChildren().add(optionsHbox);
+
+        componentDialog.getDialogPane().setContent(menuVbox);
+
+        componentDialog.showAndWait();
     }
 
     public void addWire(double leftX, double y) {
@@ -611,8 +927,8 @@ public class ProjectController {
         WireNode wire = new WireNode(leftX, y, rightX, y);
         WireModel wireModel = wire.getWireModel();
 
-        WireTerminalNode leftTerminal = wire.getLeftTerminalNode();
-        WireTerminalNode rightTerminal = wire.getRightTerminalNode();
+        TerminalNode leftTerminal = wire.getLeftTerminalNode();
+        TerminalNode rightTerminal = wire.getRightTerminalNode();
 
         if (rightX > canvasPane.getPrefWidth()) {
             double correctedLeftX = canvasPane.getPrefWidth() - 100.0;
@@ -646,7 +962,7 @@ public class ProjectController {
 
         undoButton.setDisable(false);
         adjustComponentZoomScale(zoomScale);
-        makeWireDraggable(wire, wireModel);
+        makeWireDraggable(wire);
         makeWireTerminalDraggable(leftTerminal, rightTerminal, wire);
     }
 
@@ -720,16 +1036,6 @@ public class ProjectController {
         makeDraggable(resistor, resistorModel);
     }
 
-    public void setSwitchFunctionality(CircuitSwitchNode circuitSwitch) {
-        circuitSwitch.setOnMouseClicked(mouseEvent -> {
-            CircuitSwitchModel circuitSwitchModel = circuitSwitch.getSwitchModel();
-            if (mouseEvent.isStillSincePress()) {
-                circuitSwitchModel.setActive();
-                circuitSwitch.setSwitchImageState();
-            }
-        });
-    }
-
     public void addCircuitSwitch(double x, double y) {
         CircuitSwitchNode circuitSwitch = new CircuitSwitchNode(x, y);
         CircuitSwitchModel circuitSwitchModel = circuitSwitch.getSwitchModel();
@@ -759,8 +1065,6 @@ public class ProjectController {
             currentProject.clearRedoStack();
             redoButton.setDisable(true);
         }
-
-        setSwitchFunctionality(circuitSwitch);
 
         undoButton.setDisable(false);
         adjustComponentZoomScale(zoomScale);

@@ -6,9 +6,9 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
 
 public class WireNode extends Line {
-    private WireModel wireModel;
-    private WireTerminalNode leftWireTerminalNode;
-    private WireTerminalNode rightWireTerminalNode;
+    private final WireModel wireModel;
+    private final TerminalNode leftTerminalNode;
+    private final TerminalNode rightTerminalNode;
     double strokeOffsetLeftCorner = 12.5;
     double strokeOffsetRight = -12.5;
 
@@ -19,8 +19,8 @@ public class WireNode extends Line {
         wireModel = new WireModel(startX, startY, endX, endY);
         this.setStartX(startX + strokeOffsetLeftCorner);
         this.setStartY(startY + strokeOffsetLeftCorner);
-        leftWireTerminalNode = new WireTerminalNode(getWireModel(), startX + strokeOffsetLeftCorner, startY + strokeOffsetLeftCorner, "Negative");
-        rightWireTerminalNode = new WireTerminalNode(getWireModel(), endX + strokeOffsetRight, endY + strokeOffsetLeftCorner, "Positive");
+        leftTerminalNode = new TerminalNode(getWireModel(), startX + strokeOffsetLeftCorner, startY + strokeOffsetLeftCorner, "Negative");
+        rightTerminalNode = new TerminalNode(getWireModel(), endX + strokeOffsetRight, endY + strokeOffsetLeftCorner, "Positive");
         this.setEndX(endX + strokeOffsetRight);
         this.setEndY(endY + strokeOffsetLeftCorner);
     }
@@ -29,11 +29,11 @@ public class WireNode extends Line {
         return wireModel;
     }
 
-    public WireTerminalNode getLeftTerminalNode() {
-        return leftWireTerminalNode;
+    public TerminalNode getLeftTerminalNode() {
+        return leftTerminalNode;
     }
 
-    public WireTerminalNode getRightTerminalNode() {
-        return rightWireTerminalNode;
+    public TerminalNode getRightTerminalNode() {
+        return rightTerminalNode;
     }
 }

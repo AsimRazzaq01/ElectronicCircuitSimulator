@@ -1,7 +1,8 @@
-package com.example.demo2;
+package com.example.demo2.projectactions;
 
+import com.example.demo2.Project;
 import com.example.demo2.componentmodel.Component;
-import com.example.demo2.componentnode.WireTerminalNode;
+import com.example.demo2.componentnode.TerminalNode;
 import com.example.demo2.componentnode.WireNode;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -13,7 +14,7 @@ public class AddComponent implements ProjectActions {
     private final Component COMPONENT;
 
 
-    AddComponent(Project currentProject, Pane currentCanvas, Node componentNode, Component com) {
+    public AddComponent(Project currentProject, Pane currentCanvas, Node componentNode, Component com) {
         PROJECT = currentProject;
         PROJECT_CANVAS = currentCanvas;
         COMPONENT_NODE = componentNode;
@@ -22,10 +23,11 @@ public class AddComponent implements ProjectActions {
 
     @Override
     public void performAction() {
+        //NOTE: Write to db first, if insert is successful, then perform action
         PROJECT_CANVAS.getChildren().add(COMPONENT_NODE);
         if (COMPONENT_NODE instanceof WireNode) {
-            WireTerminalNode leftTerminal = ((WireNode) COMPONENT_NODE).getLeftTerminalNode();
-            WireTerminalNode rightTerminal = ((WireNode) COMPONENT_NODE).getRightTerminalNode();
+            TerminalNode leftTerminal = ((WireNode) COMPONENT_NODE).getLeftTerminalNode();
+            TerminalNode rightTerminal = ((WireNode) COMPONENT_NODE).getRightTerminalNode();
             PROJECT_CANVAS.getChildren().add(leftTerminal);
             PROJECT_CANVAS.getChildren().add(rightTerminal);
         }
@@ -38,8 +40,8 @@ public class AddComponent implements ProjectActions {
     public void undo() {
         PROJECT_CANVAS.getChildren().remove(COMPONENT_NODE);
         if (COMPONENT_NODE instanceof WireNode) {
-            WireTerminalNode leftTerminal = ((WireNode) COMPONENT_NODE).getLeftTerminalNode();
-            WireTerminalNode rightTerminal = ((WireNode) COMPONENT_NODE).getRightTerminalNode();
+            TerminalNode leftTerminal = ((WireNode) COMPONENT_NODE).getLeftTerminalNode();
+            TerminalNode rightTerminal = ((WireNode) COMPONENT_NODE).getRightTerminalNode();
             PROJECT_CANVAS.getChildren().remove(leftTerminal);
             PROJECT_CANVAS.getChildren().remove(rightTerminal);
         }

@@ -5,10 +5,10 @@ import com.example.demo2.componentmodel.TerminalModel;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-public class WireTerminalNode extends Circle {
+public class TerminalNode extends Circle {
     private TerminalModel terminalModel;
 
-    public WireTerminalNode(Component c, double centerX, double centerY, String charge) {
+    public TerminalNode(Component c, double centerX, double centerY, String charge) {
         this.setRadius(9);
         this.setCenterY(centerY);
         if (charge.equals("Positive")) {
