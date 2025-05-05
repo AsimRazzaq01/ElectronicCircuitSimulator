@@ -1,0 +1,61 @@
+//All the tables created in MySQL for reference
+
+CREATE TABLE users {
+	user_id INT AUTO_INCREMENT PRIMARY KEY,
+	username VARCHAR(255) NOT NULL UNIQUE,
+	password VARCHAR(255) NOT NULL,
+	email VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE projects (
+	project_id INT AUTO_INCREMENT PRIMARY KEY,
+	user_id INT NOT NULL,
+	project_name VARCHAR(255) NOT NULL,
+    // optional if we get time, maybe to sort the projects in the project view of last accessed
+	last_acessed TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE components (
+	component_id INT AUTO_INCREMENT PRIMARY KEY,
+	project_id INT NOT NULL,
+	component_type ENUM('Wire', 'Battery', 'Resistor', 'Switch', 'Light bulb') NOT NULL,
+	x_cord INT NOT NULL,
+	y_cord INT NOT NULL,
+	FOREIGN KEY (project_id) REFERENCES projects(project_id) ON DELETE CASCADE
+);
+
+CREATE TABLE batteries (
+	component_id INT PRIMARY KEY,
+	voltage FLOAT NOT NULL,
+	FOREIGN KEY (component_id) REFERENCES components(component_id) ON DELETE CASCADE
+);
+
+CREATE TABLE resistors (
+	component_id INT PRIMARY KEY,
+	resistance FLOAT NOT NULL,
+	FOREIGN KEY (component_id) REFERENCES components(component_id) ON DELETE CASCADE
+);
+
+CREATE TABLE light_bulbs (
+	component_id INT PRIMARY KEY,
+	resistance FLOAT NOT NULL,
+	FOREIGN KEY (component_id) REFERENCES components(component_id) ON DELETE CASCADE
+);
+
+CREATE TABLE switches (
+	component_id INT PRIMARY KEY,
+	is_active BOOLEAN NOT NULL,
+	FOREIGN KEY (component_id) REFERENCES components(component_id) ON DELETE CASCADE
+);
+
+CREATE TABLE wires (
+	component_id INT PRIMARY KEY,
+	rx_cord INT NOT NULL,
+	ry_cord INT NOT NULL,
+	FOREIGN KEY (component_id) REFERENCES components(component_id) ON DELETE CASCADE
+);
+
+
+
+
