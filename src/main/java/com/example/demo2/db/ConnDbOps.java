@@ -4,7 +4,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * ConnDbOps class ->  Database class for Microsoft Azure SQL db
+ */
 public class ConnDbOps {
     final String MYSQL_SERVER_URL = "jdbc:mysql://csc311mojica04.mysql.database.azure.com/";
     final String DB_URL = MYSQL_SERVER_URL + "DBname";
@@ -264,4 +266,4 @@ public class ConnDbOps {
 
         return projectNames;
     }
-}
+} // End ConnDbOps
