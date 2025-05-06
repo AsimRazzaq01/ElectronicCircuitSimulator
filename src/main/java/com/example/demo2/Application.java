@@ -6,6 +6,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * Application class -> start method to start project
+ */
 public class Application extends javafx.application.Application {
     @Override
     public void start(Stage stage) throws IOException {
@@ -21,4 +24,4 @@ public class Application extends javafx.application.Application {
         launch();
     }
 
-}
+} // End Application class

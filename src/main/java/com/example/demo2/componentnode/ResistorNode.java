@@ -8,9 +8,14 @@ import javafx.scene.image.ImageView;
 
 import java.net.URL;
 
+/**
+ * ResistorNode class -> 1 var  initialized from resistor Model class -> 2 methods , 1 get resistor method
+ */
 public class ResistorNode extends Group {
+    // Private variable - resistor class
     private ResistorModel resistorModel;
 
+    // ResistorNode method 1
     public ResistorNode(double x, double y) {
         URL imagePath = Project.class.getResource("component_sprites/resistor_default.png");
         if (imagePath != null) {
@@ -30,6 +35,7 @@ public class ResistorNode extends Group {
         }
     }
 
+    // ResistorNode method 2
     public ResistorNode(double x, double y, double r) {
         URL imagePath = Project.class.getResource("component_sprites/resistor_default.png");
         if (imagePath != null) {
@@ -49,7 +55,8 @@ public class ResistorNode extends Group {
         }
     }
 
+    // getter method
     public ResistorModel getResistorModel() {
         return resistorModel;
     }
-}
+} // End ResistorNode class

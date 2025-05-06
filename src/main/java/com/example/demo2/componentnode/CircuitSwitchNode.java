@@ -8,13 +8,19 @@ import javafx.scene.image.ImageView;
 
 import java.net.URL;
 
+/**
+ * CircuitSwitchNode class -> 3 private variable -> 1 var  initialized from switch Model class -> 2 methods , get/set switch method
+ */
 public class CircuitSwitchNode extends Group {
+    // Private variable - model class
     private CircuitSwitchModel switchModel;
 
+    // Private variables
     private Image CLOSED_SWITCH_IMAGE;
     private Image OPEN_SWITCH_IMAGE;
     private ImageView switchImageView;
 
+    // CircuitSwitchNode method 1
     public CircuitSwitchNode(double x, double y) {
         URL openSwitchPath = Project.class.getResource("component_sprites/switch_opened.png");
         URL closedSwitchPath = Project.class.getResource("component_sprites/switch_closed.png");
@@ -37,6 +43,7 @@ public class CircuitSwitchNode extends Group {
         }
     }
 
+    // CircuitSwitchNode method 2
     public CircuitSwitchNode(double x, double y, boolean active) {
         URL openSwitchPath = Project.class.getResource("component_sprites/switch_opened.png");
         URL closedSwitchPath = Project.class.getResource("component_sprites/switch_closed.png");
@@ -60,10 +67,12 @@ public class CircuitSwitchNode extends Group {
         }
     }
 
+    // getter method
     public CircuitSwitchModel getSwitchModel() {
         return switchModel;
     }
 
+    // setter method
     public void setSwitchImageState(boolean active) {
         if (active) {
             switchImageView.setImage(OPEN_SWITCH_IMAGE);
@@ -72,4 +81,4 @@ public class CircuitSwitchNode extends Group {
             switchImageView.setImage(CLOSED_SWITCH_IMAGE);
         }
     }
-}
+} // End CircuitSwitchNode class

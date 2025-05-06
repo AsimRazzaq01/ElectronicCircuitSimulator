@@ -5,12 +5,16 @@ import com.example.demo2.componentmodel.BatteryModel;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
 import java.net.URL;
 
+/**
+ * BatteryNode class -> 1 private variable initialized from battery Model class -> 2 methods , 1 get battery method
+ */
 public class BatteryNode extends Group {
+    // Private variable
     private BatteryModel batteryModel;
 
+    // BatteryNode method 1
     public BatteryNode(double x, double y) {
         URL imagePath = Project.class.getResource("component_sprites/battery.png");
         if (imagePath != null) {
@@ -30,6 +34,7 @@ public class BatteryNode extends Group {
         }
     }
 
+    // BatteryNode method 2
     public BatteryNode(double x, double y, double v) {
         URL IMAGE_PATH = Project.class.getResource("component_sprites/battery.png");
         if (IMAGE_PATH != null) {
@@ -49,7 +54,8 @@ public class BatteryNode extends Group {
         }
     }
 
+    // getter method
     public BatteryModel getBatteryModel() {
         return batteryModel;
     }
-}
+} // End BatteryNode class
