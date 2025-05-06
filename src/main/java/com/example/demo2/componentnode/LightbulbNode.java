@@ -8,9 +8,14 @@ import javafx.scene.image.ImageView;
 
 import java.net.URL;
 
+/**
+ * LightbulbNode class -> 1 var  initialized from lightbulb Model class -> 2 methods , 1 get lightbulb method
+ */
 public class LightbulbNode extends Group {
+    // Private variable - model class
     private LightbulbModel lightbulbModel;
 
+    // LightbulbNode method 1
     public LightbulbNode(double x, double y) {
         URL imagePath = Project.class.getResource("component_sprites/lightbulb.png");
         if (imagePath != null) {
@@ -29,6 +34,7 @@ public class LightbulbNode extends Group {
         }
     }
 
+    // LightbulbNode method 2
     public LightbulbNode(double x, double y, double r) {
         URL imagePath = Project.class.getResource("component_sprites/lightbulb.png");
         if (imagePath != null) {
@@ -48,7 +54,8 @@ public class LightbulbNode extends Group {
         }
     }
 
+    // getter method
     public LightbulbModel getLightbulbModel() {
         return lightbulbModel;
     }
-}
+} // End LightbulbNode class
