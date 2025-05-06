@@ -60,7 +60,6 @@ public class Project {
 
     public void addToUndoStack(ProjectActions action) {
         undoStack.push(action);
-        System.out.println(undoStack);
     }
 
     public void addToRedoStack(ProjectActions action) {
