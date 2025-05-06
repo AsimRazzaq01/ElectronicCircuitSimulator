@@ -3,6 +3,7 @@ package com.example.demo2.projectactions;
 import com.example.demo2.Project;
 import com.example.demo2.componentmodel.CircuitSwitchModel;
 import com.example.demo2.componentnode.CircuitSwitchNode;
+import com.example.demo2.db.ConnDbOps;
 
 public class ModifySwitchState implements ProjectActions {
     private final Project PROJECT;
@@ -21,6 +22,7 @@ public class ModifySwitchState implements ProjectActions {
 
     @Override
     public void performAction() {
+        ConnDbOps.updateSwitches(CIRCUIT_SWITCH, NEW_STATE);
         CIRCUIT_SWITCH.setActive(NEW_STATE);
         CIRCUIT_SWITCH_NODE.setSwitchImageState(NEW_STATE);
         PROJECT.addToUndoStack(this);
@@ -28,6 +30,7 @@ public class ModifySwitchState implements ProjectActions {
 
     @Override
     public void undo() {
+        ConnDbOps.updateSwitches(CIRCUIT_SWITCH, INITIAL_STATE);
         CIRCUIT_SWITCH.setActive(INITIAL_STATE);
         CIRCUIT_SWITCH_NODE.setSwitchImageState(INITIAL_STATE);
         PROJECT.addToRedoStack(this);

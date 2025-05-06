@@ -4,16 +4,15 @@ import com.example.demo2.db.ConnDbOps;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.PathTransition;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -21,11 +20,13 @@ import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class LoginRegisterController implements Initializable {
@@ -76,13 +77,43 @@ public class LoginRegisterController implements Initializable {
     }
 
     @FXML
-    void handleButton_login(ActionEvent event) {
+    void handleButton_login() {
         String email = textField_existing_email.getText();
         String password = textField_existing_pass.getText();
 
-        int userId = db.validateLoginAndGetUserId(email, password);
-        if (userId != -1) {
-            Session.loggedInUserId = userId; // Set user ID globally
+        Stage popupStage = new Stage();
+        popupStage.setTitle("Loading");
+        popupStage.setWidth(300);
+        popupStage.setHeight(200);
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.setResizable(false);
+        VBox popupVbox = new VBox();
+        popupVbox.setAlignment(Pos.CENTER);
+        Label headerLabel = new Label("Please wait");
+        headerLabel.setStyle("-fx-font-family: System; -fx-font-size: 25px; -fx-font-weight: bold;");
+        popupVbox.getChildren().add(headerLabel);
+        Scene popup = new Scene(popupVbox);
+        popupStage.setScene(popup);
+
+        //Perform login operation on task
+        Task<Integer> login = new Task<>() {
+
+            @Override
+            protected Integer call() throws Exception {
+                int userId = db.validateLoginAndGetUserId(email, password);
+
+                if (userId == -1) {
+                    throw new NullPointerException();
+                }
+                if (userId == -2) {
+                    throw new SQLException();
+                }
+                return userId;
+            }
+        };
+
+        login.setOnSucceeded(_ -> {
+            Session.loggedInUserId = login.getValue(); // Set user ID globally
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("LandingPage.fxml"));
                 Parent root = loader.load();
@@ -90,12 +121,26 @@ public class LoginRegisterController implements Initializable {
                 Scene scene = new Scene(root, 1200, 720); // width: 680, height: 400
                 stage.setScene(scene);
                 stage.setResizable(false);
-            } catch (IOException e) {
-                e.printStackTrace();
+                popupStage.close();
+            } catch (IOException _) {
             }
-        } else {
-            showAlert("Login Failed", "Invalid email or password.");
-        }
+        });
+
+        login.setOnFailed(_ -> {
+            popupStage.close();
+            if (login.getException() instanceof NullPointerException) {
+                showAlert("Login Failed", "Invalid email or password.");
+            }
+            if (login.getException() instanceof SQLException) {
+                showAlert("Login Failed", "Could not connect to server. Please try again later.");
+            }
+        });
+
+        Thread thread = new Thread(login);
+        thread.setDaemon(true);
+        thread.start();
+
+        popupStage.show();
     }
 
     @FXML
@@ -109,9 +154,50 @@ public class LoginRegisterController implements Initializable {
             return;
         }
 
-        db.insertUser(username, email, password);
-        showAlert("Account Created", "Registration successful! You can now log in.");
-        showExisting();
+        Stage popupStage = new Stage();
+        popupStage.setTitle("Loading");
+        popupStage.setWidth(300);
+        popupStage.setHeight(200);
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.setResizable(false);
+        VBox popupVbox = new VBox();
+        popupVbox.setAlignment(Pos.CENTER);
+        Label headerLabel = new Label("Please wait");
+        headerLabel.setStyle("-fx-font-family: System; -fx-font-size: 25px; -fx-font-weight: bold;");
+        popupVbox.getChildren().add(headerLabel);
+        Scene popup = new Scene(popupVbox);
+        popupStage.setScene(popup);
+
+        Task<Integer> createAccount = new Task<>() {
+
+            @Override
+            protected Integer call() throws Exception {
+                int status = db.insertUser(username, email, password);
+
+                if (status == -1) {
+                    throw new SQLException();
+                }
+                return status;
+            }
+        };
+
+        createAccount.setOnSucceeded(_ -> {
+            showAlert("Account Created", "Registration successful! You can now log in.");
+            showExisting();
+        });
+
+        createAccount.setOnFailed(_ -> {
+            popupStage.close();
+            if (createAccount.getException() instanceof SQLException) {
+                showAlert("Account Creation Failed", "Could not connect to server. Please try again later.");
+            }
+        });
+
+        Thread thread = new Thread(createAccount);
+        thread.setDaemon(true);
+        thread.start();
+
+        popupStage.show();
     }
 
     private void showAlert(String title, String message) {

@@ -4,6 +4,7 @@ import com.example.demo2.Project;
 import com.example.demo2.componentmodel.Component;
 import com.example.demo2.componentnode.TerminalNode;
 import com.example.demo2.componentnode.WireNode;
+import com.example.demo2.db.ConnDbOps;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
@@ -23,7 +24,6 @@ public class RemoveComponent implements ProjectActions{
 
     @Override
     public void performAction() {
-        //NOTE: Write to db first, if insert is successful, then perform action
         PROJECT_CANVAS.getChildren().remove(COMPONENT_NODE);
         if (COMPONENT_NODE instanceof WireNode) {
             TerminalNode leftTerminal = ((WireNode) COMPONENT_NODE).getLeftTerminalNode();
@@ -31,7 +31,9 @@ public class RemoveComponent implements ProjectActions{
             PROJECT_CANVAS.getChildren().remove(leftTerminal);
             PROJECT_CANVAS.getChildren().remove(rightTerminal);
         }
+        ConnDbOps.deleteComponent(COMPONENT);
         PROJECT.removeComponent(COMPONENT);
+        COMPONENT.setComponentID(-1);
 
         PROJECT.addToUndoStack(this);
     }
@@ -46,6 +48,7 @@ public class RemoveComponent implements ProjectActions{
             PROJECT_CANVAS.getChildren().add(rightTerminal);
         }
 
+        ConnDbOps.saveComponent(PROJECT, COMPONENT);
         PROJECT.addComponent(COMPONENT, COMPONENT_NODE);
 
         PROJECT.addToRedoStack(this);
