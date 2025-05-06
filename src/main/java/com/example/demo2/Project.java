@@ -34,7 +34,7 @@ public class Project {
         return PROJECT_NAME;
     }
 
-    int getProjectID() {
+    public int getProjectID() {
         return PROJECT_ID;
     }
 
@@ -60,6 +60,7 @@ public class Project {
 
     public void addToUndoStack(ProjectActions action) {
         undoStack.push(action);
+        System.out.println(undoStack);
     }
 
     public void addToRedoStack(ProjectActions action) {

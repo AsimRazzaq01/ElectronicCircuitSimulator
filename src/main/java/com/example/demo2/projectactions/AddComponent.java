@@ -4,6 +4,7 @@ import com.example.demo2.Project;
 import com.example.demo2.componentmodel.Component;
 import com.example.demo2.componentnode.TerminalNode;
 import com.example.demo2.componentnode.WireNode;
+import com.example.demo2.db.ConnDbOps;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
@@ -12,13 +13,15 @@ public class AddComponent implements ProjectActions {
     private final Pane PROJECT_CANVAS;
     private final Node COMPONENT_NODE;
     private final Component COMPONENT;
+    private final boolean loadedFromDB;
 
 
-    public AddComponent(Project currentProject, Pane currentCanvas, Node componentNode, Component com) {
+    public AddComponent(Project currentProject, Pane currentCanvas, Node componentNode, Component com, boolean db) {
         PROJECT = currentProject;
         PROJECT_CANVAS = currentCanvas;
         COMPONENT_NODE = componentNode;
         COMPONENT = com;
+        loadedFromDB = db;
     }
 
     @Override
@@ -31,9 +34,12 @@ public class AddComponent implements ProjectActions {
             PROJECT_CANVAS.getChildren().add(leftTerminal);
             PROJECT_CANVAS.getChildren().add(rightTerminal);
         }
-
+        ConnDbOps.saveComponent(PROJECT, COMPONENT);
         PROJECT.addComponent(COMPONENT, COMPONENT_NODE);
-        PROJECT.addToUndoStack(this);
+
+        if (!loadedFromDB) {
+            PROJECT.addToUndoStack(this);
+        }
     }
 
     @Override
@@ -45,7 +51,9 @@ public class AddComponent implements ProjectActions {
             PROJECT_CANVAS.getChildren().remove(leftTerminal);
             PROJECT_CANVAS.getChildren().remove(rightTerminal);
         }
+        ConnDbOps.deleteComponent(COMPONENT);
         PROJECT.removeComponent(COMPONENT);
+        COMPONENT.setComponentID(-1);
         PROJECT.addToRedoStack(this);
     }
 

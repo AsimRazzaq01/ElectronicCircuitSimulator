@@ -2,6 +2,7 @@ package com.example.demo2;
 
 import com.example.demo2.componentmodel.*;
 import com.example.demo2.componentnode.*;
+import com.example.demo2.db.ConnDbOps;
 import com.example.demo2.projectactions.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -24,6 +25,8 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,8 +34,6 @@ import java.util.regex.Pattern;
 public class ProjectController {
     @FXML
     private ScrollPane canvasScrollPane;
-    @FXML
-    private Button redoButton;
     @FXML
     private Pane canvasPane;
     @FXML
@@ -47,6 +48,10 @@ public class ProjectController {
     private Button zoomInButton;
     @FXML
     private Button undoButton;
+    @FXML
+    private Button saveButton;
+    @FXML
+    private Button redoButton;
     @FXML
     private Button homeButton;
     @FXML
@@ -65,13 +70,36 @@ public class ProjectController {
     private double zoomScale = 1.0;
     private Project currentProject;
 
-    public void setProjectName(String name) {
-        projectNameLabel.setText(name);
-    }
-
-
     void setCurrentProject(Project project) {
         currentProject = project;
+        HashMap<Component, Node> components = ConnDbOps.loadComponentsForProject(project.getProjectID());
+
+        for (Map.Entry<Component, Node> entry : components.entrySet()) {
+            Component component = entry.getKey();
+            Node componentNode = entry.getValue();
+            AddComponent addComponent;
+            switch (component.getComponentType()) {
+                case "Battery", "Resistor", "Light bulb", "Switch" -> {
+                    addComponent = new AddComponent(currentProject, canvasPane, componentNode, component, true);
+                    addComponent.performAction();
+
+                    adjustComponentZoomScale(zoomScale);
+                    makeDraggable(componentNode, component);
+                }
+                case "Wire" -> {
+                    addComponent = new AddComponent(currentProject, canvasPane, componentNode, component, true);
+                    addComponent.performAction();
+
+                    WireNode wireNode = (WireNode) componentNode;
+
+                    adjustComponentZoomScale(zoomScale);
+                    makeWireDraggable(wireNode);
+                    makeWireTerminalDraggable(wireNode.getLeftTerminalNode(), wireNode.getRightTerminalNode(), wireNode);
+                }
+            }
+        }
+
+        projectNameLabel.setText(project.getProjectName());
     }
 
     @FXML
@@ -193,8 +221,6 @@ public class ProjectController {
     @FXML
     public void initialize() {
         //Project data from database will be passed to the project view screen
-        setCurrentProject(new Project(101, "Test Project"));
-        projectNameLabel.setText(currentProject.getProjectName());
         loadComponentPaneImages();
         allowDragAndDrop();
         undoButton.setDisable(true);
@@ -212,6 +238,40 @@ public class ProjectController {
         stage.setResizable(false);
         stage.centerOnScreen();
         stage.show();
+    }
+
+    @FXML
+    protected void handleSaveButton() {
+        if (currentProject == null) {
+            System.out.println("Project is null!");
+            return;
+        }
+
+        int count = 0;
+
+        for (Map.Entry<Component, Node> entry : currentProject.getProjectComponents().entrySet()) {
+            Component model = entry.getKey();
+            Node view = entry.getValue();
+
+            if (model instanceof WireModel wireModel && view instanceof WireNode wireNode) {
+                // Update start and end points for wire
+                wireModel.setComponentX(wireNode.getStartX());
+                wireModel.setComponentY(wireNode.getStartY());
+                wireModel.setRightSideX(wireNode.getEndX());
+                wireModel.setRightSideY(wireNode.getEndY());
+
+            } else {
+                // Use layoutX/Y for normal components
+                model.setComponentX(view.getLayoutX());
+                model.setComponentY(view.getLayoutY());
+            }
+
+            // Save after model update
+            ConnDbOps.saveComponent(currentProject, model);
+            count++;
+        }
+
+        System.out.println("Success: " + count + " components attempted to save.");
     }
 
     private void adjustComponentZoomScale(double zoomScale) {
@@ -418,6 +478,8 @@ public class ProjectController {
                     currentProject.clearRedoStack();
                     redoButton.setDisable(true);
                 }
+
+                undoButton.setDisable(false);
             }
         });
     }
@@ -535,6 +597,8 @@ public class ProjectController {
                     redoButton.setDisable(true);
                 }
 
+                undoButton.setDisable(false);
+
                 leftTerminal.toBack();
                 rightTerminal.toBack();
                 wire.toBack();
@@ -619,6 +683,8 @@ public class ProjectController {
                     redoButton.setDisable(true);
                 }
 
+                undoButton.setDisable(false);
+
                 leftTerminal.toBack();
                 rightTerminal.toBack();
                 wire.toBack();
@@ -693,6 +759,8 @@ public class ProjectController {
                     currentProject.clearRedoStack();
                     redoButton.setDisable(true);
                 }
+
+                undoButton.setDisable(false);
 
                 leftTerminal.toBack();
                 rightTerminal.toBack();
@@ -967,7 +1035,7 @@ public class ProjectController {
             rightTerminal.setTerminalY(wire.getEndY());
         }
 
-        AddComponent add = new AddComponent(currentProject, canvasPane, wire, wireModel);
+        AddComponent add = new AddComponent(currentProject, canvasPane, wire, wireModel, false);
         add.performAction();
 
         //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
@@ -1003,7 +1071,7 @@ public class ProjectController {
             batteryModel.setComponentY(correctedY);
         }
 
-        AddComponent add = new AddComponent(currentProject, canvasPane, battery, batteryModel);
+        AddComponent add = new AddComponent(currentProject, canvasPane, battery, batteryModel, false);
         add.performAction();
 
         //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
@@ -1038,7 +1106,7 @@ public class ProjectController {
             resistorModel.setComponentY(correctedY);
         }
 
-        AddComponent add = new AddComponent(currentProject, canvasPane, resistor, resistorModel);
+        AddComponent add = new AddComponent(currentProject, canvasPane, resistor, resistorModel, false);
         add.performAction();
 
         //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
@@ -1073,7 +1141,7 @@ public class ProjectController {
             circuitSwitchModel.setComponentY(correctedY);
         }
 
-        AddComponent add = new AddComponent(currentProject, canvasPane, circuitSwitch, circuitSwitchModel);
+        AddComponent add = new AddComponent(currentProject, canvasPane, circuitSwitch, circuitSwitchModel, false);
         add.performAction();
 
         //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
@@ -1108,7 +1176,7 @@ public class ProjectController {
             lightbulbModel.setComponentY(correctedY);
         }
 
-        AddComponent add = new AddComponent(currentProject, canvasPane, lightbulb, lightbulbModel);
+        AddComponent add = new AddComponent(currentProject, canvasPane, lightbulb, lightbulbModel, false);
         add.performAction();
 
         //If a new action is performed when the redo stack contains actions, the redo stack will be cleared
@@ -1121,5 +1189,4 @@ public class ProjectController {
         adjustComponentZoomScale(zoomScale);
         makeDraggable(lightbulb, lightbulbModel);
     }
-
 }

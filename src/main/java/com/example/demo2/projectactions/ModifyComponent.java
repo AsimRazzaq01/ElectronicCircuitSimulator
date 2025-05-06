@@ -5,6 +5,7 @@ import com.example.demo2.componentmodel.BatteryModel;
 import com.example.demo2.componentmodel.Component;
 import com.example.demo2.componentmodel.LightbulbModel;
 import com.example.demo2.componentmodel.ResistorModel;
+import com.example.demo2.db.ConnDbOps;
 
 public class ModifyComponent implements ProjectActions {
     private final Project PROJECT;
@@ -24,14 +25,17 @@ public class ModifyComponent implements ProjectActions {
         switch (COMPONENT.getComponentType()) {
             case "Battery" -> {
                 BatteryModel batteryModel = (BatteryModel) COMPONENT;
+                ConnDbOps.updateComponents(COMPONENT, NEW_VALUE);
                 batteryModel.setVoltage(NEW_VALUE);
             }
             case "Resistor" -> {
                 ResistorModel resistorModel = (ResistorModel) COMPONENT;
+                ConnDbOps.updateComponents(COMPONENT, NEW_VALUE);
                 resistorModel.setResistance(NEW_VALUE);
             }
             case "Light bulb" -> {
                 LightbulbModel lightbulbModel = (LightbulbModel) COMPONENT;
+                ConnDbOps.updateComponents(COMPONENT, NEW_VALUE);
                 lightbulbModel.setResistance(NEW_VALUE);
             }
         }
@@ -43,14 +47,17 @@ public class ModifyComponent implements ProjectActions {
         switch (COMPONENT.getComponentType()) {
             case "Battery" -> {
                 BatteryModel batteryModel = (BatteryModel) COMPONENT;
+                ConnDbOps.updateComponents(COMPONENT, INITIAL_VALUE);
                 batteryModel.setVoltage(INITIAL_VALUE);
             }
             case "Resistor" -> {
                 ResistorModel resistorModel = (ResistorModel) COMPONENT;
+                ConnDbOps.updateComponents(COMPONENT, INITIAL_VALUE);
                 resistorModel.setResistance(INITIAL_VALUE);
             }
             case "Light bulb" -> {
                 LightbulbModel lightbulbModel = (LightbulbModel) COMPONENT;
+                ConnDbOps.updateComponents(COMPONENT, INITIAL_VALUE);
                 lightbulbModel.setResistance(INITIAL_VALUE);
             }
         }
