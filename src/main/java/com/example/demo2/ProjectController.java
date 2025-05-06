@@ -272,6 +272,16 @@ public class ProjectController {
         }
 
         System.out.println("Success: " + count + " components attempted to save.");
+
+        showAlert("Success", "components saved Successfully");
+    }
+
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText(title);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     private void adjustComponentZoomScale(double zoomScale) {
