@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 
 public class LoginRegisterController implements Initializable {
 
@@ -153,6 +154,12 @@ public class LoginRegisterController implements Initializable {
             showAlert("Registration Failed", "All fields are required.");
             return;
         }
+
+        if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")) {
+            showAlert("Registration Failed", "Please enter a valid email address.");
+            return;
+        }
+
 
         Stage popupStage = new Stage();
         popupStage.setTitle("Loading");
