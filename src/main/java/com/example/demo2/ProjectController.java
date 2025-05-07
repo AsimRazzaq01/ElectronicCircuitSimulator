@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -26,6 +27,7 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -56,8 +58,6 @@ public class ProjectController {
     @FXML
     private Button homeButton;
     @FXML
-    private Slider zoomSlider;
-    @FXML
     private ImageView wireImageView;
     @FXML
     private ImageView batteryImageView;
@@ -68,12 +68,15 @@ public class ProjectController {
     @FXML
     private ImageView lightbulbImageView;
     @FXML
-    private TextField show_Current;
+    private TextField currentField;
     @FXML
-    private TextField show_Resistance;
+    private TextField resistanceField;
     @FXML
-    private TextField show_Voltage;
-
+    private TextField voltageField;
+    @FXML
+    private Button startButton;
+    @FXML
+    private HBox topButtonBar;
 
     private double zoomScale = 1.0;
     private Project currentProject;
@@ -233,7 +236,6 @@ public class ProjectController {
         allowDragAndDrop();
         undoButton.setDisable(true);
         redoButton.setDisable(true);
-        zoomSlider.setDisable(true);
     }
 
     @FXML
@@ -263,10 +265,10 @@ public class ProjectController {
 
             if (model instanceof WireModel wireModel && view instanceof WireNode wireNode) {
                 // Update start and end points for wire
-                wireModel.setComponentX(wireNode.getStartX());
-                wireModel.setComponentY(wireNode.getStartY());
-                wireModel.setRightSideX(wireNode.getEndX());
-                wireModel.setRightSideY(wireNode.getEndY());
+                wireModel.setComponentX(wireNode.getStartX() - 12.5);
+                wireModel.setComponentY(wireNode.getStartY() - 12.5);
+                wireModel.setRightSideX(wireNode.getEndX() + 12.5);
+                wireModel.setRightSideY(wireNode.getEndY() - 12.5);
 
             } else {
                 // Use layoutX/Y for normal components
@@ -393,17 +395,6 @@ public class ProjectController {
         return (bottomEdge + topEdge) / 2.0;
     }
 
-    void initializeScrollPosition() {
-        Platform.runLater(() -> {
-            canvasScrollPane.setHvalue(0.5);
-            canvasScrollPane.setVvalue(0.5);
-//            Will be utilized later
-//            for (Node node : canvasPane.getChildren()) {
-//                node.setOpacity(1.0);
-//            }
-        });
-    }
-
     @FXML
     public void undo() {
         if (!currentProject.getUndoStack().isEmpty()) {
@@ -457,6 +448,36 @@ public class ProjectController {
                 component.setComponentY((cursorInPane.getY() / zoomScale) - componentNode.getLayoutY());
                 canvasScrollPane.setPannable(false);
                 componentNode.toFront();
+
+                switch(component.getComponentType()) {
+                    case "Battery" -> {
+                        BatteryModel b = (BatteryModel) component;
+                        voltageField.setText(String.valueOf(b.getVoltage()));
+                        HashMap<Integer, Double> circuitGroups = currentProject.getCircuitGroups();
+                        currentField.setText(String.valueOf(circuitGroups.get(b.getGroup())));
+                        resistanceField.setText("null");
+                    }
+                    case "Resistor" -> {
+                        ResistorModel r = (ResistorModel) component;
+                        resistanceField.setText(String.valueOf(r.getResistance()));
+                        HashMap<Integer, Double> circuitGroups = currentProject.getCircuitGroups();
+                        currentField.setText(String.valueOf(circuitGroups.get(r.getGroup())));
+                        voltageField.setText("null");
+                    }
+                    case "Light bulb" -> {
+                        LightbulbModel l = (LightbulbModel) component;
+                        resistanceField.setText(String.valueOf(l.getResistance()));
+                        HashMap<Integer, Double> circuitGroups = currentProject.getCircuitGroups();
+                        currentField.setText(String.valueOf(circuitGroups.get(l.getGroup())));
+                        voltageField.setText("null");
+                    }
+                    case "Switch" -> {
+                        voltageField.setText("null");
+                        resistanceField.setText("null");
+                        currentField.setText("null");
+                    }
+                }
+
             }
             if (mouseEvent.getButton() == MouseButton.SECONDARY) {
                 openComponentMenu(componentNode, component);
@@ -540,6 +561,11 @@ public class ProjectController {
                 wire.toFront();
                 leftTerminal.toFront();
                 rightTerminal.toFront();
+
+                HashMap<Integer, Double> circuitGroups = currentProject.getCircuitGroups();
+                voltageField.setText("null");
+                currentField.setText(String.valueOf(circuitGroups.get(wire.getWireModel().getGroup())));
+                resistanceField.setText("null");
             }
             if (mouseEvent.getButton() == MouseButton.SECONDARY) {
                 openComponentMenu(wire, wire.getWireModel());
@@ -650,6 +676,11 @@ public class ProjectController {
             wire.toFront();
             leftTerminal.toFront();
             rightTerminal.toFront();
+
+            HashMap<Integer, Double> circuitGroups = currentProject.getCircuitGroups();
+            voltageField.setText("null");
+            currentField.setText(String.valueOf(circuitGroups.get(wire.getWireModel().getGroup())));
+            resistanceField.setText("null");
         });
 
         leftTerminal.setOnMouseDragged(mouseEvent -> {
@@ -702,6 +733,11 @@ public class ProjectController {
                 }
 
                 undoButton.setDisable(false);
+
+                HashMap<Integer, Double> circuitGroups = currentProject.getCircuitGroups();
+                voltageField.setText("null");
+                currentField.setText(String.valueOf(circuitGroups.get(wire.getWireModel().getGroup())));
+                resistanceField.setText("null");
             }
         });
 
@@ -726,6 +762,11 @@ public class ProjectController {
             wire.toFront();
             leftTerminal.toFront();
             rightTerminal.toFront();
+
+            HashMap<Integer, Double> circuitGroups = currentProject.getCircuitGroups();
+            voltageField.setText("null");
+            currentField.setText(String.valueOf(circuitGroups.get(wire.getWireModel().getGroup())));
+            resistanceField.setText("null");
         });
 
         rightTerminal.setOnMouseDragged(mouseEvent -> {
@@ -779,6 +820,11 @@ public class ProjectController {
                 }
 
                 undoButton.setDisable(false);
+
+                HashMap<Integer, Double> circuitGroups = currentProject.getCircuitGroups();
+                voltageField.setText("null");
+                currentField.setText(String.valueOf(circuitGroups.get(wire.getWireModel().getGroup())));
+                resistanceField.setText("null");
             }
         });
     }
@@ -1204,16 +1250,72 @@ public class ProjectController {
         makeDraggable(lightbulb, lightbulbModel);
     }
 
-    // method to get variables (voltage, current, resistance)
-    public void getDisplayCalculations(){
+    public void getDisplayCalculations(WireNode wireNode) {
+        WireModel wireModel = wireNode.getWireModel();
 
+        TerminalNode negativeTerminal = wireNode.getLeftTerminalNode();
+        TerminalNode positiveTerminal = wireNode.getRightTerminalNode();
+
+        ArrayList<Component> wireLeftRemove = new ArrayList<>(wireModel.getNegativeSide());
+        ArrayList<Component> wireRightRemove = new ArrayList<>(wireModel.getPositiveSide());
+
+        Bounds leftTerminal = negativeTerminal.localToScene(negativeTerminal.getBoundsInLocal());
+        for (TerminalNode t : currentProject.getTerminalList()) {
+            Bounds terminalBounds = t.localToScene(t.getBoundsInLocal());
+            if (t == negativeTerminal) {
+                continue;
+            }
+
+            if (terminalBounds.intersects(leftTerminal)) {
+                Component connected = t.getTerminalModel().getParent();
+                String charge = t.getTerminalModel().getCharge();
+                if (charge.equals("Positive") && !wireLeftRemove.contains(connected)) {
+                    connected.addToPositiveSide(wireModel);
+                    wireModel.addToNegativeSide(connected);
+                }
+
+                wireLeftRemove.remove(connected);
+            }
+        }
+
+        for (Component positive : wireLeftRemove) {
+            wireModel.getNegativeSide().remove(positive);
+            positive.getPositiveSide().remove(wireModel);
+            wireModel.setGroup(0);
+        }
+
+        Bounds rightTerminal = positiveTerminal.localToScene(positiveTerminal.getBoundsInLocal());
+        for (TerminalNode t : currentProject.getTerminalList()) {
+            Bounds terminalBounds = t.localToScene(t.getBoundsInLocal());
+            if (t == positiveTerminal) {
+                continue;
+            }
+
+            if (terminalBounds.intersects(rightTerminal)) {
+                Component connected = t.getTerminalModel().getParent();
+                String charge = t.getTerminalModel().getCharge();
+                if (charge.equals("Negative") && !wireRightRemove.contains(connected)) {
+                    connected.addToNegativeSide(wireModel);
+                    wireModel.addToPositiveSide(connected);
+                }
+
+                wireRightRemove.remove(connected);
+            }
+        }
+
+        currentProject.calculateCircuitGroups();
     }
 
 
     @FXML
-    void Start_Simulation_Button(ActionEvent event) {
-        // getDisplayCalculations -> call method to get variables (voltage, current, resistance)
-
+    void startSimulation() {
+        HashMap<Component, Node> projectComponents = currentProject.getProjectComponents();
+        for (Node componentNode : projectComponents.values()) {
+            if (componentNode instanceof WireNode) {
+                getDisplayCalculations((WireNode) componentNode);
+            }
+        }
+        topButtonBar.getChildren().remove(startButton);
     }
 
 }

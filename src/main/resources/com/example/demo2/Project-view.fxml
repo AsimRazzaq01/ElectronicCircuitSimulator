@@ -5,7 +5,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -73,7 +72,7 @@
          </ScrollPane>
       </VBox>
       <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
-         <HBox alignment="CENTER" minHeight="40.0" prefHeight="40.0" prefWidth="200.0">
+         <HBox alignment="CENTER" minHeight="40.0" prefHeight="40.0" prefWidth="1165.0">
             <Label fx:id="projectNameLabel" text="Name">
                <font>
                   <Font size="20.0" />
@@ -82,17 +81,14 @@
          </HBox>
          <HBox prefHeight="32.0" prefWidth="1165.0">
             <children>
-               <HBox prefWidth="300.0" />
-               <HBox alignment="CENTER" minHeight="32.0" prefHeight="32.0" prefWidth="565.0" spacing="50.0">
+               <HBox minWidth="20.0" prefWidth="300.0" />
+               <HBox fx:id="topButtonBar" alignment="CENTER" minHeight="32.0" prefHeight="32.0" prefWidth="827.0" spacing="50.0" HBox.hgrow="ALWAYS">
                   <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undo" text="Undo" />
                   <Button fx:id="saveButton" mnemonicParsing="false" onAction="#handleSaveButton" text="Save" />
                   <Button fx:id="redoButton" mnemonicParsing="false" onAction="#redo" text="Redo" />
+                  <Button fx:id="startButton" mnemonicParsing="false" onAction="#startSimulation" text="Start" />
                </HBox>
-               <HBox alignment="CENTER_RIGHT" prefHeight="40.0" prefWidth="300.0">
-                  <children>
-                     <Button mnemonicParsing="false" onAction="#Start_Simulation_Button" text="Start Simulation !" />
-                  </children>
-               </HBox>
+               <HBox alignment="CENTER_RIGHT" minWidth="20.0" prefHeight="40.0" prefWidth="300.0" />
             </children>
          </HBox>
          <ScrollPane fx:id="canvasScrollPane" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
@@ -102,49 +98,30 @@
                </Group>
             </StackPane>
          </ScrollPane>
-         <HBox alignment="CENTER_RIGHT" prefHeight="40.0" prefWidth="600.0" spacing="10.0">
+         <HBox alignment="CENTER_RIGHT" prefHeight="40.0" prefWidth="600.0" spacing="5.0">
             <padding>
                <Insets right="30.0" />
             </padding>
-            <GridPane prefHeight="41.0" prefWidth="712.0">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
+            <HBox alignment="CENTER_RIGHT" prefHeight="41.0" prefWidth="453.0" spacing="5.0">
                <children>
-                  <HBox alignment="CENTER_LEFT">
-                     <children>
-                        <Label prefHeight="18.0" prefWidth="60.0" text="Voltage: ">
-                           <HBox.margin>
-                              <Insets left="3.0" />
-                           </HBox.margin>
-                        </Label>
-                        <TextField fx:id="show_Voltage" editable="false" prefHeight="25.0" prefWidth="100.0" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
-                     <children>
-                        <Label prefWidth="60.0" text="Current: " />
-                        <TextField fx:id="show_Current" editable="false" prefHeight="25.0" prefWidth="100.0" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" GridPane.columnIndex="2">
-                     <children>
-                        <Label prefWidth="80.0" text="Resistance: " />
-                        <TextField fx:id="show_Resistance" editable="false" prefHeight="25.0" prefWidth="100.0" />
-                     </children>
-                  </HBox>
+                  <Label prefHeight="18.0" prefWidth="60.0" text="Voltage: " />
+                  <TextField fx:id="voltageField" editable="false" minWidth="40.0" prefHeight="41.0" prefWidth="70.0" />
+                  <Label prefWidth="60.0" text="Current: " />
+                  <TextField fx:id="currentField" editable="false" minWidth="40.0" prefHeight="25.0" prefWidth="70.0" />
+                  <Label prefWidth="80.0" text="Resistance: " />
+                  <TextField fx:id="resistanceField" editable="false" minWidth="40.0" prefHeight="25.0" prefWidth="70.0" />
                </children>
-            </GridPane>
-            <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" prefHeight="25.0" prefWidth="25.0" text="-" />
-            <Slider fx:id="zoomSlider" majorTickUnit="10.0" max="150.0" min="50.0" minorTickCount="0" prefHeight="14.0" prefWidth="237.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="100.0" />
-            <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" prefHeight="25.0" prefWidth="25.0" text="+" />
-            <Label fx:id="currentZoomLabel" text="100%" />
+               <padding>
+                  <Insets bottom="2.0" top="2.0" />
+               </padding>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" prefHeight="41.0" prefWidth="204.0" spacing="10.0">
+               <children>
+                  <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" prefHeight="25.0" prefWidth="60.0" text="-" />
+                  <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" prefHeight="38.0" prefWidth="60.0" text="+" />
+                  <Label fx:id="currentZoomLabel" text="100%" />
+               </children>
+            </HBox>
          </HBox>
       </VBox>
    </HBox>
