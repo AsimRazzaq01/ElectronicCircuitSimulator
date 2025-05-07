@@ -12,6 +12,7 @@ import javafx.scene.shape.Circle;
 public class TerminalNode extends Circle {
     // Private variable - terminal class
     private TerminalModel terminalModel;
+    private int componentId;
 
     // TerminalNode method
     public TerminalNode(Component c, double centerX, double centerY, String charge) {
@@ -22,12 +23,14 @@ public class TerminalNode extends Circle {
             this.setStroke(Color.BLACK);
             this.setCenterX(centerX);
             terminalModel = new TerminalModel(charge, c);
+            componentId = terminalModel.getParent().getComponentID();
         }
         else if (charge.equals("Negative")) {
             this.setFill(Color.GRAY);
             this.setStroke(Color.BLACK);
             this.setCenterX(centerX);
             terminalModel = new TerminalModel(charge, c);
+            componentId = terminalModel.getParent().getComponentID();
         }
     }
 

@@ -14,6 +14,8 @@ import java.net.URL;
 public class ResistorNode extends Group {
     // Private variable - resistor class
     private ResistorModel resistorModel;
+    TerminalNode negative;
+    TerminalNode positive;
 
     // ResistorNode method 1
     public ResistorNode(double x, double y) {
@@ -25,8 +27,8 @@ public class ResistorNode extends Group {
             resistorImageView.setLayoutX(20);
             resistorImageView.setPreserveRatio(true);
             resistorModel = new ResistorModel(x, y);
-            TerminalNode negative = new TerminalNode(resistorModel, 10, 16.4, "Negative");
-            TerminalNode positive = new TerminalNode(resistorModel, 100, 16.4, "Positive");
+            negative = new TerminalNode(resistorModel, 10, 16.4, "Negative");
+            positive = new TerminalNode(resistorModel, 100, 16.4, "Positive");
             this.getChildren().add(resistorImageView);
             this.getChildren().add(negative);
             this.getChildren().add(positive);
@@ -45,8 +47,8 @@ public class ResistorNode extends Group {
             resistorImageView.setPreserveRatio(true);
             resistorImageView.setLayoutX(20);
             resistorModel = new ResistorModel(x, y, r);
-            TerminalNode negative = new TerminalNode(resistorModel, 10, 16.4, "Negative");
-            TerminalNode positive = new TerminalNode(resistorModel, 100, 16.4, "Positive");
+            negative = new TerminalNode(resistorModel, 10, 16.4, "Negative");
+            positive = new TerminalNode(resistorModel, 100, 16.4, "Positive");
             this.getChildren().add(resistorImageView);
             this.getChildren().add(negative);
             this.getChildren().add(positive);
@@ -58,5 +60,13 @@ public class ResistorNode extends Group {
     // getter method
     public ResistorModel getResistorModel() {
         return resistorModel;
+    }
+
+    public TerminalNode getNegative() {
+        return negative;
+    }
+
+    public TerminalNode getPositive() {
+        return positive;
     }
 } // End ResistorNode class
