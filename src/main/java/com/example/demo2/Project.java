@@ -21,7 +21,7 @@ public class Project {
     private final ArrayList<TerminalNode> TERMINAL_LIST;
     Stack<ProjectActions> undoStack;
     Stack<ProjectActions> redoStack;
-    HashMap<Integer, Double> circuitGroups;
+    private final HashMap<Integer, Double> CIRCUIT_GROUPS;
 
     Project(int id, String name) {
         PROJECT_ID = id;
@@ -31,7 +31,7 @@ public class Project {
         TERMINAL_LIST = new ArrayList<>();
         undoStack = new Stack<>();
         redoStack = new Stack<>();
-        circuitGroups = new HashMap<>();
+        CIRCUIT_GROUPS = new HashMap<>();
     }
 
     String getProjectName() {
@@ -72,6 +72,10 @@ public class Project {
         TERMINAL_LIST.add(node);
     }
 
+    public HashMap<Integer, Double> getCircuitGroups() {
+        return CIRCUIT_GROUPS;
+    }
+
     public void removeFromTerminalList(TerminalNode node) {
         TERMINAL_LIST.remove(node);
     }
@@ -102,7 +106,7 @@ public class Project {
 
     public void calculateCircuitGroups() {
         int count = 1;
-        circuitGroups.clear();
+        CIRCUIT_GROUPS.clear();
         for (Node componentNode : PROJECT_COMPONENTS.values()) {
             if (componentNode instanceof WireNode wireNode) {
                 wireNode.setStroke(Paint.valueOf("#1D1542"));
@@ -111,7 +115,7 @@ public class Project {
 
         for (BatteryModel batteryModel : BATTERY_LIST.keySet()) {
             if (batteryModel.isStartingBattery() && !batteryModel.getNegativeSide().isEmpty() && !batteryModel.getPositiveSide().isEmpty()) {
-                circuitGroups.put(count, createCircuits(batteryModel, count));
+                CIRCUIT_GROUPS.put(count, createCircuits(batteryModel, count));
                 count++;
             }
         }
@@ -119,13 +123,13 @@ public class Project {
         for (Node componentNode : PROJECT_COMPONENTS.values()) {
             if (componentNode instanceof WireNode wireNode) {
                 if (wireNode.getWireModel().getGroup() > 0 && !wireNode.getWireModel().getNegativeSide().isEmpty() && !wireNode.getWireModel().getPositiveSide().isEmpty()) {
-                    if (circuitGroups.get(wireNode.getWireModel().getGroup()) != null && circuitGroups.get(wireNode.getWireModel().getGroup()) > 0.0) {
+                    if (CIRCUIT_GROUPS.get(wireNode.getWireModel().getGroup()) != null && CIRCUIT_GROUPS.get(wireNode.getWireModel().getGroup()) > 0.0) {
                         wireNode.setStroke(Paint.valueOf("9444CC"));
                     }
                 }
             }
         }
-        System.out.println(circuitGroups);
+        System.out.println(CIRCUIT_GROUPS);
     }
 
     public double createCircuits(BatteryModel startingBattery, int group) {

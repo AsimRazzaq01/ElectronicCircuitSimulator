@@ -105,11 +105,11 @@
             <HBox alignment="CENTER_RIGHT" prefHeight="41.0" prefWidth="453.0" spacing="5.0">
                <children>
                   <Label prefHeight="18.0" prefWidth="60.0" text="Voltage: " />
-                  <TextField fx:id="show_Voltage" editable="false" minWidth="40.0" prefHeight="41.0" prefWidth="70.0" />
+                  <TextField fx:id="voltageField" editable="false" minWidth="40.0" prefHeight="41.0" prefWidth="70.0" />
                   <Label prefWidth="60.0" text="Current: " />
-                  <TextField fx:id="show_Current" editable="false" minWidth="40.0" prefHeight="25.0" prefWidth="70.0" />
+                  <TextField fx:id="currentField" editable="false" minWidth="40.0" prefHeight="25.0" prefWidth="70.0" />
                   <Label prefWidth="80.0" text="Resistance: " />
-                  <TextField fx:id="show_Resistance" editable="false" minWidth="40.0" prefHeight="25.0" prefWidth="70.0" />
+                  <TextField fx:id="resistanceField" editable="false" minWidth="40.0" prefHeight="25.0" prefWidth="70.0" />
                </children>
             </HBox>
             <HBox alignment="CENTER_RIGHT" prefHeight="41.0" prefWidth="204.0" spacing="10.0">

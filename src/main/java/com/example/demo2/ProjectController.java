@@ -65,16 +65,16 @@ public class ProjectController {
     private ImageView switchImageView;
     @FXML
     private ImageView lightbulbImageView;
-    @FXML
-    private TextField show_Current;
-    @FXML
-    private TextField show_Resistance;
-    @FXML
-    private TextField show_Voltage;
 
 
     private double zoomScale = 1.0;
     private Project currentProject;
+    @FXML
+    private TextField currentField;
+    @FXML
+    private TextField resistanceField;
+    @FXML
+    private TextField voltageField;
 
     void setCurrentProject(Project project) {
         currentProject = project;
@@ -443,6 +443,36 @@ public class ProjectController {
                 component.setComponentY((cursorInPane.getY() / zoomScale) - componentNode.getLayoutY());
                 canvasScrollPane.setPannable(false);
                 componentNode.toFront();
+
+                switch(component.getComponentType()) {
+                    case "Battery" -> {
+                        BatteryModel b = (BatteryModel) component;
+                        voltageField.setText(String.valueOf(b.getVoltage()));
+                        HashMap<Integer, Double> circuitGroups = currentProject.getCircuitGroups();
+                        currentField.setText(String.valueOf(circuitGroups.get(b.getGroup())));
+                        resistanceField.setText("null");
+                    }
+                    case "Resistor" -> {
+                        ResistorModel r = (ResistorModel) component;
+                        resistanceField.setText(String.valueOf(r.getResistance()));
+                        HashMap<Integer, Double> circuitGroups = currentProject.getCircuitGroups();
+                        currentField.setText(String.valueOf(circuitGroups.get(r.getGroup())));
+                        voltageField.setText("null");
+                    }
+                    case "Light bulb" -> {
+                        LightbulbModel l = (LightbulbModel) component;
+                        resistanceField.setText(String.valueOf(l.getResistance()));
+                        HashMap<Integer, Double> circuitGroups = currentProject.getCircuitGroups();
+                        currentField.setText(String.valueOf(circuitGroups.get(l.getGroup())));
+                        voltageField.setText("null");
+                    }
+                    case "Switch" -> {
+                        voltageField.setText("null");
+                        resistanceField.setText("null");
+                        currentField.setText("null");
+                    }
+                }
+
             }
             if (mouseEvent.getButton() == MouseButton.SECONDARY) {
                 openComponentMenu(componentNode, component);
@@ -526,6 +556,11 @@ public class ProjectController {
                 wire.toFront();
                 leftTerminal.toFront();
                 rightTerminal.toFront();
+
+                HashMap<Integer, Double> circuitGroups = currentProject.getCircuitGroups();
+                voltageField.setText("null");
+                currentField.setText(String.valueOf(circuitGroups.get(wire.getWireModel().getGroup())));
+                resistanceField.setText("null");
             }
             if (mouseEvent.getButton() == MouseButton.SECONDARY) {
                 openComponentMenu(wire, wire.getWireModel());
@@ -636,6 +671,11 @@ public class ProjectController {
             wire.toFront();
             leftTerminal.toFront();
             rightTerminal.toFront();
+
+            HashMap<Integer, Double> circuitGroups = currentProject.getCircuitGroups();
+            voltageField.setText("null");
+            currentField.setText(String.valueOf(circuitGroups.get(wire.getWireModel().getGroup())));
+            resistanceField.setText("null");
         });
 
         leftTerminal.setOnMouseDragged(mouseEvent -> {
@@ -688,6 +728,11 @@ public class ProjectController {
                 }
 
                 undoButton.setDisable(false);
+
+                HashMap<Integer, Double> circuitGroups = currentProject.getCircuitGroups();
+                voltageField.setText("null");
+                currentField.setText(String.valueOf(circuitGroups.get(wire.getWireModel().getGroup())));
+                resistanceField.setText("null");
             }
         });
 
@@ -712,6 +757,11 @@ public class ProjectController {
             wire.toFront();
             leftTerminal.toFront();
             rightTerminal.toFront();
+
+            HashMap<Integer, Double> circuitGroups = currentProject.getCircuitGroups();
+            voltageField.setText("null");
+            currentField.setText(String.valueOf(circuitGroups.get(wire.getWireModel().getGroup())));
+            resistanceField.setText("null");
         });
 
         rightTerminal.setOnMouseDragged(mouseEvent -> {
@@ -765,6 +815,11 @@ public class ProjectController {
                 }
 
                 undoButton.setDisable(false);
+
+                HashMap<Integer, Double> circuitGroups = currentProject.getCircuitGroups();
+                voltageField.setText("null");
+                currentField.setText(String.valueOf(circuitGroups.get(wire.getWireModel().getGroup())));
+                resistanceField.setText("null");
             }
         });
     }
