@@ -56,8 +56,6 @@ public class ProjectController {
     @FXML
     private Button homeButton;
     @FXML
-    private Slider zoomSlider;
-    @FXML
     private ImageView wireImageView;
     @FXML
     private ImageView batteryImageView;
@@ -233,7 +231,6 @@ public class ProjectController {
         allowDragAndDrop();
         undoButton.setDisable(true);
         redoButton.setDisable(true);
-        zoomSlider.setDisable(true);
     }
 
     @FXML
@@ -391,17 +388,6 @@ public class ProjectController {
         double bottomEdge = topEdge + viewportHeight;
 
         return (bottomEdge + topEdge) / 2.0;
-    }
-
-    void initializeScrollPosition() {
-        Platform.runLater(() -> {
-            canvasScrollPane.setHvalue(0.5);
-            canvasScrollPane.setVvalue(0.5);
-//            Will be utilized later
-//            for (Node node : canvasPane.getChildren()) {
-//                node.setOpacity(1.0);
-//            }
-        });
     }
 
     @FXML
