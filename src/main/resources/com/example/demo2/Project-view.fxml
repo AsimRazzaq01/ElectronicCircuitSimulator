@@ -72,7 +72,7 @@
          </ScrollPane>
       </VBox>
       <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
-         <HBox alignment="CENTER" minHeight="40.0" prefHeight="40.0" prefWidth="200.0">
+         <HBox alignment="CENTER" minHeight="40.0" prefHeight="40.0" prefWidth="1165.0">
             <Label fx:id="projectNameLabel" text="Name">
                <font>
                   <Font size="20.0" />
@@ -82,11 +82,11 @@
          <HBox prefHeight="32.0" prefWidth="1165.0">
             <children>
                <HBox minWidth="20.0" prefWidth="300.0" />
-               <HBox alignment="CENTER" minHeight="32.0" prefHeight="32.0" prefWidth="827.0" spacing="50.0" HBox.hgrow="ALWAYS">
+               <HBox fx:id="topButtonBar" alignment="CENTER" minHeight="32.0" prefHeight="32.0" prefWidth="827.0" spacing="50.0" HBox.hgrow="ALWAYS">
                   <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undo" text="Undo" />
                   <Button fx:id="saveButton" mnemonicParsing="false" onAction="#handleSaveButton" text="Save" />
                   <Button fx:id="redoButton" mnemonicParsing="false" onAction="#redo" text="Redo" />
-                  <Button mnemonicParsing="false" onAction="#Start_Simulation_Button" text="Start" />
+                  <Button fx:id="startButton" mnemonicParsing="false" onAction="#startSimulation" text="Start" />
                </HBox>
                <HBox alignment="CENTER_RIGHT" minWidth="20.0" prefHeight="40.0" prefWidth="300.0" />
             </children>
@@ -111,11 +111,14 @@
                   <Label prefWidth="80.0" text="Resistance: " />
                   <TextField fx:id="resistanceField" editable="false" minWidth="40.0" prefHeight="25.0" prefWidth="70.0" />
                </children>
+               <padding>
+                  <Insets bottom="2.0" top="2.0" />
+               </padding>
             </HBox>
             <HBox alignment="CENTER_RIGHT" prefHeight="41.0" prefWidth="204.0" spacing="10.0">
                <children>
-                  <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" prefHeight="25.0" prefWidth="25.0" text="-" />
-                  <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" prefHeight="25.0" prefWidth="25.0" text="+" />
+                  <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" prefHeight="25.0" prefWidth="60.0" text="-" />
+                  <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" prefHeight="38.0" prefWidth="60.0" text="+" />
                   <Label fx:id="currentZoomLabel" text="100%" />
                </children>
             </HBox>

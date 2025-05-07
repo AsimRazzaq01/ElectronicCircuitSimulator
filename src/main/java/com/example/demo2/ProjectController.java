@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -26,6 +27,7 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -65,16 +67,19 @@ public class ProjectController {
     private ImageView switchImageView;
     @FXML
     private ImageView lightbulbImageView;
-
-
-    private double zoomScale = 1.0;
-    private Project currentProject;
     @FXML
     private TextField currentField;
     @FXML
     private TextField resistanceField;
     @FXML
     private TextField voltageField;
+    @FXML
+    private Button startButton;
+    @FXML
+    private HBox topButtonBar;
+
+    private double zoomScale = 1.0;
+    private Project currentProject;
 
     void setCurrentProject(Project project) {
         currentProject = project;
@@ -260,10 +265,10 @@ public class ProjectController {
 
             if (model instanceof WireModel wireModel && view instanceof WireNode wireNode) {
                 // Update start and end points for wire
-                wireModel.setComponentX(wireNode.getStartX());
-                wireModel.setComponentY(wireNode.getStartY());
-                wireModel.setRightSideX(wireNode.getEndX());
-                wireModel.setRightSideY(wireNode.getEndY());
+                wireModel.setComponentX(wireNode.getStartX() - 12.5);
+                wireModel.setComponentY(wireNode.getStartY() - 12.5);
+                wireModel.setRightSideX(wireNode.getEndX() + 12.5);
+                wireModel.setRightSideY(wireNode.getEndY() - 12.5);
 
             } else {
                 // Use layoutX/Y for normal components
@@ -1245,16 +1250,72 @@ public class ProjectController {
         makeDraggable(lightbulb, lightbulbModel);
     }
 
-    // method to get variables (voltage, current, resistance)
-    public void getDisplayCalculations(){
+    public void getDisplayCalculations(WireNode wireNode) {
+        WireModel wireModel = wireNode.getWireModel();
 
+        TerminalNode negativeTerminal = wireNode.getLeftTerminalNode();
+        TerminalNode positiveTerminal = wireNode.getRightTerminalNode();
+
+        ArrayList<Component> wireLeftRemove = new ArrayList<>(wireModel.getNegativeSide());
+        ArrayList<Component> wireRightRemove = new ArrayList<>(wireModel.getPositiveSide());
+
+        Bounds leftTerminal = negativeTerminal.localToScene(negativeTerminal.getBoundsInLocal());
+        for (TerminalNode t : currentProject.getTerminalList()) {
+            Bounds terminalBounds = t.localToScene(t.getBoundsInLocal());
+            if (t == negativeTerminal) {
+                continue;
+            }
+
+            if (terminalBounds.intersects(leftTerminal)) {
+                Component connected = t.getTerminalModel().getParent();
+                String charge = t.getTerminalModel().getCharge();
+                if (charge.equals("Positive") && !wireLeftRemove.contains(connected)) {
+                    connected.addToPositiveSide(wireModel);
+                    wireModel.addToNegativeSide(connected);
+                }
+
+                wireLeftRemove.remove(connected);
+            }
+        }
+
+        for (Component positive : wireLeftRemove) {
+            wireModel.getNegativeSide().remove(positive);
+            positive.getPositiveSide().remove(wireModel);
+            wireModel.setGroup(0);
+        }
+
+        Bounds rightTerminal = positiveTerminal.localToScene(positiveTerminal.getBoundsInLocal());
+        for (TerminalNode t : currentProject.getTerminalList()) {
+            Bounds terminalBounds = t.localToScene(t.getBoundsInLocal());
+            if (t == positiveTerminal) {
+                continue;
+            }
+
+            if (terminalBounds.intersects(rightTerminal)) {
+                Component connected = t.getTerminalModel().getParent();
+                String charge = t.getTerminalModel().getCharge();
+                if (charge.equals("Negative") && !wireRightRemove.contains(connected)) {
+                    connected.addToNegativeSide(wireModel);
+                    wireModel.addToPositiveSide(connected);
+                }
+
+                wireRightRemove.remove(connected);
+            }
+        }
+
+        currentProject.calculateCircuitGroups();
     }
 
 
     @FXML
-    void Start_Simulation_Button(ActionEvent event) {
-        // getDisplayCalculations -> call method to get variables (voltage, current, resistance)
-
+    void startSimulation() {
+        HashMap<Component, Node> projectComponents = currentProject.getProjectComponents();
+        for (Node componentNode : projectComponents.values()) {
+            if (componentNode instanceof WireNode) {
+                getDisplayCalculations((WireNode) componentNode);
+            }
+        }
+        topButtonBar.getChildren().remove(startButton);
     }
 
 }
