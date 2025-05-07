@@ -44,6 +44,7 @@ public class LoginRegisterController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        ThemeManager.getTheme();
         showExisting();
     }
 
@@ -121,6 +122,7 @@ public class LoginRegisterController implements Initializable {
                 Stage stage = (Stage) button_existing_login.getScene().getWindow();
                 Scene scene = new Scene(root, 1200, 720); // width: 680, height: 400
                 stage.setScene(scene);
+                ThemeManager.applyTheme(scene); // Apply the saved theme to the scene
                 stage.setResizable(false);
                 popupStage.close();
             } catch (IOException _) {

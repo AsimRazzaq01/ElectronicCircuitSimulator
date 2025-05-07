@@ -1,42 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo2.SettingsController">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" stylesheets="@cssStyles/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo2.SettingsController">
 
     <!-- VBox to organize everything vertically -->
     <VBox layoutX="50.0" layoutY="30.0" spacing="20" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
 
         <!-- Settings Title -->
-        <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Settings" />
+        <Label prefHeight="38.0" prefWidth="200.0" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Settings">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
       <HBox>
          <children>
-            <VBox prefHeight="25.0" prefWidth="198.0">
+            <VBox prefHeight="25.0" prefWidth="250.0">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Change Username:" />
+                  <Label text="Change Username:" />
             
                                 <!-- Change Username Field -->
-                    <TextField fx:id="changeUserNameField" onAction="#handleUsernameChange" prefHeight="25.0" prefWidth="199.0" promptText="Enter new username" />
+                    <TextField fx:id="changeUserNameField" onAction="#handleUsernameChange" prefHeight="41.0" prefWidth="228.0" promptText="Enter new username" />
                </children>
             </VBox>
          </children>
       </HBox>
-      <HBox prefHeight="100.0" prefWidth="200.0" />
+      <HBox prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <VBox prefHeight="96.0" prefWidth="200.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#SetLightTheme" prefWidth="200.0" text="💡 Set Light Theme">
+                     <VBox.margin>
+                        <Insets bottom="5.0" top="5.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button mnemonicParsing="false" onAction="#SetDarkTheme" prefWidth="200.0" text="🕶️ Set Dark Theme ">
+                     <VBox.margin>
+                        <Insets bottom="5.0" top="5.0" />
+                     </VBox.margin>
+                  </Button>
+               </children>
+            </VBox>
+         </children></HBox>
       <HBox prefHeight="100.0" prefWidth="200.0" />
       <HBox prefHeight="100.0" prefWidth="200.0" />
       <HBox prefHeight="100.0" prefWidth="200.0">
          <children>
-            <VBox prefHeight="100.0" prefWidth="169.0">
+            <VBox prefHeight="100.0" prefWidth="200.0">
                <children>
             
                     <!-- Back Button -->
-                    <Button fx:id="backButton" onAction="#goBack" prefHeight="38.0" prefWidth="168.0" text="🔙 Back to Home" />
+                    <Button fx:id="backButton" onAction="#goBack" prefHeight="38.0" prefWidth="200.0" text="🔙 Back to Home" />
                </children>
             </VBox>
          </children>

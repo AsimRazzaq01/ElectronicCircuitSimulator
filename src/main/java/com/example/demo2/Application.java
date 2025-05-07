@@ -14,6 +14,7 @@ public class Application extends javafx.application.Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("LoginRegister.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 680, 400);
+        ThemeManager.applyTheme(scene); // Apply the saved theme to the scene
         stage.setTitle("Electronic Circuit Simulator!");
         stage.setResizable(false);
         stage.setScene(scene);
