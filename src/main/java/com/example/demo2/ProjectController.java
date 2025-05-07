@@ -5,6 +5,7 @@ import com.example.demo2.componentnode.*;
 import com.example.demo2.db.ConnDbOps;
 import com.example.demo2.projectactions.*;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -66,6 +67,13 @@ public class ProjectController {
     private ImageView switchImageView;
     @FXML
     private ImageView lightbulbImageView;
+    @FXML
+    private TextField show_Current;
+    @FXML
+    private TextField show_Resistance;
+    @FXML
+    private TextField show_Voltage;
+
 
     private double zoomScale = 1.0;
     private Project currentProject;
@@ -1195,4 +1203,17 @@ public class ProjectController {
         adjustComponentZoomScale(zoomScale);
         makeDraggable(lightbulb, lightbulbModel);
     }
+
+    // method to get variables (voltage, current, resistance)
+    public void getDisplayCalculations(){
+
+    }
+
+
+    @FXML
+    void Start_Simulation_Button(ActionEvent event) {
+        // getDisplayCalculations -> call method to get variables (voltage, current, resistance)
+
+    }
+
 }
