@@ -13,6 +13,8 @@ import java.net.URL;
 public class BatteryNode extends Group {
     // Private variable
     private BatteryModel batteryModel;
+    TerminalNode negative;
+    TerminalNode positive;
 
     // BatteryNode method 1
     public BatteryNode(double x, double y) {
@@ -24,8 +26,8 @@ public class BatteryNode extends Group {
             batteryImageView.setPreserveRatio(true);
             batteryImageView.setLayoutX(20);
             batteryModel = new BatteryModel(x, y);
-            TerminalNode negative = new TerminalNode(batteryModel, 10, 16.4, "Negative");
-            TerminalNode positive = new TerminalNode(batteryModel, 100, 16.4, "Positive");
+            negative = new TerminalNode(batteryModel, 10, 16.4, "Negative");
+            positive = new TerminalNode(batteryModel, 100, 16.4, "Positive");
             this.getChildren().add(batteryImageView);
             this.getChildren().add(negative);
             this.getChildren().add(positive);
@@ -44,8 +46,8 @@ public class BatteryNode extends Group {
             batteryImageView.setPreserveRatio(true);
             batteryImageView.setLayoutX(20);
             batteryModel = new BatteryModel(x, y, v);
-            TerminalNode negative = new TerminalNode(batteryModel, 10, 16.4, "Negative");
-            TerminalNode positive = new TerminalNode(batteryModel, 100, 16.4, "Positive");
+            negative = new TerminalNode(batteryModel, 10, 16.4, "Negative");
+            positive = new TerminalNode(batteryModel, 100, 16.4, "Positive");
             this.getChildren().add(batteryImageView);
             this.getChildren().add(negative);
             this.getChildren().add(positive);
@@ -57,5 +59,13 @@ public class BatteryNode extends Group {
     // getter method
     public BatteryModel getBatteryModel() {
         return batteryModel;
+    }
+
+    public TerminalNode getNegative() {
+        return negative;
+    }
+
+    public TerminalNode getPositive() {
+        return positive;
     }
 } // End BatteryNode class

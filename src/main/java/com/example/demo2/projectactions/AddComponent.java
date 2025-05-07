@@ -2,8 +2,7 @@ package com.example.demo2.projectactions;
 
 import com.example.demo2.Project;
 import com.example.demo2.componentmodel.Component;
-import com.example.demo2.componentnode.TerminalNode;
-import com.example.demo2.componentnode.WireNode;
+import com.example.demo2.componentnode.*;
 import com.example.demo2.db.ConnDbOps;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -33,7 +32,38 @@ public class AddComponent implements ProjectActions {
             TerminalNode rightTerminal = ((WireNode) COMPONENT_NODE).getRightTerminalNode();
             PROJECT_CANVAS.getChildren().add(leftTerminal);
             PROJECT_CANVAS.getChildren().add(rightTerminal);
+            PROJECT.addToTerminalList(leftTerminal);
+            PROJECT.addToTerminalList(rightTerminal);
         }
+
+        if (COMPONENT_NODE instanceof BatteryNode) {
+            TerminalNode negative =((BatteryNode) COMPONENT_NODE).getNegative();
+            TerminalNode positive = ((BatteryNode) COMPONENT_NODE).getPositive();
+            PROJECT.addToTerminalList(negative);
+            PROJECT.addToTerminalList(positive);
+        }
+
+        if (COMPONENT_NODE instanceof CircuitSwitchNode) {
+            TerminalNode negative =((CircuitSwitchNode) COMPONENT_NODE).getNegative();
+            TerminalNode positive = ((CircuitSwitchNode) COMPONENT_NODE).getPositive();
+            PROJECT.addToTerminalList(negative);
+            PROJECT.addToTerminalList(positive);
+        }
+
+        if (COMPONENT_NODE instanceof LightbulbNode) {
+            TerminalNode negative =((LightbulbNode) COMPONENT_NODE).getNegative();
+            TerminalNode positive = ((LightbulbNode) COMPONENT_NODE).getPositive();
+            PROJECT.addToTerminalList(negative);
+            PROJECT.addToTerminalList(positive);
+        }
+
+        if (COMPONENT_NODE instanceof ResistorNode) {
+            TerminalNode negative =((ResistorNode) COMPONENT_NODE).getNegative();
+            TerminalNode positive = ((ResistorNode) COMPONENT_NODE).getPositive();
+            PROJECT.addToTerminalList(negative);
+            PROJECT.addToTerminalList(positive);
+        }
+
         ConnDbOps.saveComponent(PROJECT, COMPONENT);
         PROJECT.addComponent(COMPONENT, COMPONENT_NODE);
 
@@ -50,7 +80,38 @@ public class AddComponent implements ProjectActions {
             TerminalNode rightTerminal = ((WireNode) COMPONENT_NODE).getRightTerminalNode();
             PROJECT_CANVAS.getChildren().remove(leftTerminal);
             PROJECT_CANVAS.getChildren().remove(rightTerminal);
+            PROJECT.removeFromTerminalList(leftTerminal);
+            PROJECT.removeFromTerminalList(rightTerminal);
         }
+
+        if (COMPONENT_NODE instanceof BatteryNode) {
+            TerminalNode negative =((BatteryNode) COMPONENT_NODE).getNegative();
+            TerminalNode positive = ((BatteryNode) COMPONENT_NODE).getPositive();
+            PROJECT.removeFromTerminalList(negative);
+            PROJECT.removeFromTerminalList(positive);
+        }
+
+        if (COMPONENT_NODE instanceof CircuitSwitchNode) {
+            TerminalNode negative =((CircuitSwitchNode) COMPONENT_NODE).getNegative();
+            TerminalNode positive = ((CircuitSwitchNode) COMPONENT_NODE).getPositive();
+            PROJECT.removeFromTerminalList(negative);
+            PROJECT.removeFromTerminalList(positive);
+        }
+
+        if (COMPONENT_NODE instanceof LightbulbNode) {
+            TerminalNode negative =((LightbulbNode) COMPONENT_NODE).getNegative();
+            TerminalNode positive = ((LightbulbNode) COMPONENT_NODE).getPositive();
+            PROJECT.removeFromTerminalList(negative);
+            PROJECT.removeFromTerminalList(positive);
+        }
+
+        if (COMPONENT_NODE instanceof ResistorNode) {
+            TerminalNode negative =((ResistorNode) COMPONENT_NODE).getNegative();
+            TerminalNode positive = ((ResistorNode) COMPONENT_NODE).getPositive();
+            PROJECT.removeFromTerminalList(negative);
+            PROJECT.removeFromTerminalList(positive);
+        }
+
         ConnDbOps.deleteComponent(COMPONENT);
         PROJECT.removeComponent(COMPONENT);
         COMPONENT.setComponentID(-1);

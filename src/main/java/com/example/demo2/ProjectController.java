@@ -273,7 +273,7 @@ public class ProjectController {
 
         System.out.println("Success: " + count + " components attempted to save.");
 
-        showAlert("Success", "components saved Successfully");
+        showAlert("Success", count + " components were saved successfully!");
     }
 
 
@@ -608,10 +608,6 @@ public class ProjectController {
                 }
 
                 undoButton.setDisable(false);
-
-                leftTerminal.toBack();
-                rightTerminal.toBack();
-                wire.toBack();
             }
         });
     }
@@ -628,7 +624,7 @@ public class ProjectController {
         leftTerminal.setOnMousePressed(mouseEvent -> {
             Point2D cursorInPane = canvas.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
-            leftSide[0] = new MoveWireTerminal(currentProject, wire, leftTerminal);
+            leftSide[0] = new MoveWireTerminal(currentProject, canvasPane, wire, leftTerminal);
 
             leftSide[0].setInitialTerminalX(leftTerminal.getCenterX());
             leftSide[0].setInitialTerminalY(leftTerminal.getCenterY());
@@ -642,6 +638,10 @@ public class ProjectController {
             //Stores offset from cursor to both endpoints, coordinates within the wire terminal
             cursorLeftTerminalOffset[0] = new Point2D(leftTerminal.getCenterX() - cursorX, leftTerminal.getCenterY() - cursorY);
             canvasScrollPane.setPannable(false);
+
+            wire.toFront();
+            leftTerminal.toFront();
+            rightTerminal.toFront();
         });
 
         leftTerminal.setOnMouseDragged(mouseEvent -> {
@@ -694,17 +694,13 @@ public class ProjectController {
                 }
 
                 undoButton.setDisable(false);
-
-                leftTerminal.toBack();
-                rightTerminal.toBack();
-                wire.toBack();
             }
         });
 
         rightTerminal.setOnMousePressed(mouseEvent -> {
             Point2D cursorInPane = canvas.sceneToLocal(mouseEvent.getSceneX(), mouseEvent.getSceneY());
 
-            rightSide[0] = new MoveWireTerminal(currentProject, wire, rightTerminal);
+            rightSide[0] = new MoveWireTerminal(currentProject, canvasPane, wire, rightTerminal);
 
             rightSide[0].setInitialTerminalX(rightTerminal.getCenterX());
             rightSide[0].setInitialTerminalY(rightTerminal.getCenterY());
@@ -718,6 +714,10 @@ public class ProjectController {
             //Stores offset from cursor to both endpoints, coordinates within the wire terminal
             cursorRightTerminalOffset[0] = new Point2D(rightTerminal.getCenterX() - cursorX, rightTerminal.getCenterY() - cursorY);
             canvasScrollPane.setPannable(false);
+
+            wire.toFront();
+            leftTerminal.toFront();
+            rightTerminal.toFront();
         });
 
         rightTerminal.setOnMouseDragged(mouseEvent -> {
@@ -771,10 +771,6 @@ public class ProjectController {
                 }
 
                 undoButton.setDisable(false);
-
-                leftTerminal.toBack();
-                rightTerminal.toBack();
-                wire.toBack();
             }
         });
     }

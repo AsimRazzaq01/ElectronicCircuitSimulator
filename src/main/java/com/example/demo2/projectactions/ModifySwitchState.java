@@ -25,6 +25,7 @@ public class ModifySwitchState implements ProjectActions {
         ConnDbOps.updateSwitches(CIRCUIT_SWITCH, NEW_STATE);
         CIRCUIT_SWITCH.setActive(NEW_STATE);
         CIRCUIT_SWITCH_NODE.setSwitchImageState(NEW_STATE);
+        PROJECT.calculateCircuitGroups();
         PROJECT.addToUndoStack(this);
     }
 

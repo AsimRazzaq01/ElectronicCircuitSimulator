@@ -1,5 +1,6 @@
 package com.example.demo2.componentmodel;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public abstract class Component {
@@ -8,12 +9,19 @@ public abstract class Component {
     private double componentY;
     private final String COMPONENT_TYPE;
     public static double zoomScale;
+    private int group;
+
+    private final ArrayList<Component> negativeSide;
+    private final ArrayList<Component> positiveSide;
 
     public Component(double x, double y, String type) {
         componentID = -1;
         COMPONENT_TYPE = type;
         componentX = x;
         componentY = y;
+        negativeSide = new ArrayList<>();
+        positiveSide = new ArrayList<>();
+        group = 0;
     }
 
     public String getComponentType() {
@@ -44,8 +52,32 @@ public abstract class Component {
         return componentID;
     }
 
+    public void setGroup(int number) {
+        group = number;
+    }
+
+    public int getGroup() {
+        return group;
+    }
+
     public boolean hasValidID() {
         return componentID > 0;
+    }
+
+    public void addToNegativeSide(Component c) {
+        negativeSide.add(c);
+    }
+
+    public void addToPositiveSide(Component c) {
+        positiveSide.add(c);
+    }
+
+    public ArrayList<Component> getNegativeSide() {
+        return negativeSide;
+    }
+
+    public ArrayList<Component> getPositiveSide() {
+        return positiveSide;
     }
 
     @Override

@@ -1,9 +1,13 @@
 package com.example.demo2.projectactions;
 
 import com.example.demo2.Project;
+import com.example.demo2.componentmodel.Component;
 import com.example.demo2.componentmodel.WireModel;
 import com.example.demo2.componentnode.TerminalNode;
 import com.example.demo2.componentnode.WireNode;
+import javafx.geometry.Bounds;
+
+import java.util.ArrayList;
 
 public class MoveWire implements ProjectActions {
     private final WireNode WIRE_NODE;
@@ -40,7 +44,6 @@ public class MoveWire implements ProjectActions {
 
     @Override
     public void performAction() {
-        //NOTE: Write to db first, if insert is successful, then perform action
         WIRE_NODE.setStartX(newStartX);
         WIRE_NODE.setStartY(newStartY);
         WIRE_NODE.setEndX(newEndX);
@@ -51,6 +54,64 @@ public class MoveWire implements ProjectActions {
 
         POSITIVE.setTerminalX(newPositiveX);
         POSITIVE.setTerminalY(newPositiveY);
+
+        TerminalNode negativeTerminal = NEGATIVE;
+        TerminalNode positiveTerminal = POSITIVE;
+
+        ArrayList<Component> wireLeftRemove = new ArrayList<>(WIRE_MODEL.getNegativeSide());
+        ArrayList<Component> wireRightRemove = new ArrayList<>(WIRE_MODEL.getPositiveSide());
+
+        Bounds leftTerminal = negativeTerminal.localToScene(negativeTerminal.getBoundsInLocal());
+        for (TerminalNode t : PROJECT.getTerminalList()) {
+            Bounds terminalBounds = t.localToScene(t.getBoundsInLocal());
+            if (t == negativeTerminal) {
+                continue;
+            }
+
+            if (terminalBounds.intersects(leftTerminal)) {
+                Component connected = t.getTerminalModel().getParent();
+                String charge = t.getTerminalModel().getCharge();
+                if (charge.equals("Positive") && !wireLeftRemove.contains(connected)) {
+                    connected.addToPositiveSide(WIRE_MODEL);
+                    WIRE_MODEL.addToNegativeSide(connected);
+                }
+
+                wireLeftRemove.remove(connected);
+            }
+        }
+
+        for (Component positive : wireLeftRemove) {
+            WIRE_MODEL.getNegativeSide().remove(positive);
+            positive.getPositiveSide().remove(WIRE_MODEL);
+            WIRE_MODEL.setGroup(0);
+        }
+
+        Bounds rightTerminal = positiveTerminal.localToScene(positiveTerminal.getBoundsInLocal());
+        for (TerminalNode t : PROJECT.getTerminalList()) {
+            Bounds terminalBounds = t.localToScene(t.getBoundsInLocal());
+            if (t == positiveTerminal) {
+                continue;
+            }
+
+            if (terminalBounds.intersects(rightTerminal)) {
+                Component connected = t.getTerminalModel().getParent();
+                String charge = t.getTerminalModel().getCharge();
+                if (charge.equals("Negative") && !wireRightRemove.contains(connected)) {
+                    connected.addToNegativeSide(WIRE_MODEL);
+                    WIRE_MODEL.addToPositiveSide(connected);
+                }
+
+                wireRightRemove.remove(connected);
+            }
+        }
+
+        for (Component negative : wireRightRemove) {
+            WIRE_MODEL.getPositiveSide().remove(negative);
+            negative.getNegativeSide().remove(WIRE_MODEL);
+            WIRE_MODEL.setGroup(0);
+        }
+
+        PROJECT.calculateCircuitGroups();
 
         WIRE_MODEL.setComponentX(newStartX - 12.5);
         WIRE_MODEL.setComponentY(newStartY - 12.5);
@@ -71,6 +132,64 @@ public class MoveWire implements ProjectActions {
 
         POSITIVE.setTerminalX(initialPositiveX);
         POSITIVE.setTerminalY(initialPositiveY);
+
+        TerminalNode negativeTerminal = NEGATIVE;
+        TerminalNode positiveTerminal = POSITIVE;
+
+        ArrayList<Component> wireLeftRemove = new ArrayList<>(WIRE_MODEL.getNegativeSide());
+        ArrayList<Component> wireRightRemove = new ArrayList<>(WIRE_MODEL.getPositiveSide());
+
+        Bounds leftTerminal = negativeTerminal.localToScene(negativeTerminal.getBoundsInLocal());
+        for (TerminalNode t : PROJECT.getTerminalList()) {
+            Bounds terminalBounds = t.localToScene(t.getBoundsInLocal());
+            if (t == negativeTerminal) {
+                continue;
+            }
+
+            if (terminalBounds.intersects(leftTerminal)) {
+                Component connected = t.getTerminalModel().getParent();
+                String charge = t.getTerminalModel().getCharge();
+                if (charge.equals("Positive") && !wireLeftRemove.contains(connected)) {
+                    connected.addToPositiveSide(WIRE_MODEL);
+                    WIRE_MODEL.addToNegativeSide(connected);
+                }
+
+                wireLeftRemove.remove(connected);
+            }
+        }
+
+        for (Component positive : wireLeftRemove) {
+            WIRE_MODEL.getNegativeSide().remove(positive);
+            positive.getPositiveSide().remove(WIRE_MODEL);
+            WIRE_MODEL.setGroup(0);
+        }
+
+        Bounds rightTerminal = positiveTerminal.localToScene(positiveTerminal.getBoundsInLocal());
+        for (TerminalNode t : PROJECT.getTerminalList()) {
+            Bounds terminalBounds = t.localToScene(t.getBoundsInLocal());
+            if (t == positiveTerminal) {
+                continue;
+            }
+
+            if (terminalBounds.intersects(rightTerminal)) {
+                Component connected = t.getTerminalModel().getParent();
+                String charge = t.getTerminalModel().getCharge();
+                if (charge.equals("Negative") && !wireRightRemove.contains(connected)) {
+                    connected.addToNegativeSide(WIRE_MODEL);
+                    WIRE_MODEL.addToPositiveSide(connected);
+                }
+
+                wireRightRemove.remove(connected);
+            }
+        }
+
+        for (Component negative : wireRightRemove) {
+            WIRE_MODEL.getPositiveSide().remove(negative);
+            negative.getNegativeSide().remove(WIRE_MODEL);
+            WIRE_MODEL.setGroup(0);
+        }
+
+        PROJECT.calculateCircuitGroups();
 
         WIRE_MODEL.setComponentX(initialStartX - 12.5);
         WIRE_MODEL.setComponentY(initialStartY - 12.5);

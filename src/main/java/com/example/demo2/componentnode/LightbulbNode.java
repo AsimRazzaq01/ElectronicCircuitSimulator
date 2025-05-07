@@ -14,6 +14,8 @@ import java.net.URL;
 public class LightbulbNode extends Group {
     // Private variable - model class
     private LightbulbModel lightbulbModel;
+    TerminalNode negative;
+    TerminalNode positive;
 
     // LightbulbNode method 1
     public LightbulbNode(double x, double y) {
@@ -24,8 +26,8 @@ public class LightbulbNode extends Group {
             lightbulbImageView.setFitWidth(70);
             lightbulbImageView.setPreserveRatio(true);
             lightbulbModel = new LightbulbModel(x, y);
-            TerminalNode negative = new TerminalNode(lightbulbModel, 62, 95, "Negative");
-            TerminalNode positive = new TerminalNode(lightbulbModel, 35, 125, "Positive");
+            negative = new TerminalNode(lightbulbModel, 62, 95, "Negative");
+            positive = new TerminalNode(lightbulbModel, 35, 125, "Positive");
             this.getChildren().add(lightbulbImageView);
             this.getChildren().add(negative);
             this.getChildren().add(positive);
@@ -44,8 +46,8 @@ public class LightbulbNode extends Group {
             lightbulbImageView.setPreserveRatio(true);
             lightbulbImageView.setPickOnBounds(true);
             lightbulbModel = new LightbulbModel(x, y, r);
-            TerminalNode negative = new TerminalNode(lightbulbModel, 62, 95, "Negative");
-            TerminalNode positive = new TerminalNode(lightbulbModel, 35, 125, "Positive");
+            negative = new TerminalNode(lightbulbModel, 62, 95, "Negative");
+            positive = new TerminalNode(lightbulbModel, 35, 125, "Positive");
             this.getChildren().add(lightbulbImageView);
             this.getChildren().add(negative);
             this.getChildren().add(positive);
@@ -57,5 +59,13 @@ public class LightbulbNode extends Group {
     // getter method
     public LightbulbModel getLightbulbModel() {
         return lightbulbModel;
+    }
+
+    public TerminalNode getNegative() {
+        return negative;
+    }
+
+    public TerminalNode getPositive() {
+        return positive;
     }
 } // End LightbulbNode class
