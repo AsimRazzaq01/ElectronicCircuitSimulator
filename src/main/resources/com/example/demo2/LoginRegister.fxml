@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
@@ -13,9 +14,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo2.LoginRegisterController">
+<AnchorPane stylesheets="@cssStyles/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo2.LoginRegisterController">
     <children>
         <GridPane alignment="CENTER" prefHeight="400.0" prefWidth="680.0">
             <columnConstraints>
@@ -28,7 +29,11 @@
             <children>
                 <VBox fx:id="vBox_existing_fields" alignment="CENTER" spacing="15.0" GridPane.columnIndex="1">
                     <children>
-                        <Text text="Login with an existing account" />
+                  <Label text="Login with an existing account">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
                         <TextField fx:id="textField_existing_email" promptText="E-mail" />
                         <PasswordField fx:id="textField_existing_pass" promptText="Password" />
                         <Button fx:id="button_existing_login" onAction="#handleButton_login" text="Login" />
@@ -39,7 +44,7 @@
                 </VBox>
                 <VBox fx:id="vBox_new_fields" alignment="CENTER" spacing="15.0" visible="false">
                     <children>
-                        <Text text="New Account" />
+                  <Label text="New Account" />
                   <TextField fx:id="textField_new_username" promptText="Username" />
                         <TextField fx:id="textField_new_email1" promptText="E-mail" />
                         <PasswordField fx:id="textField_new_pass1" promptText="Password" />

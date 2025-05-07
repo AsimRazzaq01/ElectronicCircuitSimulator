@@ -6,6 +6,7 @@ module com.example.demo2 {
     requires com.dlsc.formsfx;
     requires org.kordamp.bootstrapfx.core;
     requires java.sql;
+    requires java.prefs;
 
     opens com.example.demo2 to javafx.fxml;
     exports com.example.demo2;
