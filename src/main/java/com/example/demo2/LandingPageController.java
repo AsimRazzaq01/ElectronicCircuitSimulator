@@ -160,6 +160,7 @@ public class LandingPageController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("Project-view.fxml"));
                 Parent root = loader.load();
 
+
                 // Get the controller and set project name
                 ProjectController projectController = loader.getController();
 
@@ -202,6 +203,7 @@ public class LandingPageController {
             Stage stage = (Stage) logoutButton.getScene().getWindow();
             Scene scene = new Scene(root, 1200, 720); // width: 680, height: 400
             stage.setScene(scene);
+            ThemeManager.applyTheme(scene) ;
             stage.setResizable(false);
         } catch (IOException e) {
             e.printStackTrace();
@@ -214,6 +216,7 @@ public class LandingPageController {
             Stage stage = (Stage) logoutButton.getScene().getWindow();
             Parent root = FXMLLoader.load(getClass().getResource("LoginRegister.fxml"));
             stage.setScene(new Scene(root));
+            ThemeManager.applyTheme(stage.getScene());
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

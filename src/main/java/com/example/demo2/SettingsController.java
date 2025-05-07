@@ -1,7 +1,9 @@
 package com.example.demo2;
 
 import com.example.demo2.db.ConnDbOps;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -48,11 +50,42 @@ public class SettingsController {
             Stage stage = (Stage) changeUserNameField.getScene().getWindow();
             Scene scene = new Scene(root, 1200, 720); // width: 680, height: 400
             stage.setScene(scene);
+            ThemeManager.applyTheme(scene);
             stage.setResizable(false);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+
+    /**
+     * SetLightTheme -> BUTTON ON CLICK
+     * @param event -> Change theme
+     */
+    @FXML
+    void SetLightTheme(ActionEvent event) {
+        Scene scene = ((Node) event.getSource()).getScene();
+        ThemeManager.setTheme("/com/example/demo2/cssStyles/style.css");
+        ThemeManager.applyTheme(scene);
+        showConfirmation("Theme set successfully.");
+    } // End SetLightTheme
+
+
+
+    /**
+     * SetDarkTheme -> BUTTON ON CLICK
+     * @param event -> Change theme
+     */
+    @FXML
+    void SetDarkTheme(ActionEvent event) {
+        Scene scene = ((Node) event.getSource()).getScene();
+        ThemeManager.setTheme("/com/example/demo2/cssStyles/darkStyle.css");
+        ThemeManager.applyTheme(scene);
+        showConfirmation("Theme set successfully.");
+
+    } // End SetDarkTheme
+
+
 
     private void showConfirmation(String msg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -60,5 +93,5 @@ public class SettingsController {
         alert.setHeaderText(null);
         alert.setContentText(msg);
         alert.showAndWait();
-    }
+    } // End showConfirmation
 }
