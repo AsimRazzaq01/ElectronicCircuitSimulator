@@ -6,8 +6,10 @@ import com.example.demo2.componentmodel.Component;
 import com.example.demo2.componentmodel.ResistorModel;
 import com.example.demo2.componentnode.BatteryNode;
 import com.example.demo2.componentnode.TerminalNode;
+import com.example.demo2.componentnode.WireNode;
 import com.example.demo2.projectactions.ProjectActions;
 import javafx.scene.Node;
+import javafx.scene.paint.Paint;
 
 import java.util.*;
 
@@ -101,12 +103,29 @@ public class Project {
     public void calculateCircuitGroups() {
         int count = 1;
         circuitGroups.clear();
+        for (Node componentNode : PROJECT_COMPONENTS.values()) {
+            if (componentNode instanceof WireNode wireNode) {
+                wireNode.setStroke(Paint.valueOf("#1D1542"));
+            }
+        }
+
         for (BatteryModel batteryModel : BATTERY_LIST.keySet()) {
             if (batteryModel.isStartingBattery() && !batteryModel.getNegativeSide().isEmpty() && !batteryModel.getPositiveSide().isEmpty()) {
                 circuitGroups.put(count, createCircuits(batteryModel, count));
                 count++;
             }
         }
+
+        for (Node componentNode : PROJECT_COMPONENTS.values()) {
+            if (componentNode instanceof WireNode wireNode) {
+                if (wireNode.getWireModel().getGroup() > 0 && !wireNode.getWireModel().getNegativeSide().isEmpty() && !wireNode.getWireModel().getPositiveSide().isEmpty()) {
+                    if (circuitGroups.get(wireNode.getWireModel().getGroup()) != null && circuitGroups.get(wireNode.getWireModel().getGroup()) > 0.0) {
+                        wireNode.setStroke(Paint.valueOf("9444CC"));
+                    }
+                }
+            }
+        }
+        System.out.println(circuitGroups);
     }
 
     public double createCircuits(BatteryModel startingBattery, int group) {

@@ -73,6 +73,7 @@ public class MoveWireTerminal implements ProjectActions {
             for (Component positive : wireLeftRemove) {
                 WIRE_MODEL.getNegativeSide().remove(positive);
                 positive.getPositiveSide().remove(WIRE_MODEL);
+                WIRE_MODEL.setGroup(0);
             }
 
             PROJECT.calculateCircuitGroups();
@@ -109,6 +110,7 @@ public class MoveWireTerminal implements ProjectActions {
             for (Component negative : wireRightRemove) {
                 WIRE_MODEL.getPositiveSide().remove(negative);
                 negative.getNegativeSide().remove(WIRE_MODEL);
+                WIRE_MODEL.setGroup(0);
             }
 
             PROJECT.calculateCircuitGroups();
@@ -151,6 +153,7 @@ public class MoveWireTerminal implements ProjectActions {
             for (Component positive : wireLeftRemove) {
                 WIRE_MODEL.getNegativeSide().remove(positive);
                 positive.getPositiveSide().remove(WIRE_MODEL);
+                WIRE_MODEL.setGroup(0);
             }
 
             PROJECT.calculateCircuitGroups();
@@ -187,6 +190,7 @@ public class MoveWireTerminal implements ProjectActions {
             for (Component negative : wireRightRemove) {
                 WIRE_MODEL.getPositiveSide().remove(negative);
                 negative.getNegativeSide().remove(WIRE_MODEL);
+                WIRE_MODEL.setGroup(0);
             }
 
             PROJECT.calculateCircuitGroups();

@@ -1,7 +1,5 @@
 package com.example.demo2.componentmodel;
 
-import com.example.demo2.componentnode.TerminalNode;
-
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -23,7 +21,7 @@ public abstract class Component {
         componentY = y;
         negativeSide = new ArrayList<>();
         positiveSide = new ArrayList<>();
-        group = -1;
+        group = 0;
     }
 
     public String getComponentType() {

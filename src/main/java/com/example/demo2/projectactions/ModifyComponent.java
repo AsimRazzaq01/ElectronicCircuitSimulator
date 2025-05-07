@@ -27,16 +27,19 @@ public class ModifyComponent implements ProjectActions {
                 BatteryModel batteryModel = (BatteryModel) COMPONENT;
                 ConnDbOps.updateComponents(COMPONENT, NEW_VALUE);
                 batteryModel.setVoltage(NEW_VALUE);
+                PROJECT.calculateCircuitGroups();
             }
             case "Resistor" -> {
                 ResistorModel resistorModel = (ResistorModel) COMPONENT;
                 ConnDbOps.updateComponents(COMPONENT, NEW_VALUE);
                 resistorModel.setResistance(NEW_VALUE);
+                PROJECT.calculateCircuitGroups();
             }
             case "Light bulb" -> {
                 LightbulbModel lightbulbModel = (LightbulbModel) COMPONENT;
                 ConnDbOps.updateComponents(COMPONENT, NEW_VALUE);
                 lightbulbModel.setResistance(NEW_VALUE);
+                PROJECT.calculateCircuitGroups();
             }
         }
         PROJECT.addToUndoStack(this);
@@ -49,16 +52,19 @@ public class ModifyComponent implements ProjectActions {
                 BatteryModel batteryModel = (BatteryModel) COMPONENT;
                 ConnDbOps.updateComponents(COMPONENT, INITIAL_VALUE);
                 batteryModel.setVoltage(INITIAL_VALUE);
+                PROJECT.calculateCircuitGroups();
             }
             case "Resistor" -> {
                 ResistorModel resistorModel = (ResistorModel) COMPONENT;
                 ConnDbOps.updateComponents(COMPONENT, INITIAL_VALUE);
                 resistorModel.setResistance(INITIAL_VALUE);
+                PROJECT.calculateCircuitGroups();
             }
             case "Light bulb" -> {
                 LightbulbModel lightbulbModel = (LightbulbModel) COMPONENT;
                 ConnDbOps.updateComponents(COMPONENT, INITIAL_VALUE);
                 lightbulbModel.setResistance(INITIAL_VALUE);
+                PROJECT.calculateCircuitGroups();
             }
         }
         PROJECT.addToRedoStack(this);
