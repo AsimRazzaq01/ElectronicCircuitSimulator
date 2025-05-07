@@ -1,10 +1,8 @@
 package com.example.demo2;
 
-import com.example.demo2.componentmodel.BatteryModel;
-import com.example.demo2.componentmodel.CircuitSwitchModel;
-import com.example.demo2.componentmodel.Component;
-import com.example.demo2.componentmodel.ResistorModel;
+import com.example.demo2.componentmodel.*;
 import com.example.demo2.componentnode.BatteryNode;
+import com.example.demo2.componentnode.LightbulbNode;
 import com.example.demo2.componentnode.TerminalNode;
 import com.example.demo2.componentnode.WireNode;
 import com.example.demo2.projectactions.ProjectActions;
@@ -126,6 +124,21 @@ public class Project {
             }
         }
         System.out.println(circuitGroups);
+
+        for (Node node : PROJECT_COMPONENTS.values()) {
+            if (node instanceof LightbulbNode bulb) {
+                // look up the loop voltage for this bulb’s circuit group
+                int group = bulb.getLightbulbModel().getGroup();
+                double loopVolt = circuitGroups.getOrDefault(group, 0.0);
+
+                // set negative side to 0V, positive side to loopVolt
+                bulb.getNegative().getTerminalModel().setVoltage(0.0);
+                bulb.getPositive().getTerminalModel().setVoltage(loopVolt);
+
+                // now swap its image if loopVolt > 0
+                bulb.updateVisualState();
+            }
+        }
     }
 
     public double createCircuits(BatteryModel startingBattery, int group) {
@@ -147,8 +160,13 @@ public class Project {
                 ((BatteryModel) current).setStartingBattery(false);
             }
 
+            // count resistor resistance
             if (current instanceof ResistorModel) {
                 totalResistance += ((ResistorModel) current).getResistance();
+            }
+            // ← NEW: count bulb resistance too
+            else if (current instanceof LightbulbModel) {
+                totalResistance += ((LightbulbModel) current).getResistance();
             }
 
             if (current instanceof CircuitSwitchModel) {
@@ -164,7 +182,6 @@ public class Project {
                     if (totalResistance == 0) {
                         return -1;
                     }
-
                     return totalVoltage / totalResistance;
                 }
                 if (!visited.contains(positive)) {

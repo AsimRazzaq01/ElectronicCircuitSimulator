@@ -28,4 +28,23 @@ public class TerminalModel {
     public Component getParent() {
         return parent;
     }
+
+
+    private double voltage = 0.0; // NEW: the voltage at this terminal
+
+    /**
+     * Retrieves the current voltage at this terminal.
+     */
+    public double getVoltage() {
+        return voltage;
+    }
+
+    /**
+     * Sets the current voltage at this terminal.
+     * Your simulation logic should call this when
+     * propagating voltages through the circuit.
+     */
+    public void setVoltage(double voltage) {
+        this.voltage = voltage;
+    }
 } // End TerminalModel class

@@ -9,54 +9,66 @@ import javafx.scene.image.ImageView;
 import java.net.URL;
 
 /**
- * LightbulbNode class -> 1 var  initialized from lightbulb Model class -> 2 methods , 1 get lightbulb method
+ * LightbulbNode displays a lightbulb image and its terminals.
+ * It swaps between unlit and lit images based on terminal voltages.
  */
 public class LightbulbNode extends Group {
-    // Private variable - model class
-    private LightbulbModel lightbulbModel;
-    TerminalNode negative;
-    TerminalNode positive;
+    private final LightbulbModel lightbulbModel;
+    private final ImageView bulbView;
+    private final Image unlitImg;
+    private final Image litImg;
+    private final TerminalNode negative;
+    private final TerminalNode positive;
 
-    // LightbulbNode method 1
+    /**
+     * Constructs an unlit lightbulb at (x, y).
+     */
     public LightbulbNode(double x, double y) {
-        URL imagePath = Project.class.getResource("component_sprites/lightbulb.png");
-        if (imagePath != null) {
-            Image lightbulbImage = new Image(imagePath.toExternalForm(), 500, 0, true, false);
-            ImageView lightbulbImageView = new ImageView(lightbulbImage);
-            lightbulbImageView.setFitWidth(70);
-            lightbulbImageView.setPreserveRatio(true);
-            lightbulbModel = new LightbulbModel(x, y);
-            negative = new TerminalNode(lightbulbModel, 62, 95, "Negative");
-            positive = new TerminalNode(lightbulbModel, 35, 125, "Positive");
-            this.getChildren().add(lightbulbImageView);
-            this.getChildren().add(negative);
-            this.getChildren().add(positive);
-            this.setLayoutX(lightbulbModel.getComponentX());
-            this.setLayoutY(lightbulbModel.getComponentY());
-        }
+        // Load images
+        unlitImg = new Image(
+                Project.class.getResource("component_sprites/lightbulb.png").toExternalForm(),
+                70, 0, true, true
+        );
+        litImg = new Image(
+                Project.class.getResource("component_sprites/litLightbulb.png").toExternalForm(),
+                70, 0, true, true
+        );
+
+        // Create ImageView for the bulb
+        bulbView = new ImageView(unlitImg);
+        bulbView.setFitWidth(70);
+        bulbView.setPreserveRatio(true);
+
+        // Initialize model and terminals
+        lightbulbModel = new LightbulbModel(x, y);
+        negative = new TerminalNode(lightbulbModel, 62, 95, "Negative");
+        positive = new TerminalNode(lightbulbModel, 35, 125, "Positive");
+
+        // Add to group
+        getChildren().addAll(bulbView, negative, positive);
+        setLayoutX(x);
+        setLayoutY(y);
     }
 
-    // LightbulbNode method 2
+    /**
+     * Constructs a lightbulb at (x, y) with custom resistance.
+     */
     public LightbulbNode(double x, double y, double r) {
-        URL imagePath = Project.class.getResource("component_sprites/lightbulb.png");
-        if (imagePath != null) {
-            Image lightbulbImage = new Image(imagePath.toExternalForm(), 500, 0, true, false);
-            ImageView lightbulbImageView = new ImageView(lightbulbImage);
-            lightbulbImageView.setFitWidth(70);
-            lightbulbImageView.setPreserveRatio(true);
-            lightbulbImageView.setPickOnBounds(true);
-            lightbulbModel = new LightbulbModel(x, y, r);
-            negative = new TerminalNode(lightbulbModel, 62, 95, "Negative");
-            positive = new TerminalNode(lightbulbModel, 35, 125, "Positive");
-            this.getChildren().add(lightbulbImageView);
-            this.getChildren().add(negative);
-            this.getChildren().add(positive);
-            this.setLayoutX(lightbulbModel.getComponentX());
-            this.setLayoutY(lightbulbModel.getComponentY());
-        }
+        this(x, y);
+        lightbulbModel.setResistance(r);
     }
 
-    // getter method
+    /**
+     * Update the bulb image based on terminal voltages. Call after simulation.
+     */
+    public void updateVisualState() {
+        double vNeg = negative.getTerminalModel().getVoltage();
+        double vPos = positive.getTerminalModel().getVoltage();
+        boolean powered = (vNeg != vPos);
+        bulbView.setImage(powered ? litImg : unlitImg);
+    }
+
+    // Getters
     public LightbulbModel getLightbulbModel() {
         return lightbulbModel;
     }
@@ -68,4 +80,4 @@ public class LightbulbNode extends Group {
     public TerminalNode getPositive() {
         return positive;
     }
-} // End LightbulbNode class
+}
