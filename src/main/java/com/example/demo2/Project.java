@@ -1,10 +1,8 @@
 package com.example.demo2;
 
-import com.example.demo2.componentmodel.BatteryModel;
-import com.example.demo2.componentmodel.CircuitSwitchModel;
-import com.example.demo2.componentmodel.Component;
-import com.example.demo2.componentmodel.ResistorModel;
+import com.example.demo2.componentmodel.*;
 import com.example.demo2.componentnode.BatteryNode;
+import com.example.demo2.componentnode.LightbulbNode;
 import com.example.demo2.componentnode.TerminalNode;
 import com.example.demo2.componentnode.WireNode;
 import com.example.demo2.projectactions.ProjectActions;
@@ -113,13 +111,13 @@ public class Project {
             }
         }
 
+
         for (BatteryModel batteryModel : BATTERY_LIST.keySet()) {
             if (batteryModel.isStartingBattery() && !batteryModel.getNegativeSide().isEmpty() && !batteryModel.getPositiveSide().isEmpty()) {
                 CIRCUIT_GROUPS.put(count, createCircuits(batteryModel, count));
                 count++;
             }
         }
-
         for (Node componentNode : PROJECT_COMPONENTS.values()) {
             if (componentNode instanceof WireNode wireNode) {
                 if (wireNode.getWireModel().getGroup() > 0 && !wireNode.getWireModel().getNegativeSide().isEmpty() && !wireNode.getWireModel().getPositiveSide().isEmpty()) {
@@ -130,30 +128,60 @@ public class Project {
             }
         }
         System.out.println(CIRCUIT_GROUPS);
+
+
+        for (Node node : PROJECT_COMPONENTS.values()) {
+            if (node instanceof LightbulbNode bulb) {
+                // look up the loop voltage for this bulb’s circuit group
+                int group = bulb.getLightbulbModel().getGroup();
+                double loopVolt = CIRCUIT_GROUPS.getOrDefault(group, 0.0);
+
+
+                // set negative side to 0V, positive side to loopVolt
+                bulb.getNegative().getTerminalModel().setVoltage(0.0);
+                bulb.getPositive().getTerminalModel().setVoltage(loopVolt);
+
+
+                // now swap its image if loopVolt > 0
+                bulb.updateVisualState();
+            }
+        }
     }
+
 
     public double createCircuits(BatteryModel startingBattery, int group) {
         double totalVoltage = 0;
         double totalResistance = 0;
 
+
         Stack<Component> componentStack = new Stack<>();
         Set<Component> visited = new HashSet<>();
+
 
         componentStack.push(startingBattery);
         totalVoltage += startingBattery.getVoltage();
 
+
         while (!componentStack.empty()) {
             Component current = componentStack.pop();
             current.setGroup(group);
+
 
             if (current != startingBattery && current instanceof BatteryModel) {
                 totalVoltage += ((BatteryModel) current).getVoltage();
                 ((BatteryModel) current).setStartingBattery(false);
             }
 
+
+            // count resistor resistance
             if (current instanceof ResistorModel) {
                 totalResistance += ((ResistorModel) current).getResistance();
             }
+            // ← NEW: count bulb resistance too
+            else if (current instanceof LightbulbModel) {
+                totalResistance += ((LightbulbModel) current).getResistance();
+            }
+
 
             if (current instanceof CircuitSwitchModel) {
                 if (((CircuitSwitchModel) current).isActive()) {
@@ -161,21 +189,25 @@ public class Project {
                 }
             }
 
+
             visited.add(current);
+
 
             for (Component positive : current.getPositiveSide()) {
                 if (positive == startingBattery && visited.contains(startingBattery)) {
                     if (totalResistance == 0) {
                         return -1;
                     }
-
                     return totalVoltage / totalResistance;
                 }
                 if (!visited.contains(positive)) {
                     componentStack.push(positive);
                 }
             }
+
+
         }
         return 0;
     }
 }
+
