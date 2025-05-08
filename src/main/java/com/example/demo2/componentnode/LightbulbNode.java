@@ -20,6 +20,7 @@ public class LightbulbNode extends Group {
     private final ImageView bulbView;
     private final Image unlitImg;
     private final Image litImg;
+    private final Image brokenImg;
     private final TerminalNode negative;
     private final TerminalNode positive;
 
@@ -40,6 +41,13 @@ public class LightbulbNode extends Group {
                 70, 0, true, true
         );
 
+        brokenImg = new Image(
+                Project.class.getResource("component_sprites/dead_bulb.png").toExternalForm(),
+                70, 0, true, true
+        );
+
+//        bulbView = new ImageView();
+//        bulbView.setImage();
 
         // Create ImageView for the bulb
         bulbView = new ImageView(unlitImg);
@@ -77,6 +85,18 @@ public class LightbulbNode extends Group {
         double vPos = positive.getTerminalModel().getVoltage();
         boolean powered = (vNeg != vPos);
         bulbView.setImage(powered ? litImg : unlitImg);
+    }
+
+
+    /**
+     * Update the bulb image based on terminal voltages. Call after simulation.
+     * but this time voltage/current is too high which breaks the bulb
+     */
+    public void updateBrokenVisualState() {
+        double vNeg = negative.getTerminalModel().getVoltage();
+        double vPos = positive.getTerminalModel().getVoltage();
+        boolean powered = (vNeg != vPos);
+        bulbView.setImage(powered ? brokenImg : litImg);
     }
 
 
