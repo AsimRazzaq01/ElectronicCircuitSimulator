@@ -47,7 +47,7 @@ This project’s main purpose is to let users register, then drag-and-drop elect
 
 ### Prerequisites
 
-- **Java 17 JDK**  
+- **Java 23+ JDK**  
 - **Maven**  
 - **MySQL** (local or Azure-hosted)  
 - **IntelliJ IDEA** (or another Java IDE)  
