@@ -154,7 +154,7 @@ public class Project {
                 bulb.updateVisualState();
 
 
-                // 0.7 is average bulb capacity of current before break
+                // 0.7 is the average capacity of current required to overload a 60 watt bulb
                 if (loopVolt > 0.7) {
                     //wait(1000);
                     bulb.updateBrokenVisualState();
@@ -162,9 +162,7 @@ public class Project {
                     System.out.println("Bulb broken");
                     return;
                 }
-
             }
-
         }
     }
 
