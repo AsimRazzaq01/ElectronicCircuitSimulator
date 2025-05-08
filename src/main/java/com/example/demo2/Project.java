@@ -1,10 +1,7 @@
 package com.example.demo2;
 
 import com.example.demo2.componentmodel.*;
-import com.example.demo2.componentnode.BatteryNode;
-import com.example.demo2.componentnode.LightbulbNode;
-import com.example.demo2.componentnode.TerminalNode;
-import com.example.demo2.componentnode.WireNode;
+import com.example.demo2.componentnode.*;
 import com.example.demo2.projectactions.ProjectActions;
 import javafx.scene.Node;
 import javafx.scene.paint.Paint;
@@ -102,12 +99,20 @@ public class Project {
         redoStack.clear();
     }
 
+    private boolean broken_bulb = false;
+
+
     public void calculateCircuitGroups() {
         int count = 1;
         CIRCUIT_GROUPS.clear();
         for (Node componentNode : PROJECT_COMPONENTS.values()) {
             if (componentNode instanceof WireNode wireNode) {
                 wireNode.setStroke(Paint.valueOf("#1D1542"));
+
+                // bulb broken = true
+                if (broken_bulb) {
+                    wireNode.setStroke(Paint.valueOf("#D2042D"));
+                }
             }
         }
 
@@ -130,8 +135,10 @@ public class Project {
         System.out.println(CIRCUIT_GROUPS);
 
 
+
+
         for (Node node : PROJECT_COMPONENTS.values()) {
-            if (node instanceof LightbulbNode bulb) {
+            if (node instanceof LightbulbNode bulb ) {
                 // look up the loop voltage for this bulb’s circuit group
                 int group = bulb.getLightbulbModel().getGroup();
                 double loopVolt = CIRCUIT_GROUPS.getOrDefault(group, 0.0);
@@ -141,9 +148,20 @@ public class Project {
                 bulb.getNegative().getTerminalModel().setVoltage(0.0);
                 bulb.getPositive().getTerminalModel().setVoltage(loopVolt);
 
+                System.out.println("bulb loopVolt = " +loopVolt);
 
                 // now swap its image if loopVolt > 0
                 bulb.updateVisualState();
+
+
+                // 0.7 is the average capacity of current required to overload a 60 watt bulb
+                if (loopVolt > 0.7) {
+                    //wait(1000);
+                    bulb.updateBrokenVisualState();
+                    System.out.println("High current in system = " + loopVolt);
+                    System.out.println("Bulb broken");
+                    return;
+                }
             }
         }
     }
