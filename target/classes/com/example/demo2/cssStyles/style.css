@@ -56,3 +56,85 @@ Button {
 Button:hover {
     -fx-background-color: #3542b4;
 }
+
+/* cssStyles/style.css */
+
+/* Page background */
+.root {
+    -fx-background-color: #E3F2FD; /* light blue */
+}
+
+/* Top bar styling */
+.top-bar {
+    -fx-background-color: #90CAF9; /* mid-tone blue */
+    -fx-border-color: #FFEB3B;      /* yellow accent */
+    -fx-border-width: 0 0 2 0;
+}
+
+/* Welcome text */
+.headline {
+    -fx-font-size: 20px;
+    -fx-text-fill: #0D47A1; /* dark blue */
+    -fx-font-weight: bold;
+}
+
+/* Center container padding */
+.center-container {
+    -fx-padding: 20;
+}
+
+/* ScrollPane tweaks */
+.project-scroll {
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+/* Primary buttons (New & Settings) */
+.primary-btn {
+    -fx-background-color: #FFEB3B;  /* yellow */
+    -fx-text-fill: #0D47A1;         /* dark blue text */
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+
+/* Secondary button (Logout) */
+.secondary-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #0D47A1;
+    -fx-font-size: 14px;
+}
+
+/* Footer bar */
+.footer-bar {
+    -fx-background-color: #BBDEFB;
+}
+
+.footer-bar Label {
+    -fx-text-fill: #0D47A1;
+    -fx-font-size: 12px;
+}
+
+/* make the ScrollPane’s viewport grey, rounded, and padded */
+ScrollPane.project-scroll .viewport {
+    -fx-background-color: #CCCCCC;
+    -fx-background-radius: 8;
+    -fx-padding: 20;            /* pushes the content inward */
+}
+
+/* now style the labels inside that grey area */
+ScrollPane.project-scroll .viewport Label {
+    -fx-text-fill: #FFEB3B;
+    -fx-font-size: 16px;
+}
+
+/* style buttons inside too */
+ScrollPane.project-scroll .viewport Button {
+    -fx-background-color: #90CAF9;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+

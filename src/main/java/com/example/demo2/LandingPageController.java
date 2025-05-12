@@ -59,14 +59,14 @@ public class LandingPageController {
         } else {
             for (String name : projects) {
                 HBox row = new HBox(10);
-                row.setStyle("-fx-padding: 5px; -fx-alignment: center-left;");
+                row.setStyle("-fx-padding: 5px; -fx-alignment: center-left; -fx-text-fill: #0D47A1;");
 
                 Label projectLabel = new Label(name);
-                projectLabel.setStyle("-fx-font-size: 16px; -fx-cursor: hand;");
+                projectLabel.setStyle("-fx-font-size: 16px; -fx-cursor: hand; -fx-text-fill: #0D47A1;");
                 projectLabel.setOnMouseClicked(_ -> openProject(name));
 
                 Button deleteButton = new Button("Delete");
-                deleteButton.setStyle("-fx-background-color: red; -fx-text-fill: white;");
+                deleteButton.setStyle("-fx-background-color: #0D47A1; -fx-text-fill: white;");
                 deleteButton.setOnAction(_ -> {
                     dbOps.deleteProject(currentUserId, name);
                     loadProjects(); // Refresh UI after deletion
@@ -78,8 +78,6 @@ public class LandingPageController {
             }
         }
     }
-
-
     @FXML
     private void openNewProject() {
         TextInputDialog dialog = new TextInputDialog();
@@ -193,7 +191,6 @@ public class LandingPageController {
 
         popupStage.show();
     }
-
 
     @FXML
     private void openSettings() {
