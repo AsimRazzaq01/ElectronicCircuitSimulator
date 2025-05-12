@@ -61,9 +61,6 @@ public class LandingPageController {
                 HBox row = new HBox(10);
                 row.setStyle("-fx-padding: 5px; -fx-alignment: center-left;");
 
-                Label projectLabel = new Label(name);
-                projectLabel.setStyle("-fx-font-size: 16px; -fx-cursor: hand;");
-                projectLabel.setOnMouseClicked(_ -> openProject(name));
 
                 Button deleteButton = new Button("Delete");
                 deleteButton.setStyle("-fx-background-color: red; -fx-text-fill: white;");
@@ -71,6 +68,10 @@ public class LandingPageController {
                     dbOps.deleteProject(currentUserId, name);
                     loadProjects(); // Refresh UI after deletion
                 });
+
+                Label projectLabel = new Label(name);
+                projectLabel.setStyle("-fx-font-size: 16px; -fx-cursor: hand;");
+                projectLabel.setOnMouseClicked(_ -> openProject(name));
 
                 row.getChildren().addAll(projectLabel, deleteButton);
                 projectListVBox.getChildren().add(row);
