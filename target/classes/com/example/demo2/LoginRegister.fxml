@@ -16,9 +16,9 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane stylesheets="@cssStyles/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo2.LoginRegisterController">
+<AnchorPane prefHeight="720.0" prefWidth="1200.0" stylesheets="@cssStyles/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo2.LoginRegisterController">
     <children>
-        <GridPane alignment="CENTER" prefHeight="400.0" prefWidth="680.0">
+        <GridPane alignment="CENTER" prefHeight="720.0" prefWidth="1200.0">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" prefWidth="322.0" />
                 <ColumnConstraints hgrow="SOMETIMES" prefWidth="317.0" />
@@ -27,24 +27,36 @@
                 <RowConstraints vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <VBox fx:id="vBox_existing_fields" alignment="CENTER" spacing="15.0" GridPane.columnIndex="1">
+                <VBox fx:id="vBox_existing_fields" alignment="CENTER" prefHeight="720.0" prefWidth="600.0" spacing="15.0" GridPane.columnIndex="1">
                     <children>
                   <Label text="Login with an existing account">
                      <font>
-                        <Font size="18.0" />
+                        <Font size="30.0" />
                      </font>
                   </Label>
-                        <TextField fx:id="textField_existing_email" promptText="E-mail" />
-                        <PasswordField fx:id="textField_existing_pass" promptText="Password" />
-                        <Button fx:id="button_existing_login" onAction="#handleButton_login" text="Login" />
+                        <TextField fx:id="textField_existing_email" promptText="E-mail">
+                     <font>
+                        <Font size="18.0" />
+                     </font></TextField>
+                        <PasswordField fx:id="textField_existing_pass" promptText="Password">
+                     <font>
+                        <Font size="18.0" />
+                     </font></PasswordField>
+                        <Button fx:id="button_existing_login" onAction="#handleButton_login" prefHeight="40.0" prefWidth="150.0" text="Login">
+                     <font>
+                        <Font size="18.0" />
+                     </font></Button>
                     </children>
                     <padding>
                         <Insets left="15.0" right="15.0" />
                     </padding>
                 </VBox>
-                <VBox fx:id="vBox_new_fields" alignment="CENTER" spacing="15.0" visible="false">
+                <VBox fx:id="vBox_new_fields" alignment="CENTER" prefHeight="720.0" prefWidth="600.0" spacing="15.0" visible="false">
                     <children>
-                  <Label text="New Account" />
+                  <Label text="Create New Account">
+                     <font>
+                        <Font size="30.0" />
+                     </font></Label>
                   <TextField fx:id="textField_new_username" promptText="Username" />
                         <TextField fx:id="textField_new_email1" promptText="E-mail" />
                         <PasswordField fx:id="textField_new_pass1" promptText="Password" />
@@ -56,28 +68,36 @@
                 </VBox>
             </children>
         </GridPane>
-        <Pane fx:id="pane_box">
+        <Pane fx:id="pane_box" prefHeight="720.0" prefWidth="600.0">
             <children>
-                <Rectangle fx:id="rectangle" arcHeight="5.0" arcWidth="5.0" fill="#6abce2" height="400.0" stroke="BLACK" strokeType="INSIDE" width="340.0" />
-                <VBox fx:id="vBox_existing_box" alignment="TOP_CENTER" prefHeight="400.0" prefWidth="340.0" spacing="30.0">
+                <Rectangle fx:id="rectangle" arcHeight="5.0" arcWidth="5.0" fill="#6abce2" height="720.0" stroke="BLACK" strokeType="INSIDE" width="600.0" />
+                <VBox fx:id="vBox_existing_box" alignment="TOP_CENTER" prefHeight="720.0" prefWidth="600.0" spacing="30.0">
                     <children>
-                        <ImageView fx:id="logoImageView" fitHeight="220.0" fitWidth="220.0">
+                        <ImageView fx:id="logoImageView" fitHeight="400.0" fitWidth="400.0">
                      <image>
                         <Image url="@../../../Images/Studio_Shodwe-removebg-preview.png" />
-                     </image></ImageView>
-                        <Button fx:id="button_newAccount" onAction="#showNew" text="Need an account?" />
+                     </image>
+                  </ImageView>
+                        <Button fx:id="button_newAccount" onAction="#showNew" text="Need an account?">
+                     <font>
+                        <Font size="18.0" />
+                     </font></Button>
                     </children>
                     <padding>
                         <Insets top="70.0" />
                     </padding>
                 </VBox>
-                <VBox fx:id="vBox_new_box" alignment="TOP_CENTER" prefHeight="400.0" prefWidth="340.0" spacing="30.0" visible="false">
+                <VBox fx:id="vBox_new_box" alignment="TOP_CENTER" prefHeight="720.0" prefWidth="600.0" spacing="30.0" visible="false">
                     <children>
-                        <ImageView fx:id="logoImageViewNew" fitHeight="220.0" fitWidth="220.0">
+                        <ImageView fx:id="logoImageViewNew" fitHeight="400.0" fitWidth="400.0">
                      <image>
                         <Image url="@../../../Images/Studio_Shodwe-removebg-preview.png" />
-                     </image></ImageView>
-                        <Button fx:id="button_existingAccount" onAction="#showExisting" text="Already have an account?" />
+                     </image>
+                  </ImageView>
+                        <Button fx:id="button_existingAccount" onAction="#showExisting" text="Already have an account?">
+                     <font>
+                        <Font size="18.0" />
+                     </font></Button>
                     </children>
                     <padding>
                         <Insets top="70.0" />

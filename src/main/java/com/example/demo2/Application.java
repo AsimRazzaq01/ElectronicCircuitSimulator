@@ -12,7 +12,8 @@ import java.io.IOException;
 public class Application extends javafx.application.Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("LoginRegister.fxml"));
+//        FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("LoginRegister.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("Splash_Screen.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1200, 720);  //680, 400
         ThemeManager.applyTheme(scene); // Apply the saved theme to the scene
         stage.setTitle("Electronic Circuit Simulator!");
