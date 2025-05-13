@@ -8,67 +8,52 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefWidth="800" prefHeight="600"
-            stylesheets="@cssStyles/style.css"
-            xmlns="http://javafx.com/javafx/21"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.demo2.LandingPageController">
+<AnchorPane prefHeight="720.0" prefWidth="1200.0" stylesheets="@cssStyles/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo2.LandingPageController">
 
     <!-- Top Bar now anchored left/right/top -->
-    <HBox fx:id="topBar"
-          layoutY="0"
-          AnchorPane.topAnchor="0"
-          AnchorPane.leftAnchor="0"
-          AnchorPane.rightAnchor="0"
-          prefHeight="60"
-          spacing="10"
-          alignment="CENTER_LEFT"
-          styleClass="top-bar">
+    <HBox fx:id="topBar" alignment="CENTER_LEFT" layoutY="0" prefHeight="60" spacing="10" styleClass="top-bar" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
         <padding>
-            <Insets top="10" bottom="10" left="20" right="20"/>
+            <Insets bottom="10" left="20" right="20" top="10" />
         </padding>
 
         <!-- Welcome label -->
-        <Label fx:id="welcomeLabel"
-               text="Welcome Back, User!"
-               styleClass="headline"/>
+        <Label fx:id="welcomeLabel" styleClass="headline" text="Welcome Back, User!">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
 
         <!-- spacer -->
-        <Region HBox.hgrow="ALWAYS"/>
+        <Region HBox.hgrow="ALWAYS" />
 
         <!-- logout -->
-        <Button fx:id="logoutButton"
-                text="🚪 Log Out"
-                onAction="#logout"
-                styleClass="secondary-btn"/>
+        <Button fx:id="logoutButton" onAction="#logout" styleClass="secondary-btn" text="🚪 Log Out">
+         <font>
+            <Font size="14.0" />
+         </font></Button>
     </HBox>
 
     <!-- Main content below -->
-    <VBox layoutX="20" layoutY="80"
-          AnchorPane.leftAnchor="20"
-          AnchorPane.rightAnchor="20"
-          AnchorPane.bottomAnchor="20"
-          spacing="20"
-          styleClass="center-container">
+    <VBox layoutX="20" layoutY="80" spacing="20" styleClass="center-container" AnchorPane.bottomAnchor="20" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20">
 
-        <ScrollPane fitToWidth="true" prefHeight="400" styleClass="project-scroll">
+        <ScrollPane fitToWidth="true" prefHeight="500.0" styleClass="project-scroll">
             <VBox fx:id="projectListVBox" spacing="10">
                 <padding>
-                    <Insets top="10" right="20" bottom="10" left="20"/>
+                    <Insets bottom="10" left="20" right="20" top="10" />
                 </padding>
             </VBox>
         </ScrollPane>
 
-        <HBox spacing="20" alignment="CENTER">
-            <Button fx:id="newProjectButton"
-                    text="➕ New Project"
-                    onAction="#openNewProject"
-                    styleClass="primary-btn"/>
-            <Button fx:id="settingsButton"
-                    text="⚙ Settings"
-                    onAction="#openSettings"
-                    styleClass="primary-btn"/>
+        <HBox alignment="CENTER" spacing="20">
+            <Button fx:id="newProjectButton" onAction="#openNewProject" prefHeight="40.0" prefWidth="150.0" styleClass="primary-btn" text="➕ New Project">
+            <font>
+               <Font size="14.0" />
+            </font></Button>
+            <Button fx:id="settingsButton" onAction="#openSettings" prefHeight="40.0" prefWidth="150.0" styleClass="primary-btn" text="⚙ Settings">
+            <font>
+               <Font size="14.0" />
+            </font></Button>
         </HBox>
 
     </VBox>

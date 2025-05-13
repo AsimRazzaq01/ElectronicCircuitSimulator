@@ -66,13 +66,23 @@ public class LandingPageController {
                 projectLabel.setOnMouseClicked(_ -> openProject(name));
 
                 Button deleteButton = new Button("Delete");
-                deleteButton.setStyle("-fx-background-color: #0D47A1; -fx-text-fill: white;");
+
+                deleteButton.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
+                    if (isNowHovered) {
+                        deleteButton.setStyle("-fx-background-color: red; -fx-text-fill: white;");
+                    } else {
+                        deleteButton.setStyle("-fx-background-color: #0D47A1; -fx-text-fill: white;");
+                    }
+                });
+
+//                deleteButton.setStyle("-fx-background-color: #0D47A1; -fx-text-fill: white;");
+
                 deleteButton.setOnAction(_ -> {
                     dbOps.deleteProject(currentUserId, name);
                     loadProjects(); // Refresh UI after deletion
                 });
 
-                row.getChildren().addAll(projectLabel, deleteButton);
+                row.getChildren().addAll( deleteButton , projectLabel);
                 projectListVBox.getChildren().add(row);
 
             }

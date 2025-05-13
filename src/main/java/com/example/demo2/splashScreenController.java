@@ -13,6 +13,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.media.Media; // ✅ CORRECT for JavaFX video/audio
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -24,6 +25,8 @@ import java.util.ResourceBundle;
 public class splashScreenController implements Initializable {
     @FXML
     private MediaView mediaView;
+    @FXML
+    private Text splash_header;
 
     private File file;
     private Media media;
@@ -46,9 +49,13 @@ public class splashScreenController implements Initializable {
                         new KeyFrame(duration.subtract(Duration.seconds(2)), event -> {
                             // Start fading out 1 second before the video ends
                             FadeTransition fadeOut = new FadeTransition(Duration.seconds(3), mediaView);
+                            FadeTransition fadeOut2 = new FadeTransition(Duration.seconds(3), splash_header);
                             fadeOut.setFromValue(1.0);
                             fadeOut.setToValue(0.0);
                             fadeOut.play();
+                            fadeOut2.setFromValue(1.0);
+                            fadeOut2.setToValue(0.0);
+                            fadeOut2.play();
                         })
                 );
                 fadeTrigger.play();
@@ -82,16 +89,17 @@ public class splashScreenController implements Initializable {
             stage.setScene(transitionScene);
 
             // Create fade transitions
-            FadeTransition fadeOutOld = new FadeTransition(Duration.seconds(1), oldRoot);
+            FadeTransition fadeOutOld = new FadeTransition(Duration.seconds(2), oldRoot);
             fadeOutOld.setFromValue(1.0);
             fadeOutOld.setToValue(0.0);
 
-            FadeTransition fadeInNew = new FadeTransition(Duration.seconds(1), newRoot);
+            FadeTransition fadeInNew = new FadeTransition(Duration.seconds(2), newRoot);
             fadeInNew.setFromValue(0.0);
             fadeInNew.setToValue(1.0);
 
             // Once transition is done, set final scene to newRoot only
-            //fadeInNew.setOnFinished(event -> stage.setScene(new Scene(newRoot, 1200, 720)));
+//            fadeInNew.setOnFinished(event -> stage.setScene(new Scene(newRoot, 1200, 720)));
+
 
             // Play both animations in parallel
             new ParallelTransition(fadeOutOld, fadeInNew).play();
@@ -102,42 +110,6 @@ public class splashScreenController implements Initializable {
     }
 
 
-
-
-//    private void switchToMainScreen() {
-//        // Create fade out transition for the media view (1 second)
-//        FadeTransition fadeOut = new FadeTransition(Duration.seconds(1), mediaView);
-//        fadeOut.setFromValue(1.0);
-//        fadeOut.setToValue(0.0);
-//
-//        fadeOut.setOnFinished(event -> {
-//            try {
-//                // Load the main scene FXML
-//                FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginRegister.fxml"));
-//                Parent root = loader.load();
-//
-//                // Get current stage from mediaView
-//                Stage stage = (Stage) mediaView.getScene().getWindow();
-//
-//                // Set new scene with a fade in effect
-//                Scene scene = new Scene(root, 1200, 720);
-//                root.setOpacity(0);
-//
-//                stage.setScene(scene);
-//
-//                // Fade in the new scene
-//                FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), root);
-//                fadeIn.setFromValue(0.0);
-//                fadeIn.setToValue(1.0);
-//                fadeIn.play();
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        });
-//
-//        fadeOut.play();
-//    }
 
 
 

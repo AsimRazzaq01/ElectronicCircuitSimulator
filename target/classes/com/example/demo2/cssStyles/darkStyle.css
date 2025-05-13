@@ -74,7 +74,7 @@
 
 * {
     -fx-font-family: "Segoe UI", sans-serif;
-    -fx-font-size: 18px;
+    /*-fx-font-size: 18px;*/
 }
 
 AnchorPane {
