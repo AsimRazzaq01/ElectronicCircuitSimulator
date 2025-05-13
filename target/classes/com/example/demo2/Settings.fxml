@@ -3,64 +3,69 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" stylesheets="@cssStyles/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo2.SettingsController">
+<BorderPane prefWidth="800" prefHeight="600"
+            stylesheets="@cssStyles/style.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.demo2.SettingsController">
 
-    <!-- VBox to organize everything vertically -->
-    <VBox layoutX="50.0" layoutY="30.0" spacing="20" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+    <!-- Top Bar -->
+    <top>
+        <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="10">
+            <padding>
+                <Insets top="10" bottom="10" left="20" right="20"/>
+            </padding>
+            <Label text="Settings" styleClass="headline"/>
+            <Separator orientation="VERTICAL"/>
+            <Button fx:id="backButton"
+                    text="🔙 Back to Home"
+                    onAction="#goBack"
+                    styleClass="secondary-btn"/>
+        </HBox>
+    </top>
 
-        <!-- Settings Title -->
-        <Label prefHeight="38.0" prefWidth="200.0" style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Settings">
-         <font>
-            <Font size="18.0" />
-         </font></Label>
-      <HBox>
-         <children>
-            <VBox prefHeight="25.0" prefWidth="250.0">
-               <children>
-                  <Label text="Change Username:" />
-            
-                                <!-- Change Username Field -->
-                    <TextField fx:id="changeUserNameField" onAction="#handleUsernameChange" prefHeight="41.0" prefWidth="228.0" promptText="Enter new username" />
-               </children>
+    <!-- Center Content -->
+    <center>
+        <VBox spacing="30" styleClass="center-container">
+            <!-- Change Username Section -->
+            <VBox spacing="5">
+                <Label text="Change Username:" style="-fx-font-size:16px; -fx-text-fill:#0D47A1;"/>
+                <HBox spacing="10">
+                    <TextField fx:id="changeUserNameField"
+                               promptText="Enter new username"
+                               onAction="#handleUsernameChange"
+                               styleClass="text-input"/>
+                    <Button text="Save" onAction="#handleUsernameChange" styleClass="primary-btn"/>
+                </HBox>
             </VBox>
-         </children>
-      </HBox>
-      <HBox prefHeight="100.0" prefWidth="200.0">
-         <children>
-            <VBox prefHeight="96.0" prefWidth="200.0">
-               <children>
-                  <Button mnemonicParsing="false" onAction="#SetLightTheme" prefWidth="200.0" text="💡 Set Light Theme">
-                     <VBox.margin>
-                        <Insets bottom="5.0" top="5.0" />
-                     </VBox.margin>
-                  </Button>
-                  <Button mnemonicParsing="false" onAction="#SetDarkTheme" prefWidth="200.0" text="🕶️ Set Dark Theme ">
-                     <VBox.margin>
-                        <Insets bottom="5.0" top="5.0" />
-                     </VBox.margin>
-                  </Button>
-               </children>
-            </VBox>
-         </children></HBox>
-      <HBox prefHeight="100.0" prefWidth="200.0" />
-      <HBox prefHeight="100.0" prefWidth="200.0" />
-      <HBox prefHeight="100.0" prefWidth="200.0">
-         <children>
-            <VBox prefHeight="100.0" prefWidth="200.0">
-               <children>
-            
-                    <!-- Back Button -->
-                    <Button fx:id="backButton" onAction="#goBack" prefHeight="38.0" prefWidth="200.0" text="🔙 Back to Home" />
-               </children>
-            </VBox>
-         </children>
-      </HBox>
 
-    </VBox>
-</AnchorPane>
+            <Separator/>
+
+            <!-- Theme Controls -->
+            <VBox spacing="10">
+                <Label text="Theme:" style="-fx-font-size:16px; -fx-text-fill:#0D47A1;"/>
+                <HBox spacing="20">
+                    <Button text="Light Theme" onAction="#SetLightTheme" styleClass="primary-btn"/>
+                    <Button text="Dark Theme" onAction="#SetDarkTheme" styleClass="primary-btn"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </center>
+
+    <!-- Footer (optional extra space) -->
+    <bottom>
+        <HBox alignment="CENTER_RIGHT">
+            <padding>
+                <Insets top="10" bottom="10" right="20"/>
+            </padding>
+            <Label text="v1.0.0" style="-fx-text-fill:gray; -fx-font-size:12px;"/>
+        </HBox>
+    </bottom>
+</BorderPane>
