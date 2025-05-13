@@ -42,18 +42,20 @@ public class LoginRegisterController implements Initializable {
 
     private final ConnDbOps db = new ConnDbOps();
 
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         ThemeManager.getTheme();
+//        ThemeManager.applySavedTheme(mainScene);  // Pass your scene here
         showExisting();
     }
 
     public void showExisting() {
-        fadeTransition(vBox_existing_fields, vBox_existing_box, vBox_new_fields, vBox_new_box, 510, 170);
+        fadeTransition(vBox_existing_fields, vBox_existing_box, vBox_new_fields, vBox_new_box, 900, 300);  //510, 170
     }
 
     public void showNew() {
-        fadeTransition(vBox_new_fields, vBox_new_box, vBox_existing_fields, vBox_existing_box, 170, 510);
+        fadeTransition(vBox_new_fields, vBox_new_box, vBox_existing_fields, vBox_existing_box, 300, 900);  //170, 510
     }
 
     private void fadeTransition(VBox fadeInFields, VBox fadeInBox, VBox fadeOutFields, VBox fadeOutBox, double fromX, double toX) {
@@ -67,7 +69,7 @@ public class LoginRegisterController implements Initializable {
         outFields.setFromValue(1.0); outFields.setToValue(0.0);
         outBox.setFromValue(1.0); outBox.setToValue(0.0);
 
-        Path path = new Path(new MoveTo(fromX, 200), new LineTo(toX, 200));
+        Path path = new Path(new MoveTo(fromX, 360), new LineTo(toX, 360)); //200
         PathTransition slide = new PathTransition(Duration.seconds(1.25), path, pane_box);
 
         fadeInFields.setVisible(true);
@@ -122,7 +124,8 @@ public class LoginRegisterController implements Initializable {
                 Stage stage = (Stage) button_existing_login.getScene().getWindow();
                 Scene scene = new Scene(root, 1200, 720); // width: 680, height: 400
                 stage.setScene(scene);
-                ThemeManager.applyTheme(scene); // Apply the saved theme to the scene
+//                ThemeManager.applyTheme(scene); // Apply the saved theme to the scene
+                ThemeManager.applySavedTheme(scene); // 👈 Restore the saved theme
                 stage.setResizable(false);
                 popupStage.close();
             } catch (IOException _) {

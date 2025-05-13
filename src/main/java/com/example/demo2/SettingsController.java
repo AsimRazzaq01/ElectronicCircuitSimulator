@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class SettingsController {
 
@@ -50,12 +51,15 @@ public class SettingsController {
             Stage stage = (Stage) changeUserNameField.getScene().getWindow();
             Scene scene = new Scene(root, 1200, 720); // width: 680, height: 400
             stage.setScene(scene);
-            ThemeManager.applyTheme(scene);
+//            ThemeManager.applyTheme(scene);
+            ThemeManager.applySavedTheme(scene); // 👈 Restore the saved theme
+
             stage.setResizable(false);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
 
     /**
@@ -65,12 +69,10 @@ public class SettingsController {
     @FXML
     void SetLightTheme(ActionEvent event) {
         Scene scene = ((Node) event.getSource()).getScene();
-        ThemeManager.setTheme("/com/example/demo2/cssStyles/style.css");
-        ThemeManager.applyTheme(scene);
-        showConfirmation("Theme set successfully.");
-    } // End SetLightTheme
-
-
+        // Use the correct path for your light theme CSS file
+        ThemeManager.applyTheme(scene, "/com/example/demo2/cssStyles/style.css");
+        showConfirmation("Light theme applied.");
+    }
 
     /**
      * SetDarkTheme -> BUTTON ON CLICK
@@ -79,11 +81,25 @@ public class SettingsController {
     @FXML
     void SetDarkTheme(ActionEvent event) {
         Scene scene = ((Node) event.getSource()).getScene();
-        ThemeManager.setTheme("/com/example/demo2/cssStyles/darkStyle.css");
-        ThemeManager.applyTheme(scene);
-        showConfirmation("Theme set successfully.");
+        // Use the correct path for your dark theme CSS file
+        // Remove the redundant scene.getStylesheets().clear(); line
+        ThemeManager.applyTheme(scene, "/com/example/demo2/cssStyles/darkStyle.css");
+        showConfirmation("Dark theme applied.");
+    }
 
-    } // End SetDarkTheme
+    // Debugging
+//    @FXML
+//    void SetDarkTheme(ActionEvent event) {
+//        Scene scene = ((Node) event.getSource()).getScene();
+//        System.out.println("Stylesheets BEFORE applying dark theme: " + scene.getStylesheets());
+//        ThemeManager.applyTheme(scene, "/com/example/demo2/cssStyles/darkStyle.css");
+//        System.out.println("Stylesheets AFTER applying dark theme: " + scene.getStylesheets());
+//        showConfirmation("Dark theme applied.");
+//    }
+
+
+
+
 
 
 

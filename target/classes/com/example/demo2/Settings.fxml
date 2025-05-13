@@ -5,29 +5,21 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefWidth="800" prefHeight="600"
-            stylesheets="@cssStyles/style.css"
-            xmlns="http://javafx.com/javafx/21"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.demo2.SettingsController">
+<BorderPane prefHeight="600" prefWidth="800" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo2.SettingsController">
 
     <!-- Top Bar -->
     <top>
-        <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="10">
+        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="top-bar">
             <padding>
-                <Insets top="10" bottom="10" left="20" right="20"/>
+                <Insets bottom="10" left="20" right="20" top="10" />
             </padding>
-            <Label text="Settings" styleClass="headline"/>
-            <Separator orientation="VERTICAL"/>
-            <Button fx:id="backButton"
-                    text="🔙 Back to Home"
-                    onAction="#goBack"
-                    styleClass="secondary-btn"/>
+            <Label styleClass="headline" text="Settings" />
+            <Separator orientation="VERTICAL" />
+            <Button fx:id="backButton" onAction="#goBack" styleClass="secondary-btn" text="🔙 Back to Home" />
         </HBox>
     </top>
 
@@ -36,24 +28,21 @@
         <VBox spacing="30" styleClass="center-container">
             <!-- Change Username Section -->
             <VBox spacing="5">
-                <Label text="Change Username:" style="-fx-font-size:16px; -fx-text-fill:#0D47A1;"/>
+                <Label style="-fx-font-size:16px; -fx-text-fill:#0D47A1;" text="Change Username:" />
                 <HBox spacing="10">
-                    <TextField fx:id="changeUserNameField"
-                               promptText="Enter new username"
-                               onAction="#handleUsernameChange"
-                               styleClass="text-input"/>
-                    <Button text="Save" onAction="#handleUsernameChange" styleClass="primary-btn"/>
+                    <TextField fx:id="changeUserNameField" onAction="#handleUsernameChange" promptText="Enter new username" styleClass="text-input" />
+                    <Button onAction="#handleUsernameChange" styleClass="primary-btn" text="Save" />
                 </HBox>
             </VBox>
 
-            <Separator/>
+            <Separator />
 
             <!-- Theme Controls -->
             <VBox spacing="10">
-                <Label text="Theme:" style="-fx-font-size:16px; -fx-text-fill:#0D47A1;"/>
+                <Label style="-fx-font-size:16px; -fx-text-fill:#0D47A1;" text="Theme:" />
                 <HBox spacing="20">
-                    <Button text="Light Theme" onAction="#SetLightTheme" styleClass="primary-btn"/>
-                    <Button text="Dark Theme" onAction="#SetDarkTheme" styleClass="primary-btn"/>
+                    <Button onAction="#SetLightTheme" styleClass="primary-btn" text="Light Theme" />
+                    <Button onAction="#SetDarkTheme" styleClass="primary-btn" text="Dark Theme" />
                 </HBox>
             </VBox>
         </VBox>
@@ -63,9 +52,9 @@
     <bottom>
         <HBox alignment="CENTER_RIGHT">
             <padding>
-                <Insets top="10" bottom="10" right="20"/>
+                <Insets bottom="10" right="20" top="10" />
             </padding>
-            <Label text="v1.0.0" style="-fx-text-fill:gray; -fx-font-size:12px;"/>
+            <Label style="-fx-text-fill:gray; -fx-font-size:12px;" text="v1.0.0" />
         </HBox>
     </bottom>
 </BorderPane>

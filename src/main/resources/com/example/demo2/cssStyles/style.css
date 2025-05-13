@@ -1,10 +1,11 @@
 * {
     -fx-font-family: "Segoe UI", sans-serif;
-    -fx-font-size: 14px;
+    /*-fx-font-size: 14px;*/
 }
 
 AnchorPane {
-    -fx-background-color: #f8f9fa;
+    -fx-background-color: #E3F2FD;
+    /*-fx-background-color: f8f9fa;*/
 }
 
 .main-card {
@@ -44,17 +45,28 @@ TextField, PasswordField {
     -fx-font-size: 15px;
 }
 
+TextField:focused, PasswordField:focused {
+    -fx-focus-color: #90CAF9;
+    -fx-faint-focus-color: #BBDEFB;
+}
+
+
 Button {
     -fx-background-color: #4653eb;
     -fx-text-fill: white;
-    -fx-font-size: 15px;
+    -fx-font-size: 20px;
     -fx-background-radius: 6px;
     -fx-padding: 10px 25px;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 4, 0.0, 0, 3);
+    -fx-transition: all 0.3s ease-in-out;
+
 }
 
 Button:hover {
     -fx-background-color: #3542b4;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.4), 20, 0.5, 0, 0);
 }
 
 /* cssStyles/style.css */
@@ -103,7 +115,7 @@ Button:hover {
 .secondary-btn {
     -fx-background-color: transparent;
     -fx-text-fill: #0D47A1;
-    -fx-font-size: 14px;
+    /*-fx-font-size: 14px;*/
 }
 
 /* Footer bar */
@@ -138,3 +150,27 @@ ScrollPane.project-scroll .viewport Button {
     -fx-cursor: hand;
 }
 
+Label {
+    /*-fx-text-fill: #90CAF9;*/
+    -fx-font-weight: bold;
+
+}
+
+/* Styling for component images */
+.component-image {
+    /* Ensure no effect or scaling by default */
+    -fx-effect: null;
+    -fx-scale-x: 1.0;
+    -fx-scale-y: 1.0;
+    -fx-cursor: hand; /* Indicate it's interactive */
+    /* Smooth transition for effect and scale */
+    -fx-transition: -fx-effect 0.3s ease-out, -fx-scale-x 0.2s ease-out, -fx-scale-y 0.2s ease-out;
+}
+
+.component-image:hover {
+    /* Add a glow effect on hover (adjust color and radius) */
+    -fx-effect: dropshadow(gaussian, rgba(70, 83, 235, 0.7), 10, 0, 0, 0); /* Example: Blue glow */
+    /* Slight scale up animation */
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
