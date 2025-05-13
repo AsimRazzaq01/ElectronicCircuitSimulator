@@ -155,6 +155,25 @@ ScrollPane.project-scroll .viewport Button {
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 4);
 }
 
+ /* Styling for component images */
+ .component-image {
+     /* Ensure no effect or scaling by default */
+     -fx-effect: null;
+     -fx-scale-x: 1.0;
+     -fx-scale-y: 1.0;
+     -fx-cursor: hand; /* Indicate it's interactive */
+     /* Smooth transition for effect and scale */
+     -fx-transition: -fx-effect 0.3s ease-out, -fx-scale-x 0.2s ease-out, -fx-scale-y 0.2s ease-out;
+ }
+
+ .component-image:hover {
+     /* Add a glow effect on hover (adjust color and radius) */
+     -fx-effect: dropshadow(gaussian, rgba(70, 83, 235, 0.7), 10, 0, 0, 0); /* Example: Blue glow */
+     /* Slight scale up animation */
+     -fx-scale-x: 1.05;
+     -fx-scale-y: 1.05;
+ }
+
 
 
 

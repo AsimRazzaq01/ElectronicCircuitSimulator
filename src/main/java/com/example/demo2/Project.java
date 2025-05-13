@@ -4,6 +4,7 @@ import com.example.demo2.componentmodel.*;
 import com.example.demo2.componentnode.*;
 import com.example.demo2.projectactions.ProjectActions;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.paint.Paint;
 
 import java.util.*;
@@ -47,6 +48,14 @@ public class Project {
 
     Stack<ProjectActions> getRedoStack() {
         return redoStack;
+    }
+
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText(title);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     public void addComponent(Component component, Node node) {
@@ -158,6 +167,7 @@ public class Project {
                 if (loopVolt > 0.7) {
                     //wait(1000);
                     bulb.updateBrokenVisualState();
+                    showAlert(" * POP *  -> High Current Detected", "Your voltage is to high or not enough resistance! Current should be under 0.7 for Standard 60 watt bulb.");
                     System.out.println("High current in system = " + loopVolt);
                     System.out.println("Bulb broken");
                     return;

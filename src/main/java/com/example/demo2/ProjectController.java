@@ -157,6 +157,13 @@ public class ProjectController {
             Image wireImage = new Image(wireImagePath.toExternalForm(), 500, 0, true, false);
             wireImageView.setImage(wireImage);
         }
+
+        batteryImageView.getStyleClass().add("component-image"); // Add a custom class for component images
+        resistorImageView.getStyleClass().add("component-image");
+        switchImageView.getStyleClass().add("component-image");
+        lightbulbImageView.getStyleClass().add("component-image");
+        wireImageView.getStyleClass().add("component-image");
+
     }
 
     private void allowDragAndDrop() {
