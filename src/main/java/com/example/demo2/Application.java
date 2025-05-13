@@ -15,7 +15,7 @@ public class Application extends javafx.application.Application {
 //        FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("LoginRegister.fxml"));
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("Splash_Screen.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1200, 720);  //680, 400
-        ThemeManager.applyTheme(scene); // Apply the saved theme to the scene
+        ThemeManager.applySavedTheme(scene); // 👈 Restore the saved theme
         stage.setTitle("Electronic Circuit Simulator!");
         stage.setResizable(false);
         stage.setScene(scene);

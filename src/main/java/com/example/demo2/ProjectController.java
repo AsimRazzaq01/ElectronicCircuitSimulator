@@ -120,6 +120,7 @@ public class ProjectController {
         Stage stage = (Stage) logoutButton.getScene().getWindow();
         Scene scene = new Scene(root, 1280, 720); // width: 680, height: 400
         stage.setScene(scene);
+        ThemeManager.applySavedTheme(scene);
         stage.setResizable(false);
         stage.show();
     }
@@ -231,6 +232,8 @@ public class ProjectController {
 
     @FXML
     public void initialize() {
+        ThemeManager.getTheme();
+
         //Project data from database will be passed to the project view screen
         loadComponentPaneImages();
         allowDragAndDrop();
@@ -243,8 +246,9 @@ public class ProjectController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginRegister.fxml"));
         Parent root = loader.load();
         Stage stage = (Stage) logoutButton.getScene().getWindow();
-        Scene scene = new Scene(root, 680, 400); // width: 680, height: 400
+        Scene scene = new Scene(root, 1200, 720); // width: 680, height: 400
         stage.setScene(scene);
+        ThemeManager.applySavedTheme(scene); // 👈 Restore the saved theme
         stage.setResizable(false);
         stage.centerOnScreen();
         stage.show();

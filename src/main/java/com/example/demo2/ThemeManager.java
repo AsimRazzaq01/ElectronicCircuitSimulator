@@ -1,16 +1,10 @@
 package com.example.demo2;
 
 import javafx.scene.Scene;
-
 import java.util.Objects;
 import java.util.prefs.Preferences;
-
-
-import javafx.scene.Scene;
-
 import java.net.URL;
-import java.util.Objects;
-import java.util.prefs.Preferences;
+
 
 public class ThemeManager {
     private static final Preferences prefs = Preferences.userNodeForPackage(ThemeManager.class);
@@ -18,23 +12,28 @@ public class ThemeManager {
     private static String currentTheme;
 
     static {
-        // Default to the correct full path with leading slash
+        // Default theme
         currentTheme = prefs.get(THEME_KEY, "/com/example/demo2/cssStyles/style.css");
     }
 
-    public static void applyTheme(Scene scene) {
-        scene.getStylesheets().clear();
-        URL url = ThemeManager.class.getResource(currentTheme);
+    public static void applyTheme(Scene scene, String themePath) {
+        URL url = ThemeManager.class.getResource(themePath);
         if (url == null) {
-            System.err.println("❌ CSS not found at: " + currentTheme);
+            System.err.println("❌ Theme not found: " + themePath);
             return;
         }
+
+        // Update theme
+        currentTheme = themePath;
+        prefs.put(THEME_KEY, currentTheme);
+
+        // Apply to scene
+        scene.getStylesheets().clear();
         scene.getStylesheets().add(url.toExternalForm());
     }
 
-    public static void setTheme(String themePath) {
-        currentTheme = themePath;
-        prefs.put(THEME_KEY, currentTheme);
+    public static void applySavedTheme(Scene scene) {
+        applyTheme(scene, currentTheme);
     }
 
     public static String getTheme() {

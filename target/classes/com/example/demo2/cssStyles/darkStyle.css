@@ -1,36 +1,203 @@
+
+ /*DARK STYLE 1*/
+
+.root {
+    -fx-background-color: #1E1E2F;
+    -fx-text-fill: #ECEFF1;
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+/* Top bar */
+.top-bar {
+    -fx-background-color: #2A2A3D;
+    -fx-border-color: #90CAF9;
+    -fx-border-width: 0 0 2 0;
+}
+
+/* Welcome text */
+.headline {
+    -fx-font-size: 20px;
+    -fx-text-fill: #90CAF9;
+    -fx-font-weight: bold;
+}
+
+/* Card styling */
+.main-card {
+    -fx-background-color: #2E2E3E;
+    -fx-padding: 30px;
+    -fx-background-radius: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 12, 0, 0, 6);
+}
+
+/* Logo panel */
+.logo-panel {
+    -fx-background-color: #252538;
+    -fx-background-radius: 20px 0 0 20px;
+    -fx-padding: 400px 20px;
+}
+
+/* Form panel */
+.form-panel {
+    -fx-padding: 40px 30px;
+    -fx-background-radius: 0 20px 20px 0;
+}
+
+/* Input fields */
+TextField, PasswordField {
+    -fx-background-color: #3A3A4D;
+    -fx-border-color: #90CAF9;
+    -fx-text-fill: #FFFFFF;
+    -fx-border-width: 1;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 10px;
+    -fx-font-size: 15px;
+}
+
+ TextField:focused, PasswordField:focused {
+     -fx-focus-color: #90CAF9;
+     -fx-faint-focus-color: #BBDEFB;
+ }
+
+ Label {
+     -fx-text-fill: #90CAF9;
+     -fx-font-weight: bold;
+
+ }
+
+ Label:focused, PasswordField:focused {
+
+ }
+
+/* Button base */
+Button {
+    -fx-background-color: #4653eb;
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+    -fx-background-radius: 6px;
+    -fx-padding: 10px 25px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 6, 0.0, 0, 3);
+}
+
+/* Button hover */
+Button:hover {
+    -fx-background-color: #3542b4;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(gaussian, rgba(144,202,249,0.4), 10, 0.5, 0, 0);
+}
+
+/* Primary buttons (New & Settings) */
+.primary-btn {
+    -fx-background-color: #90CAF9;
+    -fx-text-fill: #1E1E2F;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+
+/* Secondary button (Logout) */
+.secondary-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #90CAF9;
+}
+
+/* Footer bar */
+.footer-bar {
+    -fx-background-color: #2E2E3E;
+}
+
+.footer-bar Label {
+    -fx-text-fill: #BBDEFB;
+    -fx-font-size: 12px;
+}
+
+/* Center container */
+.center-container {
+    -fx-padding: 20;
+}
+
+/* ScrollPane tweaks */
+.project-scroll {
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+ScrollPane.project-scroll .viewport {
+    -fx-background-color: #3B3B4F;
+    -fx-background-radius: 8;
+    -fx-padding: 20;
+}
+
+ScrollPane.project-scroll .viewport Label {
+    -fx-text-fill: #FFEB3B;
+    -fx-font-size: 16px;
+}
+
+ScrollPane.project-scroll .viewport Button {
+    -fx-background-color: #5C6BC0;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+
+/* Header text */
+.header-text {
+    -fx-font-size: 18px;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+/* Logo Image Shadow */
+#logoImageView {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 4);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+ /*DARK STYLE 2*/
+
 /** {*/
 /*    -fx-font-family: "Segoe UI", sans-serif;*/
-/*    -fx-font-size: 14px;*/
+/*    !*-fx-font-size: 14px;*!*/
 /*}*/
 
-/*.root {*/
-/*    -fx-background-color: #2E236C;*/
-/*}*/
-
-/*.button {*/
-/*    -fx-background-color: #6EACDA;*/
-/*    -fx-text-fill: white;*/
-/*}*/
-
+/*!* Main background - Dark Gray *!*/
 /*AnchorPane {*/
-/*    -fx-background-color: #17153B; !* Deepest background tone *!*/
+/*    -fx-background-color: #2D2D2D;*/
 /*}*/
 
+/*!* Card/Panel background - Medium Dark Gray *!*/
 /*.main-card {*/
-/*    -fx-background-color: #2E236C; !* Slightly lighter for contrast *!*/
+/*    -fx-background-color: #3C3C3C;*/
 /*    -fx-padding: 30px;*/
 /*    -fx-background-radius: 20px;*/
-/*    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 12, 0, 0, 6);*/
+/*    !* Keep the dropshadow, it often works on dark, maybe adjust alpha if needed *!*/
+/*    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 12, 0, 0, 6);*/
 /*}*/
 
+/*!* Logo panel background - Dark Blue-Gray *!*/
 /*.logo-panel {*/
-/*    -fx-background-color: #433D8B; !* Mid-tone blue/purple for visual interest *!*/
+/*    -fx-background-color: #3A4750;*/
 /*    -fx-background-radius: 20px 0 0 20px;*/
 /*    -fx-padding: 400px 20px;*/
 /*}*/
 
 /*#logoImageView {*/
-/*    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 4);*/
+/*    !* Keep the dropshadow *!*/
+/*    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 4);*/
 /*}*/
 
 /*.form-panel {*/
@@ -41,114 +208,133 @@
 /*.header-text {*/
 /*    -fx-font-size: 18px;*/
 /*    -fx-font-weight: bold;*/
-/*    -fx-text-fill: #6EACDA; !* Lightest blue for contrast *!*/
+/*    -fx-text-fill: #EEEEEE; !* Light text for headers *!*/
 /*}*/
 
+/*!* Text field and password field styling - Dark background, lighter border, light text *!*/
 /*TextField, PasswordField {*/
-/*    -fx-background-color: #ffffff;*/
-/*    -fx-border-color: #6EACDA; !* Highlight border *!*/
+/*    -fx-background-color: #4A4A4A; !* Slightly darker than main card *!*/
+/*    -fx-border-color: #7E88C2; !* Lighter blue border *!*/
 /*    -fx-border-width: 1;*/
 /*    -fx-border-radius: 6px;*/
 /*    -fx-background-radius: 6px;*/
 /*    -fx-padding: 10px;*/
 /*    -fx-font-size: 15px;*/
-/*    -fx-text-fill: #17153B; !* High contrast input text *!*/
+/*    -fx-text-fill: #90CAF9; !* Light text *!*/
 /*}*/
 
+/*TextField:focused, PasswordField:focused {*/
+/*    -fx-focus-color: #007bff; !* Bright blue focus indicator *!*/
+/*    -fx-faint-focus-color: #0056b3; !* Slightly darker bright blue faint focus *!*/
+/*}*/
+
+/*  Label {*/
+/*      -fx-text-fill: #90CAF9;*/
+/*      -fx-font-weight: bold;*/
+
+/*  }*/
+
+/*  Label:focused {*/
+/*      -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0, 0, 4);*/
+/*  }*/
+
+/*!* Default Button styling - Dark Blue-Gray background, light text *!*/
 /*Button {*/
-/*    -fx-background-color: #6EACDA; !* Light blue button *!*/
-/*    -fx-text-fill: #17153B; !* Dark text for contrast *!*/
-/*    -fx-font-size: 15px;*/
-/*    -fx-font-weight: bold;*/
+/*    -fx-background-color: #556270; !* Dark blue-gray *!*/
+/*    -fx-text-fill: #EEEEEE; !* Light text *!*/
+/*    -fx-font-size: 20px;*/
 /*    -fx-background-radius: 6px;*/
 /*    -fx-padding: 10px 25px;*/
-/*    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.0, 0, 3);*/
+/*    !* Keep the dropshadow *!*/
+/*    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 4, 0.0, 0, 3); !* Slightly increased alpha *!*/
+/*    -fx-transition: all 0.3s ease-in-out;*/
 /*}*/
 
 /*Button:hover {*/
-/*    -fx-background-color: #433D8B; !* Darker hover state *!*/
-/*    -fx-text-fill: white;*/
+/*    -fx-background-color: #6A7B8C; !* Slightly lighter on hover *!*/
+/*    -fx-scale-x: 1.05;*/
+/*    -fx-scale-y: 1.05;*/
+/*    !* Adjust white shadow for dark background if needed, keeping as is for now *!*/
+/*    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.2), 20, 0.5, 0, 0); !* Reduced white shadow alpha *!*/
 /*}*/
 
+/*!* cssStyles/darkStyle.css *!*/
 
+/*!* Page background (using .root for the very root of the scene) - Dark Gray *!*/
+/*.root {*/
+/*    -fx-background-color: #2D2D2D;*/
+/*}*/
 
-* {
-    -fx-font-family: "Segoe UI", sans-serif;
-    /*-fx-font-size: 18px;*/
-}
+/*!* Top bar styling - Darker Blue *!*/
+/*.top-bar {*/
+/*    -fx-background-color: #1C313A;*/
+/*    -fx-border-color: #FFA000;      !* Orange accent *!*/
+/*    -fx-border-width: 0 0 2 0;*/
+/*}*/
 
-AnchorPane {
-    -fx-background-color: #17153B; /* Deepest background tone */
-}
+/*!* Welcome text - Light Blue Text *!*/
+/*.headline {*/
+/*    -fx-font-size: 20px;*/
+/*    -fx-text-fill: #BBDEFB; !* Light blue *!*/
+/*    -fx-font-weight: bold;*/
+/*}*/
 
-.root {
-    -fx-background-color: #2E236C;
-}
-.label {
-    -fx-text-fill:  #6EACDA;
-    -fx-font-size: 18px;
-}
+/*!* Center container padding - structural, keep *!*/
+/*.center-container {*/
+/*    -fx-padding: 20;*/
+/*}*/
 
-.Text{
-    -fx-text-fill:  #6EACDA;
-    -fx-font-size: 18px;
-}
+/*!* ScrollPane tweaks - structural, keep *!*/
+/*.project-scroll {*/
+/*    -fx-background: transparent;*/
+/*    -fx-border-color: transparent;*/
+/*}*/
 
-.button {
-    -fx-background-color: #6EACDA;
-    -fx-text-fill: white;
-}
+/*!* Primary buttons (New & Settings) - Keep Yellow, Dark Text *!*/
+/*.primary-btn {*/
+/*    -fx-background-color: #FFEB3B;  !* yellow *!*/
+/*    -fx-text-fill: #0D47A1;         !* dark blue text *!*/
+/*    -fx-font-size: 14px;*/
+/*    -fx-font-weight: bold;*/
+/*    -fx-background-radius: 6;*/
+/*    -fx-cursor: hand;*/
+/*}*/
 
-.main-card {
-    -fx-background-color: #2E236C; /* Slightly lighter for contrast */
-    -fx-padding: 30px;
-    -fx-background-radius: 20px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 12, 0, 0, 6);
-}
+/*!* Secondary button (Logout) - Transparent background, Light Text *!*/
+/*.secondary-btn {*/
+/*    -fx-background-color: transparent;*/
+/*    -fx-text-fill: #90CAF9; !* Light blue *!*/
+/*    !*-fx-font-size: 14px;*!*/
+/*}*/
 
-.logo-panel {
-    -fx-background-color: #433D8B; /* Mid-tone blue/purple for visual interest */
-    -fx-background-radius: 20px 0 0 20px;
-    -fx-padding: 400px 20px;
-}
+/*!* Footer bar - Dark Blue-Gray *!*/
+/*.footer-bar {*/
+/*    -fx-background-color: #3A4750; !* Same as logo panel for consistency *!*/
+/*}*/
 
-#logoImageView {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 4);
-}
+/*.footer-bar Label {*/
+/*    -fx-text-fill: #BBDEFB; !* Light blue *!*/
+/*    -fx-font-size: 12px;*/
+/*}*/
 
-.form-panel {
-    -fx-padding: 40px 30px;
-    -fx-background-radius: 0 20px 20px 0;
-}
+/*!* ScrollPane’s viewport - Darker Gray *!*/
+/*ScrollPane.project-scroll .viewport {*/
+/*    -fx-background-color: #4A4A4A; !* Same as text field background *!*/
+/*    -fx-background-radius: 8;*/
+/*    -fx-padding: 20;            !* pushes the content inward *!*/
+/*}*/
 
-.header-text {
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #6EACDA; /* Lightest blue for contrast */
-}
+/*!* Labels inside scrollpane viewport - Light Text *!*/
+/*ScrollPane.project-scroll .viewport Label {*/
+/*    -fx-text-fill: #EEEEEE; !* Light gray *!*/
+/*    -fx-font-size: 16px;*/
+/*}*/
 
-TextField, PasswordField {
-    -fx-background-color: #ffffff;
-    -fx-border-color: #6EACDA; /* Highlight border */
-    -fx-border-width: 1;
-    -fx-border-radius: 6px;
-    -fx-background-radius: 6px;
-    -fx-padding: 10px;
-    -fx-font-size: 15px;
-    -fx-text-fill: #17153B; /* High contrast input text */
-}
-
-Button {
-    -fx-background-color: #6EACDA; /* Light blue button */
-    -fx-text-fill: #17153B; /* Dark text for contrast */
-    -fx-font-size: 15px;
-    -fx-font-weight: bold;
-    -fx-background-radius: 6px;
-    -fx-padding: 10px 25px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.0, 0, 3);
-}
-
-Button:hover {
-    -fx-background-color: #433D8B; /* Darker hover state */
-    -fx-text-fill: white;
-}
+/*!* Buttons inside scrollpane viewport - Dark Button Style *!*/
+/*ScrollPane.project-scroll .viewport Button {*/
+/*    -fx-background-color: #556270; !* Same as default dark button *!*/
+/*    -fx-text-fill: #EEEEEE; !* Light text *!*/
+/*    -fx-font-size: 14px;*/
+/*    -fx-background-radius: 6;*/
+/*    -fx-cursor: hand;*/
+/*}*/

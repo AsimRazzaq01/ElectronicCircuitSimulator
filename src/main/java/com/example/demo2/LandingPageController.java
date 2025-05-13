@@ -43,6 +43,8 @@ public class LandingPageController {
 
     @FXML
     public void initialize() {
+        ThemeManager.getTheme();
+
         String username = new ConnDbOps().getUsernameById(Session.loggedInUserId);
         welcomeLabel.setText("Welcome Back, " + (username != null ? username : "User") + "!");
         loadProjects();
@@ -62,7 +64,18 @@ public class LandingPageController {
                 row.setStyle("-fx-padding: 5px; -fx-alignment: center-left; -fx-text-fill: #0D47A1;");
 
                 Label projectLabel = new Label(name);
-                projectLabel.setStyle("-fx-font-size: 16px; -fx-cursor: hand; -fx-text-fill: #0D47A1;");
+                projectLabel.setStyle("-fx-font-size: 16px; -fx-cursor: hand;  -fx-text-fill: #0D47A1; ");
+//                projectLabel.getStyleClass().add(ThemeManager.getTheme());
+
+
+                projectLabel.hoverProperty().addListener((observable, oldValue, newValue) -> {
+                    if (newValue) {
+                        projectLabel.setStyle("-fx-text-fill: #90CAF9");
+                    } else {
+                        projectLabel.setStyle(" -fx-text-fill: #0D47A1;");
+                    }
+                });
+
                 projectLabel.setOnMouseClicked(_ -> openProject(name));
 
                 Button deleteButton = new Button("Delete");
@@ -178,7 +191,14 @@ public class LandingPageController {
 
                 Stage stage = (Stage) newProjectButton.getScene().getWindow();
                 stage.setResizable(true);
-                stage.setScene(new Scene(root, 1280, 720));
+
+                // Create the NEW Scene for the project screen
+                Scene projectScene = new Scene(root, 1200, 720); // Use a variable for the new scene
+
+                // apply save theme
+                ThemeManager.applySavedTheme(projectScene);
+                // set stage to saved theme
+                stage.setScene(projectScene);
                 stage.show();
                 popupStage.close();
             } catch (IOException _) {
@@ -210,7 +230,9 @@ public class LandingPageController {
             Stage stage = (Stage) logoutButton.getScene().getWindow();
             Scene scene = new Scene(root, 1200, 720); // width: 680, height: 400
             stage.setScene(scene);
-            ThemeManager.applyTheme(scene) ;
+//            ThemeManager.applyTheme(scene) ;
+            ThemeManager.applySavedTheme(scene); // 👈 Restore the saved theme
+
             stage.setResizable(false);
         } catch (IOException e) {
             e.printStackTrace();
@@ -223,7 +245,9 @@ public class LandingPageController {
             Stage stage = (Stage) logoutButton.getScene().getWindow();
             Parent root = FXMLLoader.load(getClass().getResource("LoginRegister.fxml"));
             stage.setScene(new Scene(root));
-            ThemeManager.applyTheme(stage.getScene());
+//            ThemeManager.applyTheme(stage.getScene());
+            ThemeManager.applySavedTheme(stage.getScene()); // 👈 Restore the saved theme
+
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

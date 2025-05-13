@@ -12,7 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
-import javafx.scene.media.Media; // ✅ CORRECT for JavaFX video/audio
+import javafx.scene.media.Media; // ✅ CORRECT for JavaFX video/audio other imports cause error
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -25,8 +25,6 @@ import java.util.ResourceBundle;
 public class splashScreenController implements Initializable {
     @FXML
     private MediaView mediaView;
-    @FXML
-    private Text splash_header;
 
     private File file;
     private Media media;
@@ -40,7 +38,7 @@ public class splashScreenController implements Initializable {
         if (mediaUrl != null) {
             media = new Media(mediaUrl.toString());
             mediaPlayer = new MediaPlayer(media);
-            mediaPlayer.setRate(2.0);
+            mediaPlayer.setRate(3.0);
             mediaView.setMediaPlayer(mediaPlayer);
 
             mediaPlayer.setOnReady(() -> {
@@ -49,13 +47,9 @@ public class splashScreenController implements Initializable {
                         new KeyFrame(duration.subtract(Duration.seconds(2)), event -> {
                             // Start fading out 1 second before the video ends
                             FadeTransition fadeOut = new FadeTransition(Duration.seconds(3), mediaView);
-                            FadeTransition fadeOut2 = new FadeTransition(Duration.seconds(3), splash_header);
                             fadeOut.setFromValue(1.0);
                             fadeOut.setToValue(0.0);
                             fadeOut.play();
-                            fadeOut2.setFromValue(1.0);
-                            fadeOut2.setToValue(0.0);
-                            fadeOut2.play();
                         })
                 );
                 fadeTrigger.play();
@@ -86,6 +80,9 @@ public class splashScreenController implements Initializable {
             StackPane stack = new StackPane(oldRoot, newRoot);
             Scene transitionScene = new Scene(stack, 1200, 720);
 
+            // ⭐ Apply the saved theme to the NEW scene ⭐
+            ThemeManager.applySavedTheme(transitionScene);
+
             stage.setScene(transitionScene);
 
             // Create fade transitions
@@ -97,10 +94,6 @@ public class splashScreenController implements Initializable {
             fadeInNew.setFromValue(0.0);
             fadeInNew.setToValue(1.0);
 
-            // Once transition is done, set final scene to newRoot only
-//            fadeInNew.setOnFinished(event -> stage.setScene(new Scene(newRoot, 1200, 720)));
-
-
             // Play both animations in parallel
             new ParallelTransition(fadeOutOld, fadeInNew).play();
 
@@ -108,10 +101,6 @@ public class splashScreenController implements Initializable {
             e.printStackTrace();
         }
     }
-
-
-
-
 
 
 

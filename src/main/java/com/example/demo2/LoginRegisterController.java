@@ -42,9 +42,11 @@ public class LoginRegisterController implements Initializable {
 
     private final ConnDbOps db = new ConnDbOps();
 
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         ThemeManager.getTheme();
+//        ThemeManager.applySavedTheme(mainScene);  // Pass your scene here
         showExisting();
     }
 
@@ -122,7 +124,8 @@ public class LoginRegisterController implements Initializable {
                 Stage stage = (Stage) button_existing_login.getScene().getWindow();
                 Scene scene = new Scene(root, 1200, 720); // width: 680, height: 400
                 stage.setScene(scene);
-                ThemeManager.applyTheme(scene); // Apply the saved theme to the scene
+//                ThemeManager.applyTheme(scene); // Apply the saved theme to the scene
+                ThemeManager.applySavedTheme(scene); // 👈 Restore the saved theme
                 stage.setResizable(false);
                 popupStage.close();
             } catch (IOException _) {

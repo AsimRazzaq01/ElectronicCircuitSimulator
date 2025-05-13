@@ -4,7 +4,8 @@
 }
 
 AnchorPane {
-    -fx-background-color: #f8f9fa;
+    -fx-background-color: #E3F2FD;
+    /*-fx-background-color: f8f9fa;*/
 }
 
 .main-card {
@@ -44,6 +45,12 @@ TextField, PasswordField {
     -fx-font-size: 15px;
 }
 
+TextField:focused, PasswordField:focused {
+    -fx-focus-color: #90CAF9;
+    -fx-faint-focus-color: #BBDEFB;
+}
+
+
 Button {
     -fx-background-color: #4653eb;
     -fx-text-fill: white;
@@ -51,6 +58,8 @@ Button {
     -fx-background-radius: 6px;
     -fx-padding: 10px 25px;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 4, 0.0, 0, 3);
+    -fx-transition: all 0.3s ease-in-out;
+
 }
 
 Button:hover {
@@ -106,7 +115,7 @@ Button:hover {
 .secondary-btn {
     -fx-background-color: transparent;
     -fx-text-fill: #0D47A1;
-    -fx-font-size: 14px;
+    /*-fx-font-size: 14px;*/
 }
 
 /* Footer bar */

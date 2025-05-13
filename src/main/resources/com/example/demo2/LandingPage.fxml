@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="720.0" prefWidth="1200.0" stylesheets="@cssStyles/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo2.LandingPageController">
+<AnchorPane prefHeight="720.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo2.LandingPageController">
 
     <!-- Top Bar now anchored left/right/top -->
     <HBox fx:id="topBar" alignment="CENTER_LEFT" layoutY="0" prefHeight="60" spacing="10" styleClass="top-bar" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
@@ -28,7 +28,7 @@
         <Region HBox.hgrow="ALWAYS" />
 
         <!-- logout -->
-        <Button fx:id="logoutButton" onAction="#logout" styleClass="secondary-btn" text="🚪 Log Out">
+        <Button fx:id="logoutButton" onAction="#logout" prefHeight="40.0" prefWidth="150.0" styleClass="secondary-btn" text="🚪 Log Out">
          <font>
             <Font size="14.0" />
          </font></Button>
@@ -46,10 +46,7 @@
         </ScrollPane>
 
         <HBox alignment="CENTER" spacing="20">
-            <Button fx:id="newProjectButton" onAction="#openNewProject" prefHeight="40.0" prefWidth="150.0" styleClass="primary-btn" text="➕ New Project">
-            <font>
-               <Font size="14.0" />
-            </font></Button>
+            <Button fx:id="newProjectButton" onAction="#openNewProject" prefHeight="40.0" prefWidth="150.0" styleClass="primary-btn" text="➕ New Project" />
             <Button fx:id="settingsButton" onAction="#openSettings" prefHeight="40.0" prefWidth="150.0" styleClass="primary-btn" text="⚙ Settings">
             <font>
                <Font size="14.0" />
