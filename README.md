@@ -93,23 +93,22 @@ This project’s main purpose is to let users register, then drag-and-drop elect
 
 1. **User Flow**  
    Register/Login → Create or Select Project → Build on Canvas → Save/Simulate
-   ![image](https://github.com/user-attachments/assets/f10214c8-9dbb-4d8c-a046-d69b98f14add)
+   ![LoginSignUp](https://github.com/user-attachments/assets/bfdb0592-6552-44ea-b662-28eeb49357ee)
 
 3. **Load Projects**  
    `setProjectName(...)` clears the canvas, loads components via `ConnDbOps.loadComponentsForProject()`, and renders them
-   ![image](https://github.com/user-attachments/assets/23343c7c-b89c-4b13-a802-a9242e99564f)
-    ![image](https://github.com/user-attachments/assets/a5418587-5193-469f-b0d1-5c8541fece00)
+  ![LandingPage](https://github.com/user-attachments/assets/d1921273-afae-4eb4-ae80-ecf63fb8ac5f)
+
 
 5. **Add Components**  
    `AddComponent.performAction()` places a UI node and persists its record in the database
-   ![image](https://github.com/user-attachments/assets/0dffda45-aebb-40f8-8bd8-3bfa4d85a1f0)
 
 7. **Drag & Drop**  
    Mouse handlers on each node update on-screen position and model state
-   ![image](https://github.com/user-attachments/assets/247fa657-7230-4f4e-8d52-3d12706b8501)
 
 9. **Simulation**  
    `ProjectController()` helps run the simulations in the circuit
+![Simulation](https://github.com/user-attachments/assets/4a586a2e-dfe6-4084-8101-bbce4fc14a2e)
 
 ## Usage
 
