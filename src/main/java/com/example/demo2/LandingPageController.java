@@ -21,19 +21,18 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * LandingPageController -> class that loads / creates projects , settings & logout button.
+ */
 public class LandingPageController {
     @FXML
     private Button settingsButton;
-
     @FXML
     private Button logoutButton;
-
     @FXML
     private VBox projectListVBox;
-
     @FXML
     private Button newProjectButton;
-
     @FXML
     private Label welcomeLabel;
 
@@ -50,6 +49,9 @@ public class LandingPageController {
         loadProjects();
     }
 
+    /**
+     * method to load projects from db
+     */
     private void loadProjects() {
         List<String> projects = dbOps.getProjectsForUser(currentUserId);
 
@@ -100,7 +102,9 @@ public class LandingPageController {
 
             }
         }
-    }
+    } // End loadProjects method
+
+
     @FXML
     private void openNewProject() {
         TextInputDialog dialog = new TextInputDialog();
@@ -141,7 +145,8 @@ public class LandingPageController {
             thread.setDaemon(true);
             thread.start();
         });
-    }
+    } // End openNewProject method
+
 
     private void openProject(String projectName) {
         Stage popupStage = new Stage();
@@ -220,7 +225,7 @@ public class LandingPageController {
         thread.start();
 
         popupStage.show();
-    }
+    } // End openProject method
 
     @FXML
     private void openSettings() {
@@ -237,7 +242,7 @@ public class LandingPageController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    } // End openSettings method
 
     @FXML
     private void logout() {
@@ -252,12 +257,13 @@ public class LandingPageController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    } // End logout method
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(title);
         alert.setContentText(message);
         alert.showAndWait();
-    }
-}
+    } // End showAlert method
+
+} // End LandingPageController class

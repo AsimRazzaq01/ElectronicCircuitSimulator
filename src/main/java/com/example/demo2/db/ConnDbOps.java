@@ -10,13 +10,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
+/**
+ * ConnDbOps -> DB class -> class to allow us to access our Azure SQL database
+ */
 public class ConnDbOps {
+    // Connection to azure db account
     private static final String MYSQL_SERVER_URL = "jdbc:mysql://csc311mojica04.mysql.database.azure.com/";
     private static final String DB_URL = MYSQL_SERVER_URL + "DBname";
     private static final String USERNAME = "mojin";
     private static final String PASSWORD = "FARM123$";
 
+    /**
+     * method to query by usernames in db
+     * @param username
+     */
     public void queryUserByUsername(String username) {
         try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
              PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM users WHERE username = ?")) {
@@ -33,8 +40,11 @@ public class ConnDbOps {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
+    } // End queryUserByUsername method
 
+    /**
+     * method to listAllUsers
+     */
     public void listAllUsers() {
         try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
              PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM users")) {
@@ -51,9 +61,16 @@ public class ConnDbOps {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
+    } // End listAllUsers method
 
 
+    /**
+     * Method to insert users into db
+     * @param username
+     * @param email
+     * @param password
+     * @return -> 0 if successful else -1
+     */
     public int insertUser(String username, String email, String password) {
         try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
              PreparedStatement preparedStatement = conn.prepareStatement(
@@ -70,8 +87,14 @@ public class ConnDbOps {
         }
 
         return 0;
-    }
+    } // End insertUser method
 
+    /**
+     * Method to confirm users are in the db / get there id
+     * @param email
+     * @param password
+     * @return -> id or -1 if Login failed, -2 if error
+     */
     public int validateLoginAndGetUserId(String email, String password) {
         String query = "SELECT id FROM users WHERE email = ? AND password = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
@@ -88,8 +111,13 @@ public class ConnDbOps {
             return -2;
         }
         return -1;  //Login failed
-    }
+    } // End validateLoginAndGetUserId method
 
+    /**
+     * method to get Username By Id
+     * @param userId
+     * @return -> Username
+     */
     public String getUsernameById(int userId) {
         String query = "SELECT username FROM users WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
@@ -104,8 +132,13 @@ public class ConnDbOps {
         } catch (SQLException _) {
         }
         return null;
-    }
+    } // End getUsernameById method
 
+    /**
+     * method -> to update Username By Id
+     * @param userId
+     * @param newUsername
+     */
     public void updateUsernameById(int userId, String newUsername) {
         String sql = "UPDATE users SET username = ? WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
@@ -123,8 +156,14 @@ public class ConnDbOps {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
+    } // End updateUsernameById method
 
+    /**
+     * method -> to insert Project into db of user
+     * @param userId
+     * @param projectName
+     * @return -> 0 if successful, -1 if exception occurred.
+     */
     public int insertProject(int userId, String projectName) {
         String sql = "INSERT INTO projects (user_id, project_name) VALUES (?, ?)";
 
@@ -141,8 +180,13 @@ public class ConnDbOps {
             return -1;
         }
         return 0;
-    }
+    } // End insertProject method
 
+    /**
+     * Deletes a project from the database based on the user ID and project name.
+     * @param userId
+     * @param projectName
+     */
     public void deleteProject(int userId, String projectName) {
         String sql = "DELETE FROM projects WHERE user_id = ? AND project_name = ?";
 
@@ -162,8 +206,12 @@ public class ConnDbOps {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
+    } // End deleteProject method
 
+    /**
+     * method -> to delete Component
+     * @param component
+     */
     public static void deleteComponent(Component component) {
         try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
             switch (component.getComponentType()) {
@@ -206,8 +254,13 @@ public class ConnDbOps {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
+    } // End deleteComponent method
 
+    /**
+     * method -> to get as saved Projects For User in db
+     * @param userId
+     * @return -> project
+     */
     public List<String> getProjectsForUser(int userId) {
         List<String> projectNames = new ArrayList<>();
         String sql = "SELECT project_name FROM projects WHERE user_id = ?";
@@ -227,8 +280,15 @@ public class ConnDbOps {
         }
 
         return projectNames;
-    }
+    } // End getProjectsForUser method
 
+    /**
+     * Retrieves the project ID from the database based on the user ID and project name.
+     * @param userId
+     * @param projectName
+     * @return -> The project ID if found, -1 if no matching project exists,
+     *          -2 if a SQL exception occurs.
+     */
     public int getProjectIdByName(int userId, String projectName) {
         String sql = "SELECT project_id FROM projects WHERE user_id = ? AND project_name = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
@@ -246,7 +306,7 @@ public class ConnDbOps {
             return -2;
         }
         return -1;
-    }
+    } // End getProjectIdByName method
 
     //Modified loadComponents
     public static HashMap<Component, Node> loadComponentsForProject(int projectId) {
@@ -329,8 +389,14 @@ public class ConnDbOps {
         }
 
         return components;
-    }
+    } // End loadComponentsForProject method
 
+    /**
+     * Inserts a component's specific data into its corresponding subtype table in the database.
+     * @param conn
+     * @param component
+     * @throws SQLException
+     */
     private static void insertIntoSubtypeTable(Connection conn, Component component) throws SQLException {
         switch (component.getComponentType()) {
             case "Battery" -> {
@@ -383,8 +449,14 @@ public class ConnDbOps {
                 System.out.println(" Unrecognized component type: " + component.getComponentType());
             }
         }
-    }
+    } // End insertIntoSubtypeTable method
 
+    /**
+     * Updates the specified value of a component in its corresponding subtype table.
+     * @param component
+     * @param value
+     * @return -> 0 if the update was successful, -1 if a SQL exception
+     */
     public static int updateComponents(Component component, Double value) {
         try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
             switch (component.getComponentType()) {
@@ -419,8 +491,14 @@ public class ConnDbOps {
             return -1;
         }
         return 0;
-    }
+    } // End updateComponents method
 
+    /**
+     * updateSwitches -> Updates the active state of a switch component in the database.
+     * @param component
+     * @param value
+     * @return -> 0 if the update was successful, -1 if a SQL exception
+     */
     public static int updateSwitches(Component component, Boolean value) {
         try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
             String updateSQL = "UPDATE switches SET is_active = ? WHERE component_id = ?";
@@ -435,8 +513,13 @@ public class ConnDbOps {
             return -1;
         }
         return 0;
-    }
+    } // End updateSwitches method
 
+    /**
+     * Saves a component to the database by either inserting a new record or updating an existing one, depending on whether the component has a valid ID.
+     * @param project
+     * @param component
+     */
     public static void saveComponent(Project project, Component component) {
         try (Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD)) {
             if (!component.hasValidID()) {
@@ -482,5 +565,7 @@ public class ConnDbOps {
             }
         } catch (SQLException _) {
         }
-    }
-}
+    } // End saveComponent method
+
+
+} // End ConnDbOps class

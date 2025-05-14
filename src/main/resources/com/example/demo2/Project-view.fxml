@@ -121,9 +121,9 @@
                         <Label prefHeight="18.0" prefWidth="60.0" text="Voltage: " />
                         <TextField fx:id="voltageField" editable="false" minWidth="40.0" prefHeight="41.0" prefWidth="70.0" />
                         <Label prefWidth="60.0" text="Current: " />
-                        <TextField fx:id="currentField" editable="false" minWidth="40.0" prefHeight="25.0" prefWidth="70.0" />
+                        <TextField fx:id="currentField" editable="false" minWidth="40.0" prefHeight="40.0" prefWidth="70.0" />
                         <Label prefWidth="80.0" text="Resistance: " />
-                        <TextField fx:id="resistanceField" editable="false" minWidth="40.0" prefHeight="25.0" prefWidth="70.0" />
+                        <TextField fx:id="resistanceField" editable="false" prefHeight="40.0" prefWidth="70.0" />
                      </children>
                      <padding>
                         <Insets bottom="2.0" top="2.0" />
@@ -131,8 +131,8 @@
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="41.0" prefWidth="204.0" spacing="10.0">
                      <children>
-                        <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" prefHeight="25.0" prefWidth="60.0" text="-" />
-                        <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" prefHeight="38.0" prefWidth="60.0" text="+" />
+                        <Button fx:id="zoomOutButton" mnemonicParsing="false" onAction="#zoomOut" prefHeight="35.0" prefWidth="60.0" text="-" />
+                        <Button fx:id="zoomInButton" mnemonicParsing="false" onAction="#zoomIn" prefHeight="35.0" prefWidth="60.0" text="+" />
                         <Label fx:id="currentZoomLabel" text="100%" />
                      </children>
                   </HBox>

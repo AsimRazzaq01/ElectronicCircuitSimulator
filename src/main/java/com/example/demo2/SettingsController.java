@@ -15,6 +15,9 @@ import javafx.fxml.FXMLLoader;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * SettingsController -> class for setting page
+ */
 public class SettingsController {
 
     private final ConnDbOps db = new ConnDbOps();
@@ -98,11 +101,6 @@ public class SettingsController {
 //    }
 
 
-
-
-
-
-
     private void showConfirmation(String msg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Update");
@@ -110,4 +108,5 @@ public class SettingsController {
         alert.setContentText(msg);
         alert.showAndWait();
     } // End showConfirmation
-}
+
+} // End SettingsController

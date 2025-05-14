@@ -5,7 +5,11 @@ import java.util.Objects;
 import java.util.prefs.Preferences;
 import java.net.URL;
 
-
+/**
+ * ThemeManager -> class is responsible for managing and applying themes in the application.
+ *                  It handles storing the current theme in user preferences and applying it to J
+ *                  avaFX scenes.
+ */
 public class ThemeManager {
     private static final Preferences prefs = Preferences.userNodeForPackage(ThemeManager.class);
     private static final String THEME_KEY = "theme";
@@ -39,5 +43,5 @@ public class ThemeManager {
     public static String getTheme() {
         return currentTheme;
     }
-}
+} // End ThemeManager class
 

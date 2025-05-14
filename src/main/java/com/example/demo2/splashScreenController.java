@@ -22,6 +22,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * splashScreenController -> class for splash screen ui
+ */
 public class splashScreenController implements Initializable {
     @FXML
     private MediaView mediaView;
@@ -80,7 +83,7 @@ public class splashScreenController implements Initializable {
             StackPane stack = new StackPane(oldRoot, newRoot);
             Scene transitionScene = new Scene(stack, 1200, 720);
 
-            // ⭐ Apply the saved theme to the NEW scene ⭐
+            // Apply the saved theme to the NEW scene
             ThemeManager.applySavedTheme(transitionScene);
 
             stage.setScene(transitionScene);
@@ -103,5 +106,4 @@ public class splashScreenController implements Initializable {
     }
 
 
-
-}
+} // End splashScreenController class

@@ -34,6 +34,9 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * ProjectController -> class for interacting with project
+ */
 public class ProjectController {
     @FXML
     private ScrollPane canvasScrollPane;
@@ -1329,4 +1332,4 @@ public class ProjectController {
         topButtonBar.getChildren().remove(startButton);
     }
 
-}
+} // End ProjectController class

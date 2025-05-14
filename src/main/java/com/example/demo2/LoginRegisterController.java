@@ -30,6 +30,9 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
+/**
+ * LoginRegisterController -> Class for Login & Registration
+ */
 public class LoginRegisterController implements Initializable {
 
     @FXML private Button button_existingAccount, button_existing_login, button_newAccount, button_new_register;
@@ -78,7 +81,7 @@ public class LoginRegisterController implements Initializable {
         fadeOutBox.setVisible(false);
 
         new ParallelTransition(slide, inFields, inBox, outFields, outBox).play();
-    }
+    } // End fadeTransition method
 
     @FXML
     void handleButton_login() {
@@ -218,4 +221,5 @@ public class LoginRegisterController implements Initializable {
         alert.setContentText(message);
         alert.showAndWait();
     }
-}
+
+} // End LoginRegisterController class

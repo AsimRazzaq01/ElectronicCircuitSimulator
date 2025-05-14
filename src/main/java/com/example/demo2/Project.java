@@ -9,6 +9,9 @@ import javafx.scene.paint.Paint;
 
 import java.util.*;
 
+/**
+ * Project -> class for defining project features & logic
+ */
 public class Project {
     private final int PROJECT_ID;
     private final String PROJECT_NAME;
@@ -237,5 +240,6 @@ public class Project {
         }
         return 0;
     }
-}
+
+} // End Project class
 

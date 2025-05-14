@@ -13,6 +13,7 @@ public class Application extends javafx.application.Application {
     @Override
     public void start(Stage stage) throws IOException {
 //        FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("LoginRegister.fxml"));
+
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("Splash_Screen.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1200, 720);  //680, 400
         ThemeManager.applySavedTheme(scene); // 👈 Restore the saved theme
@@ -20,7 +21,8 @@ public class Application extends javafx.application.Application {
         stage.setResizable(false);
         stage.setScene(scene);
         stage.show();
-    }
+
+    } // start method
 
     public static void main(String[] args) {
         launch();

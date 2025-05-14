@@ -3,6 +3,10 @@ package com.example.demo2.componentmodel;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/**
+ *  * This class is meant to be extended by specific component types
+ *  ex. battery hence it is a (abstract class)
+ */
 public abstract class Component {
     private int componentID;
     private double componentX;
@@ -14,6 +18,12 @@ public abstract class Component {
     private final ArrayList<Component> negativeSide;
     private final ArrayList<Component> positiveSide;
 
+    /**
+     * Constructs a new Component with a position and type.
+     * @param x    The x-coordinate of the component
+     * @param y    The y-coordinate of the component
+     * @param type The type of the component (e.g., "Resistor", "Capacitor")
+     */
     public Component(double x, double y, String type) {
         componentID = -1;
         COMPONENT_TYPE = type;
@@ -80,18 +90,27 @@ public abstract class Component {
         return positiveSide;
     }
 
+    /**
+     * Two components are equal if their IDs and types match.
+     * @param o The object to compare
+     * @return True if equal, false otherwise
+     */
     @Override
     public boolean equals(Object o) {
         if (o instanceof Component) {
-            return componentID == ((Component) o).getComponentID() && COMPONENT_TYPE.equals(((Component) o).getComponentType());
+            return componentID == ((Component) o).getComponentID()
+                    && COMPONENT_TYPE.equals(((Component) o).getComponentType());
         }
         else {
             return false;
         }
     }
 
+    /**
+     * @return Hash code -> gen a hash code for component using its ID and type.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(componentID, COMPONENT_TYPE);
     }
-}
+} // End Component class
